@@ -2,22 +2,33 @@ import React, {useState} from 'react';
 import {
     Card,
     CardContent,
-    Divider,
+    CircularProgress,
     IconButton,
     InputBase,
+    LinearProgress,
     List,
     ListItem,
     Paper,
-    TextField,
     Typography
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import http from "../../commons/http-commons";
+import logo from "../../assets/images/matrixdb_logo_medium.png";
 
 function SearchComponents() {
 
     const [searchText, setSearchText] = useState("");
+    const [searchStart, setSearchStart] = useState(false);
+    const [searchDone, setSearchDone] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
+
+    const keyDownHandler = (e: React.KeyboardEvent) =>{
+        if( e.key === 'Enter' ){
+            e.preventDefault();
+            handleSearch();
+            setSearchStart(true);
+        }
+    };
 
     const handleSearchTextChange = (e : any) => {
         setSearchText(e.target.value);
@@ -27,11 +38,21 @@ function SearchComponents() {
         http.get("/search?text=" + searchText)
             .then((searchResponse) => {
                 setSearchResults(searchResponse.data);
+                setSearchDone(true);
+                setSearchStart(false);
             });
     }
 
     return (
         <>
+            <div className={"App-header"}>
+                <div>
+                    <img src={logo} className={"App-logo"}/>
+                </div>
+                <div>
+                    <h3>The extracellular matrix interaction database</h3>
+                </div>
+            </div>
             <div className={"App-search"}>
                 <Paper
                     component="form"
@@ -42,6 +63,7 @@ function SearchComponents() {
                         placeholder="Search MatrixDB e.g GAG_1"
                         inputProps={{ 'aria-label': 'e.g Heparin' }}
                         onChange={handleSearchTextChange}
+                        onKeyDown={keyDownHandler}
                     />
                     <IconButton
                         type="button"
@@ -55,7 +77,15 @@ function SearchComponents() {
             </div>
             <div className={"App-search"}>
                 {
-                    searchResults && <h5>{searchResults.length} Results</h5>
+                    searchStart && <div style={{paddingTop: '20px'}}>
+                        <CircularProgress />
+                        </div>
+                }
+                {
+                    searchDone && <h5>{searchResults.length} Results</h5>
+                }
+                {
+                    searchDone && searchResults.length === 0  && <h5>Sorry we couldn't find what you looking for</h5>
                 }
                 <List>
                     {
@@ -66,7 +96,7 @@ function SearchComponents() {
                                     <Card sx={{ width: 500 }}>
                                         <CardContent>
                                             <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                                                <a href={""}>{result.id}</a>
+                                                <a href={"/biomolecule/" + result.id}>{result.id}</a>
                                             </Typography>
                                             {
                                                 result.GAG_Name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -84,13 +114,28 @@ function SearchComponents() {
                                                 </Typography>
                                             }
                                             {
-                                                result.GAG_Name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                                result.Spep_Name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                                    {result.Spep_Name}
+                                                </Typography>
+                                            }
+                                            {
+                                                result.GAG_Comments && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                                                     {result.GAG_Comments}
                                                 </Typography>
                                             }
                                             {
                                                 result.SmallMol_Definition && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                                                     {result.SmallMol_Definition}
+                                                </Typography>
+                                            }
+                                            {
+                                                result.Spep_Comments && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                                    {result.Spep_Comments}
+                                                </Typography>
+                                            }
+                                            {
+                                                result.Pfrag_Info && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                                    {result.Pfrag_Info}
                                                 </Typography>
                                             }
                                             {

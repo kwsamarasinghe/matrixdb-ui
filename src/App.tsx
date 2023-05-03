@@ -1,24 +1,24 @@
 import React from 'react';
-import logo from './assets/images/matrixdb_logo_medium.png';
-import './App.css';
-import {Divider, IconButton, InputBase, Paper, TextField} from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
+import {Routes, Route} from 'react-router-dom';
 
 import SearchComponent from "./components/search/SearchComponent";
+import BiomoleculeComponent from "./components/biomolecules/BiomoleculeComponent";
+import AssociationComponent from "./components/associations/AssociationComponent";
+import ExperimentComponent from "./components/experiments/ExperimentComponent";
+
+import './App.css';
 
 function App() {
 
   return (
     <div className="App">
-        <div className={"App-header"}>
-            <div>
-                <img src={logo} className={"App-logo"}/>
-            </div>
-            <div>
-                <h3>The extracellular matrix interaction database</h3>
-            </div>
-        </div>
-        <SearchComponent/>
+        <Routes>
+            <Route path="/" element={<SearchComponent/>}>
+            </Route>
+            <Route path="/biomolecule/:biomoleculeId" element={<BiomoleculeComponent/>} />
+            <Route path="/association/:associationId" element={<AssociationComponent/>} />
+            <Route path="/experiment/:experimentId" element={<ExperimentComponent/>} />
+        </Routes>
     </div>
   );
 }

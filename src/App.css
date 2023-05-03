@@ -30,6 +30,13 @@
   justify-content: center;
 }
 
+.App-search-header {
+  position: sticky;
+  top: 0;
+  background-color: black;
+  z-index: 1;
+}
+
 .App-link {
   color: #61dafb;
 }
