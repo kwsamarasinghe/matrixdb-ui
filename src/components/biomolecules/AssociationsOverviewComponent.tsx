@@ -7,6 +7,8 @@ import http from "../../commons/http-commons";
 
 interface Interactors{
     count: number,
+    countMatrixdb: number,
+    countIntact: number,
     direct: number,
     inferred: number,
     spokeExpanded: number,
@@ -113,7 +115,10 @@ function AssociationsOverviewComponent(props: any) {
                             <h2>Interactions</h2>
                         </div>
                         <div style={{clear: 'left', textAlign: 'left'}}>
-                          <h4 >Interactors : <span style={{ color : 'red'}}>{interactors.count}</span></h4>
+                          <h4 >Interactors : 
+                            <span style={{ color : 'red'}}>MatrixDB 3.5 {interactors.countMatrixdb}</span>
+                            <span style={{ color : 'green'}}>, Intact {interactors.countIntact}</span>
+                          </h4>
                           {interactors.direct > 0 && <h4>Directly supported by experiments : <span style={{ color : 'red'}}>{interactors.direct}</span> </h4>}
                           {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
                         </div>
