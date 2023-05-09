@@ -225,7 +225,7 @@ function OverviewComponent(props: any) {
                             <Divider/>
                         </div>
                         <Paper style={{ width: '400px'}}>
-                            <img src={"/img/snfg_img/"+biomoleculeToDisplay.image} style={{ width: '400px'}}/>
+                            <img src={process.env.REACT_APP_BASE_URL + "img/snfg_img/"+biomoleculeToDisplay.image} style={{ width: '400px'}}/>
                         </Paper>
                     </Grid>
                     }
