@@ -12,7 +12,8 @@ import {
     useTheme,
     ListItemButton,
     ListItemIcon,
-    Box
+    Box,
+    Typography
 } from '@mui/material';
 import SearchIcon from "@mui/icons-material/Search";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
@@ -41,7 +42,7 @@ function BiomoleculeComponent() {
 
     const theme = useTheme();
     return (<>
-        <Box sx={{ display: 'flex', bgcolor: 'white' }}>
+        {biomolecule && <Box sx={{ display: 'flex', bgcolor: 'white' }}>
             <AppBar style={{zIndex: theme.zIndex.drawer + 1}} position="fixed">
                 <Toolbar className={'App-search-header'}>
                     <div>
@@ -95,7 +96,19 @@ function BiomoleculeComponent() {
                         biomolecule && <KeywordComponent biomolecule={biomolecule}/>
                     }
             </Box>
-        </Box>
+        </Box>}
+        {
+                !biomolecule &&
+                <Box sx={{ display: 'flex', bgcolor: 'white' , justifyContent: 'center'}}>
+                    <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
+                        <Paper elevation={2}>
+                          <Typography variant="subtitle1" component="span">
+                            <h5>No data currently availble on association {biomoleculeId}</h5>
+                          </Typography>
+                        </Paper>
+                    </Box>
+                </Box>
+        }
         </>
     );
 }
