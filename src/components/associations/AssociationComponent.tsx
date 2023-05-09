@@ -63,8 +63,8 @@ function AssociationComponent() {
                         </div>
                     </Toolbar>
                 </AppBar>
-            </Box>
-            <Box sx={{ display: 'flex', bgcolor: 'white' , justifyContent: 'center'}}>
+            </Box> 
+            {association && <Box sx={{ display: 'flex', bgcolor: 'white' , justifyContent: 'center'}}>
                 <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
                     {association && <Paper variant="outlined">
                         <Grid container spacing={2}>
@@ -94,7 +94,20 @@ function AssociationComponent() {
                         </Grid>
                     </Paper>}
                 </Box>
-            </Box>
+            </Box>}
+            {
+                !association &&
+                <Box sx={{ display: 'flex', bgcolor: 'white' , justifyContent: 'center'}}>
+                    <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
+                        <Paper elevation={2}>
+                          <Typography variant="subtitle1" component="span">
+                            <h5>No data currently availble on association {associationId}</h5>
+                            <h6>Will be integrated soon</h6>
+                          </Typography>
+                        </Paper>
+                    </Box>
+                </Box>
+            }
         </>
     );
 }

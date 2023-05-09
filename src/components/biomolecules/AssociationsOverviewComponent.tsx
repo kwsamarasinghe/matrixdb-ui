@@ -29,34 +29,107 @@ function AssociationsOverviewComponent(props: any) {
             field: 'id', 
             headerName: 'Partner', 
             width: 150,
-            renderCell: (params: any) =>  (<a href={params.value}>{params.value}</a>)
+            renderCell: (params: any) =>  (
+                <>
+                    <a href={params.value}>{params.value}</a>
+                </>)
+        },
+        { 
+            field: 'association', 
+            headerName: 'Association', 
+            width: 250,
+            renderCell: (params: any) =>  (
+                <>
+                    <a href={process.env.REACT_APP_PUBLIC_URL + "association/"+params.value}>{params.value}</a>
+                </>)
         },
         {
           field: 'directlysupportedby',
           headerName: 'Directly Supported',
           width: 180,
           renderCell: (params: any) =>  (
-            <Tooltip title={params.value}>
-                <span className="table-cell-trucate">{params.value}</span>
-            </Tooltip>
-           )
+            <>
+                {
+                    params.value.length > 0 && <Tooltip title={
+                            params.value.map((ex :any) => {
+                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL + "experiment/"+ ex}>{ex}</a></li>)
+                            })
+                    }>
+                        <span className="table-cell-trucate">{params.value.length}</span>
+                    </Tooltip>
+                }
+                {
+                    params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
+                }
+            </>
+           ),
+           sortComparator: (v1, v2) =>  v2.length - v1.length
         },
         {
           field: 'spokeexpandedfrom',
           headerName: 'Spoke Expanded',
-          width: 180
+          width: 180,
+          renderCell: (params: any) =>  (
+            <>
+                {
+                    params.value.length > 0 && <Tooltip title={
+                            params.value.map((ex :any) => {
+                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL + "experiment/"+ ex}>{ex}</a></li>)
+                            })
+                    }>
+                        <span className="table-cell-trucate">{params.value.length}</span>
+                    </Tooltip>
+                }
+                {
+                    params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
+                }
+            </>
+           ),
+           sortComparator: (v1, v2) =>  v2.length - v1.length
         },
         {
           field: 'inferredfrom',
           headerName: 'Inferred From',
-          width: 180
+          width: 180,
+          renderCell: (params: any) =>  (
+            <>
+                {
+                    params.value.length > 0 && <Tooltip title={
+                            params.value.map((ex :any) => {
+                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL  + "experiment/"+ ex}>{ex}</a></li>)
+                            })
+                    }>
+                        <span className="table-cell-trucate">{params.value.length}</span>
+                    </Tooltip>
+                }
+                {
+                    params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
+                }
+            </>
+           ),
+           sortComparator: (v1, v2) =>  v2.length - v1.length
         },
         {
             field: 'newFromIntact',
             headerName: 'From Intact 09/22',
             width: 280,
             renderCell: (params: any) =>  (
-                <span style={{color: "green", fontWeight: "bold"}}>{params.value}</span>)
+                <>
+                    {
+                        params.value.length > 0 && <Tooltip title={
+                                params.value.map((ex :any) => {
+                                    return(<li><a href={process.env.REACT_APP_PUBLIC_URL  + "experiment/"+ ex}>{ex}</a></li>)
+                                })
+                        }>
+                            <span className="table-cell-trucate" style={{color: 'green'}}>{params.value.length}</span>
+                        </Tooltip>
+                    }
+                    {
+                        params.value.length === 0 && <span className="table-cell-trucate" style={{color: 'green'}}>{params.value.length}</span>
+                    }
+                </>
+               ),
+            sortComparator: (v1, v2) =>  v2.length - v1.length
         }
       ];
 
@@ -71,28 +144,33 @@ function AssociationsOverviewComponent(props: any) {
     useEffect(() => {
         if(interactors) {
             let rows = Object.keys(interactors.interactors).map((interactor : string) => {
-                let dsCount = 0, seCount = 0, inCount = 0, newFromIntact = 0;
+                let dsCount = 0, seCount = 0, inCount = 0, newFromIntact = [];
+                let ds : string[] = [];
+                let se : string[] = [];
+                let inf : string[] = [];
+                let association = interactors.interactors[interactor].association;
                 if(interactors.interactors[interactor].directlysupportedby) {
-                    dsCount = interactors.interactors[interactor].directlysupportedby.length;
+                    ds = interactors.interactors[interactor].directlysupportedby;
                 }
 
                 if(interactors.interactors[interactor]?.spokeexpandedfrom) {
-                    seCount = interactors.interactors[interactor].spokeexpandedfrom.length;
+                    se = interactors.interactors[interactor].spokeexpandedfrom;
                 }
 
                 if(interactors.interactors[interactor]?.inferredfrom) {
-                    inCount = interactors.interactors[interactor].inferredfrom.length;
+                    inf = interactors.interactors[interactor].inferredfrom;
                 }
 
                 if(interactors.interactors[interactor]?.direct_from_intact) {
-                    newFromIntact = interactors.interactors[interactor].direct_from_intact.length;
+                    newFromIntact = interactors.interactors[interactor].direct_from_intact;
                 }
 
                 return {
                     id: interactor,
-                    directlysupportedby: dsCount,
-                    spokeexpandedfrom: seCount,
-                    inferredfrom: inCount,
+                    association: association,
+                    directlysupportedby: ds,
+                    spokeexpandedfrom: se,
+                    inferredfrom: inf,
                     newFromIntact: newFromIntact
                 }
             });
@@ -124,7 +202,7 @@ function AssociationsOverviewComponent(props: any) {
                         </div>
                         {
                             interactors.count > 0 &&
-                            <div style={{width: '900px'}}>
+                            <div style={{width: '1100px'}}>
                                 <DataGrid
                                   rows={rows}
                                   columns={columns}
