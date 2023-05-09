@@ -96,7 +96,7 @@ function SearchComponents() {
                                     <Card sx={{ width: 500 }}>
                                         <CardContent>
                                             <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                                                <a href={"/biomolecule/" + result.id}>{result.id}</a>
+                                                <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/" + result.id}>{result.id}</a>
                                             </Typography>
                                             {
                                                 result.GAG_Name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
