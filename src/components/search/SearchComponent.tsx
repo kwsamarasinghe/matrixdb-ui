@@ -5,7 +5,6 @@ import {
     CircularProgress,
     IconButton,
     InputBase,
-    LinearProgress,
     List,
     ListItem,
     Paper,
@@ -14,6 +13,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import http from "../../commons/http-commons";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
+import ResultComponent from './ResultComponent';
 
 function SearchComponents() {
 
@@ -21,6 +21,7 @@ function SearchComponents() {
     const [searchStart, setSearchStart] = useState(false);
     const [searchDone, setSearchDone] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
+
 
     const keyDownHandler = (e: React.KeyboardEvent) =>{
         if( e.key === 'Enter' ){
@@ -50,7 +51,7 @@ function SearchComponents() {
                     <img src={logo} className={"App-logo"}/>
                 </div>
                 <div>
-                    <h3>The extracellular matrix interaction database</h3>
+                    <h4>The extracellular matrix interaction database</h4>
                 </div>
             </div>
             <div className={"App-search"}>
@@ -82,72 +83,14 @@ function SearchComponents() {
                         </div>
                 }
                 {
-                    searchDone && <h5>{searchResults.length} Results</h5>
+                    !searchStart && searchDone && <h5>{searchResults.length} Results</h5>
                 }
                 {
-                    searchDone && searchResults.length === 0  && <h5>Sorry we couldn't find what you looking for</h5>
+                    !searchStart && searchDone && searchResults.length === 0  && <h5>Sorry we couldn't find what you looking for</h5>
                 }
                 <List>
                     {
-                        searchResults &&
-                        searchResults.map((result: any) => {
-                            return(
-                                <ListItem>
-                                    <Card sx={{ width: 500 }}>
-                                        <CardContent>
-                                            <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                                                <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/" + result.id}>{result.id}</a>
-                                            </Typography>
-                                            {
-                                                result.GAG_Name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.GAG_Name}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.SmallMol_Name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.SmallMol_Name}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.FragmentName && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.FragmentName}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.Spep_Name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.Spep_Name}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.GAG_Comments && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.GAG_Comments}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.SmallMol_Definition && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.SmallMol_Definition}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.Spep_Comments && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.Spep_Comments}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.Pfrag_Info && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {result.Pfrag_Info}
-                                                </Typography>
-                                            }
-                                            {
-                                                result.CheBI_identifier && <Typography variant="body2">
-                                                    {result.CheBI_identifier}
-                                                </Typography>
-                                            }
-                                        </CardContent>
-                                    </Card>
-                                </ListItem>
-                            );
-                        })
+                        searchResults && <ResultComponent searchResults={searchResults}/>
                     }
                 </List>
             </div>

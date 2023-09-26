@@ -16,6 +16,8 @@ interface ParticipantToDisplay {
 
 interface ExperimentToDisplay {
     id: string,
+    intactId: string,
+    imaxId: string,
     pmid: string,
     biomolecule: Array<string>,
     source: string,
@@ -47,8 +49,10 @@ function ExperimentComponent() {
                         directlysupports: experimentData?.directlysupports,
                         inferredfrom: experimentData?.inferredfrom,
                         detectionMethod: experimentData.interaction_detection_method,
-                        type: experimentData.type,
+                        type: experimentData.interaction_type,
                         comment: experimentData.comment,
+                        intactId: experimentData?.intact_xref,
+                        imaxId: experimentData?.imex_id_experiment,
                         participants: Object.keys(experimentData.Participants).map(pk  => {
                             return {
                                 id: experimentData.Participants[pk].id,
@@ -63,6 +67,29 @@ function ExperimentComponent() {
                 }
             });
     }, []);
+
+    const generateExperimentName = (experiment : ExperimentToDisplay) => {
+        let participants = experiment.participants;
+        if(participants?.length == 2 ) {
+            let bait = participants.find((participant) => participant.experimentalRole === 'MI:0496');
+            let prey = participants.find((participant) => participant.experimentalRole !== 'MI:0496');
+            return (
+                    <span>
+                        <h6>{bait?.id} and { prey?.id }</h6>
+                    </span>  
+            )
+        } else {
+            let bait = participants?.find((participant) => participant.experimentalRole === 'MI:0496');
+            if(bait && participants) {
+                return (
+                    <span>
+                        <h6>{bait.id} and { participants.length - 1} others</h6>
+                    </span>  
+                )
+            }
+            
+        }
+    }
 
     const theme = useTheme();
     return (<>
@@ -91,44 +118,70 @@ function ExperimentComponent() {
             </Box>
             <Box sx={{ display: 'flex', bgcolor: 'white' , justifyContent: 'center'}}>
                 <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
-                    {experiment && <Paper variant="outlined">
+                    {experiment && <Paper variant="outlined" style={{background: '#cbdef2'}}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
-                                <Typography variant="h5">{experiment.id}</Typography>
+                                <Typography variant="h6">
+                                    {generateExperimentName(experiment)}
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography align="left"><b>Biomolecule:</b> {
-                                    experiment.biomolecule.map(b => {
-                                            let link = "/biomolecule/" + b;
-                                            return (<a href={link}>{b}</a>)
-                                        }
-                                    )}</Typography>
+                                <Typography align="left"><b>Identifier:</b> {experiment.id}</Typography>
                             </Grid>
-                            <Grid item xs={12}>
+                            {experiment.intactId && <Grid item xs={12}>
+                                <Typography align="left"><b>Intact Identifier:</b>
+                                    <a href={"http://www.ebi.ac.uk/intact/interaction/EBI-15184828/" + experiment.intactId}>
+                                        {experiment.intactId}
+                                    </a>
+                                </Typography>
+                            </Grid>}
+                            {experiment.imaxId && <Grid item xs={12}>
+                                <Typography align="left"><b>IMAX Identifier:</b>
+                                    <a href={"https://www.ebi.ac.uk/intact/imex/main.xhtml?query="+experiment.imaxId+"&Search=1#"}>
+                                        {experiment.imaxId}
+                                    </a>
+                                </Typography>
+                            </Grid>}
+                            {experiment.comment && <Grid item xs={12}>
                                 <Typography align="left"><b>General Comment:</b> {experiment.comment}</Typography>
+                            </Grid>}
+                            <Grid item xs={12}>
+                                <Typography align="left">
+                                    <b>Detection Method:</b>
+                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
+                                        {experiment.detectionMethod}
+                                    </a>
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography align="left"><b>Detection Method:</b> {experiment.detectionMethod}</Typography>
+                                <Typography align="left"><b>Interaction Type:</b>
+                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.type }>
+                                        {experiment.type}
+                                    </a>
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography align="left"><b>Interaction Type:</b> {experiment.type}</Typography>
+                                <Typography align="left"><b>PMID:</b>
+                                    <a href={"https://pubmed.ncbi.nlm.nih.gov/"+experiment.pmid} target="_blank">{experiment.pmid}</a>
+                                </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography align="left"><b>PMID:</b> <a href={"https://pubmed.ncbi.nlm.nih.gov/"+experiment.pmid} target="_blank">{experiment.pmid}</a></Typography>
+                                <Typography align="left"><b>Source:</b>
+                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.source }>
+                                        {experiment.source}
+                                    </a>
+                                </Typography>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Typography align="left"><b>Source:</b> {experiment.source}</Typography>
-                            </Grid>
-                            <Grid item xs={12}>
+                            {experiment.directlysupports && <Grid item xs={12}>
                                 <Typography align="left"><b>Directly Supports:</b> {experiment.directlysupports}</Typography>
-                            </Grid>
+                            </Grid>}
                         </Grid>
                     </Paper>}
 
                     <Paper variant="outlined">
                         <Typography variant="h5">Participants</Typography>
                         {
-                            experiment && experiment.participants && experiment.participants.map(participant => {
+                            experiment && experiment.participants && experiment.participants.sort((p1,p2) => {return p1.biomolecule.localeCompare(p2.biomolecule)}).map(participant => {
                                 return(
                                     <Paper variant="outlined">
                                         <Typography variant="h6">{participant && participant.biomolecule}</Typography>

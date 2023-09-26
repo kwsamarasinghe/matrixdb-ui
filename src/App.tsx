@@ -7,6 +7,7 @@ import AssociationComponent from "./components/associations/AssociationComponent
 import ExperimentComponent from "./components/experiments/ExperimentComponent";
 
 import './App.css';
+import StatisticsComponent from "./components/statistics/StatisticsComponent";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
             <Route path="/biomolecule/:biomoleculeId" element={<BiomoleculeComponent/>} />
             <Route path="/association/:associationId" element={<AssociationComponent/>} />
             <Route path="/experiment/:experimentId" element={<ExperimentComponent/>} />
+            <Route path="/statistics/" element={<StatisticsComponent/>} />
         </Routes>
     </div>
   );
