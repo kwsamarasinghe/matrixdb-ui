@@ -1,14 +1,10 @@
 import React, {useState} from 'react';
 import {
-    Card,
-    CardContent,
     CircularProgress,
     IconButton,
     InputBase,
     List,
-    ListItem,
-    Paper,
-    Typography
+    Paper
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import http from "../../commons/http-commons";

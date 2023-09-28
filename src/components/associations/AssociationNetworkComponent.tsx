@@ -20,7 +20,7 @@ function PartnerOverview(props: any) {
         return(
             <Card>
                 <CardContent>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="body2" gutterBottom>
                         <a href={"/biomolecule/"+partner.id}>{partner.names && partner.names.name || partner.id}</a>
                     </Typography>
                     <Typography color="textSecondary">
@@ -37,6 +37,49 @@ function PartnerOverview(props: any) {
         return <></>
     }
 }
+
+function InteractionOverview(props: any) {
+
+    const [interaction, setinteraction] = useState<any>(null);
+
+    useEffect(() => {
+        setinteraction(props.interaction);
+    }, [props.interaction])
+
+    if(interaction) {
+        return(
+            <Card style={{width: 230}}>
+                <CardContent>
+                    <Typography variant="body2" gutterBottom>
+                        <a href={"/association/"+interaction.id}>
+                            {interaction.id && interaction.id}
+                        </a>
+                    </Typography>
+                    {
+                        interaction.experiments.map((experiment: any) => {
+                            return (
+                                <div style={{ wordWrap: 'break-word' }}>
+                                    <Typography variant="caption" color="textSecondary">
+                                        <strong>Experiments:</strong> {experiment}
+                                    </Typography>
+                                </div>
+                            );
+                        })
+                    }
+                    <div style={{ wordWrap: 'break-word' }}>
+                        <Typography variant="caption" color="textSecondary">
+                            <strong>Pubmed Id:</strong> {interaction.pubmed}
+                        </Typography>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
+    else{
+        return <></>
+    }
+}
+
 
 function AssociationNetworkComponent(props: any) {
 
@@ -124,7 +167,7 @@ function AssociationNetworkComponent(props: any) {
                 },
                 style: [
                     {
-                        selector: 'node',
+                        selector: 'node[type="center"]',
                         style: {
                             width: "30px",
                             height: "30px",
@@ -158,10 +201,20 @@ function AssociationNetworkComponent(props: any) {
             });
             cy.zoom(1.5);
 
+            cy.on('click', 'node', function(event) {
+               const node = event.target;
+               let selectedInteraction = associations.find(association => association.id === biomoleculeIds[0]+'__'+node.id());
+               console.log(node.id())
+               if(selectedInteraction) {
+                   setSelectedInteraction(selectedInteraction);
+                   setSelectedPartnerId(null);
+               }
+            });
 
             cy.on('mouseover', 'node', function(event) {
                 const node = event.target;
                 setSelectedPartnerId(node.id());
+                setSelectedInteraction(null);
             });
 
             cy.on('mouseout', 'node', function(event) {
@@ -180,6 +233,7 @@ function AssociationNetworkComponent(props: any) {
         <div style={{ display: 'flex' }}>
             <div style={{ flex: 0.75, backgroundColor: 'lightgray' }}>
                 { selectedPartnerId && <PartnerOverview partnerId={selectedPartnerId}/> }
+                { selectedInteraction && <InteractionOverview interaction={selectedInteraction}/> }
             </div>
 
             <div
@@ -188,7 +242,6 @@ function AssociationNetworkComponent(props: any) {
             />
 
             <div style={{ flex: 1.25,  backgroundColor: 'lightgray' }}>
-                {}
             </div>
         </div>
     );
