@@ -1,9 +1,7 @@
-import {useParams} from "react-router";
 import {useEffect, useState, useRef} from "react";
 import http from "../../commons/http-commons";
 import cytoscape from "cytoscape";
 import {Card, CardContent, Typography} from "@mui/material";
-
 
 function PartnerOverview(props: any) {
 
@@ -16,7 +14,7 @@ function PartnerOverview(props: any) {
                     setPartner(biomoleculeResponse.data);
                 });
         }
-    });
+    },[props.partnerId]);
 
     if(partner) {
         return(
@@ -45,13 +43,12 @@ function AssociationNetworkComponent(props: any) {
     const {biomoleculeIds} = props;
     const [associations, setAssociations] = useState<any[]>();
     const [participants, setParticipants] = useState<any[]>();
-    const [associationsRetreived, setAssociationsRetrieved] = useState(false);
     const [loading, setLoading] = useState(false);
     const cyRef = useRef(null);
-    const radius = 100;
+    const radius = 200;
 
     const [selectedPartnerId, setSelectedPartnerId] = useState(null);
-    const selectedInteraction = useState(null);
+    const [selectedInteraction, setSelectedInteraction] = useState(null);
 
     useEffect(() => {
         if(!loading && !associations) {
@@ -63,14 +60,13 @@ function AssociationNetworkComponent(props: any) {
                 if(associationResponse.data && associationResponse.data.interactions) {
                         setAssociations(associationResponse.data.interactions);
                         setParticipants(associationResponse.data.participants);
-                        setAssociationsRetrieved(true);
                 }
             });
         }
     }, []);
 
     useEffect(() => {
-        if(associations) {
+        if(participants && associations) {
             let centerBiomoleculeId = biomoleculeIds[0];
             let elements = [];
             elements.push({
@@ -85,34 +81,41 @@ function AssociationNetworkComponent(props: any) {
                 }
             });
             let i = 0;
-            let associationCount = associations?.length;
-            
-            associations.forEach(association => {
-                let partnerId = association.participants.filter((participantId: string) => participantId !== centerBiomoleculeId)[0];
-                //TODO: self interactions to be handled
-                if(partnerId && partnerId !== centerBiomoleculeId){
-                    elements.push({
-                        data: {
-                            id: partnerId,
-                            label: partnerId,
-                            type: 'interactor'
-                        },
-                        position: {
-                            x: radius * 3 * Math.sin(i*2*Math.PI/associationCount),
-                            y: radius * Math.cos(i*2*Math.PI/associationCount)
-                        }
-                    });
-                    elements.push({
-                        data: {
-                            source: centerBiomoleculeId,
-                            target: partnerId,
-                            label: association["id"]
-                        }
-                    });
-                    i++;
-                }
-            });
-        
+            let associationCount = participants.filter(p => p.id !== biomoleculeIds[0]).length;
+            if(associationCount) {
+                associations.forEach(association => {
+                    let partnerId = association.participants.filter((participantId: string) => participantId !== centerBiomoleculeId)[0];
+                    //TODO: self interactions to be handled
+                    if(partnerId && partnerId !== centerBiomoleculeId){
+                        elements.push({
+                            data: {
+                                id: partnerId,
+                                label: partnerId,
+                                type: 'interactor'
+                            },
+                            position: {
+                                x: radius * Math.cos(i*2*(Math.PI/associationCount)),
+                                y: radius * Math.sin(i*2*(Math.PI/associationCount))
+                            }
+                        });
+                        elements.push({
+                            data: {
+                                source: centerBiomoleculeId,
+                                target: partnerId,
+                                label: association["id"]
+                            }
+                        });
+                        i++;
+                    } else {
+                        console.log(association.id)
+                        console.log(association.participants)
+                        console.log(partnerId);
+                    }
+
+                });
+
+            }
+
             const cy = cytoscape({
                 container: cyRef.current,
                 elements: elements,
@@ -155,6 +158,7 @@ function AssociationNetworkComponent(props: any) {
             });
             cy.zoom(1.5);
 
+
             cy.on('mouseover', 'node', function(event) {
                 const node = event.target;
                 setSelectedPartnerId(node.id());
@@ -172,22 +176,19 @@ function AssociationNetworkComponent(props: any) {
 
     }, [associations])
 
-
     return(
         <div style={{ display: 'flex' }}>
-            <div style={{ flex: 1, backgroundColor: 'lightblue' }}>
+            <div style={{ flex: 0.75, backgroundColor: 'lightgray' }}>
                 { selectedPartnerId && <PartnerOverview partnerId={selectedPartnerId}/> }
             </div>
 
-            {/* Middle div with your "cy" component */}
             <div
                 ref={cyRef}
-                style={{ flex: 3, height: "500px", backgroundColor: 'lightgray' }}
+                style={{ flex: 3, height: "800px" }}
             />
 
-            {/* Right div */}
-            <div style={{ flex: 1,  backgroundColor: 'lightgreen' }}>
-                {/* Content for the right div */}
+            <div style={{ flex: 1.25,  backgroundColor: 'lightgray' }}>
+                {}
             </div>
         </div>
     );
