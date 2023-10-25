@@ -30,10 +30,8 @@ interface BiomoleculeToDisplay {
     location?: string | undefined,
     crossRefs?: any | undefined,
     biologicalProcessing: Array<string>,
-    glycoct: string,
     gene: string | undefined,
-    molecularWeight: number | undefined,
-    sequenceLength: number | undefined,
+    molecularDetails: any | undefined,
     interpro: Array<string> | [],
     subcellularLocation: string,
     function: string
@@ -59,10 +57,8 @@ function OverviewComponent(props: any) {
             location: undefined,
             crossRefs: {},
             biologicalProcessing: [],
-            glycoct: "",
             gene: undefined,
-            molecularWeight: undefined,
-            sequenceLength: undefined,
+            molecularDetails: undefined,
             interpro: [],
             subcellularLocation: "",
 
@@ -74,8 +70,7 @@ function OverviewComponent(props: any) {
         biomoleculeToDisplay.recommendedName = biomolecule.names?.recommended_name;
         biomoleculeToDisplay.species = biomolecule.species;
         biomoleculeToDisplay.gene = biomolecule.relations.gene_name;
-        biomoleculeToDisplay.sequenceLength = biomolecule.molecular_details?.sequence?.length;
-        biomoleculeToDisplay.molecularWeight = biomolecule.molecularWeight;
+        biomoleculeToDisplay.molecularDetails= biomolecule.molecular_details;
 
         biomoleculeToDisplay.function = biomolecule.annotations?.function?.text;
         biomoleculeToDisplay.subcellularLocation = biomolecule.annotations?.subcellular_location?.join(",");
@@ -92,7 +87,8 @@ function OverviewComponent(props: any) {
         background: 'rgba(255, 255, 255, 0.9)',
         boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
         padding: '16px',
-        width: '100%'
+        width: '100%',
+        borderRadius: 0
     };
 
     const cellStyles = {
@@ -130,11 +126,11 @@ function OverviewComponent(props: any) {
                                     }
                                 </TableCell>
                             </Grid>
-                            {biomoleculeToDisplay?.sequenceLength  && <Grid item xs={6}>
+                            {biomoleculeToDisplay?.molecularDetails?.sequanceLength  && <Grid item xs={6}>
                                 <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Sequence Length</h4></TableCell>
                                 <TableCell style={cellStyles}>
                                     {
-                                        biomoleculeToDisplay?.sequenceLength 
+                                        biomoleculeToDisplay?.molecularDetails.sequenceLength
                                     }
                                 </TableCell>
                             </Grid>}
@@ -164,14 +160,14 @@ function OverviewComponent(props: any) {
                         </Grid>
                     </div>
                     {
-                    biomoleculeToDisplay && biomoleculeToDisplay.type === '"GAG"' && biomoleculeToDisplay.image && 
+                    biomoleculeToDisplay && biomoleculeToDisplay.type === 'gag' &&
                     <Grid item xs={3} style={{paddingLeft: '20px'}}>
                         <div style={{textAlign: 'left' , width: '300px'}}>
                             <h3>Symbol Nomenclature For Glycans </h3>
                             <Divider/>
                         </div>
                         <Paper style={{ width: '400px'}}>
-                            <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.image} style={{ width: '400px'}}/>
+                            <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.molecularDetails.snfg} style={{ width: '400px'}}/>
                         </Paper>
                     </Grid>
                     }

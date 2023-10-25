@@ -70,7 +70,7 @@ function ExperimentComponent() {
 
     const generateExperimentName = (experiment : ExperimentToDisplay) => {
         let participants = experiment.participants;
-        if(participants?.length == 2 ) {
+        if(participants?.length === 2 ) {
             let bait = participants.find((participant) => participant.experimentalRole === 'MI:0496');
             let prey = participants.find((participant) => participant.experimentalRole !== 'MI:0496');
             return (

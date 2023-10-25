@@ -8,6 +8,7 @@ import ExperimentComponent from "./components/experiments/ExperimentComponent";
 
 import './App.css';
 import StatisticsComponent from "./components/statistics/StatisticsComponent";
+import NetworkExplorer from "./components/networks/NetworkExplorerComponent";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
             <Route path="/association/:associationId" element={<AssociationComponent/>} />
             <Route path="/experiment/:experimentId" element={<ExperimentComponent/>} />
             <Route path="/statistics/" element={<StatisticsComponent/>} />
+            <Route path="/networks/" element={<NetworkExplorer/>} />
         </Routes>
     </div>
   );

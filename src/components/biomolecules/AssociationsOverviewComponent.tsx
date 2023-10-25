@@ -1,10 +1,12 @@
 import {useEffect, useState} from 'react';
 import {
-    Box, CircularProgress, Paper, Tab, Tabs, Tooltip
+    Box, CircularProgress, IconButton, Paper, Tab, Tabs, Tooltip
 } from "@mui/material";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import http from "../../commons/http-commons";
-import AssociationNetworkComponent from "../associations/AssociationNetworkComponent";
+import AssociationNetworkComponent from "../networks/AssociationNetworkComponent";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface Interactors{
     count: number,
@@ -30,8 +32,14 @@ function AssociationsOverviewComponent(props: any) {
 
     const {biomoleculeId} = props;
     const [interactors, setInteractors] = useState<Interactors>();
+    const [interactorNetwork, setInteractorNetwork] = useState<any | null>(null);
     const [rows, setRows] = useState<any[]>([]);
     const [loaded, setLoaded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
+
+    const toggleExpansion = () => {
+        setIsExpanded(!isExpanded);
+    };
 
     const columns: GridColDef[] = [
         { 
@@ -121,45 +129,61 @@ function AssociationsOverviewComponent(props: any) {
       ];
 
     useEffect(() => {
-        http.get("/biomolecules/" + biomoleculeId + "/interactors/")
-            .then((interactorResponse) => {
-                setInteractors(interactorResponse.data);
-                setLoaded(true);
-            });
-    }, []);
+        if(!loaded) {
+            http.get("/biomolecules/" + biomoleculeId + "/interactors/")
+                .then((interactorResponse) => {
+                    setInteractors(interactorResponse.data);
+                    let interactors = interactorResponse.data;
+                    if(interactors) {
+                        let rows = Object.keys(interactors.details).map((partner : any) => {
+                            let ds : string[] = [];
+                            let se : string[] = [];
+                            let inf : string[] = [];
+                            let detail = interactors.details[partner];
+                            if(detail.directlySupportedBy) {
+                                ds = detail.directlySupportedBy;
+                            }
 
-    useEffect(() => {
-        if(interactors) {
-            let rows = Object.keys(interactors.details).map((partner : any) => {
-                let ds : string[] = [];
-                let se : string[] = [];
-                let inf : string[] = [];
-                let detail = interactors.details[partner];
-                if(detail.directlySupportedBy) {
-                    ds = detail.directlySupportedBy;
-                }
+                            if(detail?.spokeExpandedFrom) {
+                                se = detail.spokeExpandedFrom;
+                            }
 
-                if(detail?.spokeExpandedFrom) {
-                    se = detail.spokeExpandedFrom;
-                }
-
-                return {
-                    id: partner,
-                    association: interactors.details[partner]["association"] ,
-                    directlySupportedBy: ds,
-                    spokeExpandedFrom: se,
-                    inferredfrom: inf
-                }
-            });
-            setRows(rows);
+                            return {
+                                id: partner,
+                                association: interactors.details[partner]["association"] ,
+                                directlySupportedBy: ds,
+                                spokeExpandedFrom: se,
+                                inferredfrom: inf
+                            }
+                        });
+                        setRows(rows);
+                    }
+                });
         }
-    }, [interactors]);
+
+        if (!interactorNetwork) {
+
+            http.post("/networks", {
+                biomolecules: [biomoleculeId]
+            })
+                .then((networkResponse) => {
+                    if (networkResponse.data) {
+                        setInteractorNetwork({
+                            participantIds: networkResponse.data.participants,
+                            associations: networkResponse.data.associations
+                        });
+                    }
+                    setLoaded(true);
+                })
+        }
+    }, []);
 
     const paperStyle = {
         background: 'rgba(255, 255, 255, 0.9)',
         boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
         padding: '16px',
-        width: '100%'
+        width: '100%',
+        borderRadius: 0
     };
 
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
@@ -188,41 +212,63 @@ function AssociationsOverviewComponent(props: any) {
                 <div>
                     <Paper style={paperStyle}>
                         <>
-                            <div style={{float: 'left'}}>
-                                <h2>Interactions</h2>
+                            <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                                <span style={{paddingLeft: '10px'}}>
+                                    <h3>Interactions</h3>
+                                </span>
                             </div>
-                            <div style={{clear: 'left', textAlign: 'left'}}>
-                                <h4 >Interactors {interactors.count}</h4>
-                                {interactors.direct > 0 && <h4>Directly supported by experiments : <span style={{ color : 'red'}}>{interactors.direct}</span> </h4>}
-                                {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
+                            <div>
+                                <div style={{clear: 'left', textAlign: 'left'}}>
+                                    <h4 >Interactors {interactors.count}</h4>
+                                    {interactors.direct > 0 && <h4>Directly supported by experiments : <span style={{ color : 'red'}}>{interactors.direct}</span> </h4>}
+                                    {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
+                                </div>
+                                <div style={{float: 'right'}}>
+                                    <IconButton onClick={toggleExpansion}>
+                                        {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                    </IconButton>
+                                </div>
                             </div>
-                            <Tabs value={tabValue} onChange={handleTabChange} centered>
-                                <Tab label="Network View" />
-                                <Tab label="List View" />
-                            </Tabs>
-                            <TabPanel value={tabValue} index={0}>
-                                {loaded && <AssociationNetworkComponent biomoleculeIds={[biomoleculeId]}/>}
-                            </TabPanel>
-                            <TabPanel value={tabValue} index={1}>
-                                {
-                                    interactors.count > 0 &&
-                                    <div /*style={{width: '1100px'}}*/>
-                                        <DataGrid
-                                        rows={rows}
-                                        columns={columns}
-                                        initialState={{
-                                            pagination: {
-                                            paginationModel: {
-                                                pageSize: 10,
-                                            },
-                                            },
-                                        }}
-                                        pageSizeOptions={[5]}
-                                        disableRowSelectionOnClick
-                                        />
-                                    </div>
-                                }
-                            </TabPanel>
+                            {
+                               /*isExpanded &&
+                               <>
+                                   <Tabs value={tabValue} onChange={handleTabChange} centered>
+                                       <Tab label="Network View" />
+                                       <Tab label="List View" />
+                                   </Tabs>
+                                   {loaded  && biomoleculeId && interactorNetwork && <TabPanel value={tabValue} index={0}>
+                                       <AssociationNetworkComponent
+                                           biomoleculeIds={[biomoleculeId]}
+                                           network={interactorNetwork}
+                                       />
+                                   </TabPanel>}
+                                   <TabPanel value={tabValue} index={1}>
+                                       {
+                                           interactors.count > 0 &&
+                                           <div style={{width: '1100px'}}>
+                                               <DataGrid
+                                                   rows={rows}
+                                                   columns={columns}
+                                                   initialState={{
+                                                       pagination: {
+                                                           paginationModel: {
+                                                               pageSize: 10,
+                                                           },
+                                                       },
+                                                   }}
+                                                   pageSizeOptions={[5]}
+                                                   disableRowSelectionOnClick
+                                               />
+                                           </div>
+                                       }
+                                   </TabPanel>
+                               </>*/
+                            }
+                            {loaded  && biomoleculeId && interactorNetwork &&
+                                <AssociationNetworkComponent
+                                    biomoleculeIds={[biomoleculeId]}
+                                    network={interactorNetwork}
+                                />}
                         </>
                     </Paper>
                 </div>

@@ -65,7 +65,7 @@ function AssociationComponent() {
                     setAssociation(association);
                 }
             });
-    }, []);
+    });
 
     const theme = useTheme();
     return (<>
@@ -74,7 +74,7 @@ function AssociationComponent() {
                     <Toolbar className={'App-search-header'}>
                         <div>
                             <a href="/">
-                                <img src={logo} style={{width: '50px', height: '50px'}} className={"App-logo"}/>
+                                <img src={logo} alt={""} style={{width: '50px', height: '50px'}} className={"App-logo"}/>
                             </a>
                         </div>
                         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 'auto'}}>

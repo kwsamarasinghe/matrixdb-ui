@@ -42,35 +42,41 @@ function SearchComponents() {
 
     return (
         <>
-            <div className={"App-header"}>
+            <div className={"App App-header"}>
                 <div>
                     <img src={logo} className={"App-logo"}/>
                 </div>
                 <div>
                     <h4>The extracellular matrix interaction database</h4>
                 </div>
-            </div>
-            <div className={"App-search"}>
-                <Paper
-                    component="form"
-                    sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
-                >
-                    <InputBase
-                        sx={{ ml: 1, flex: 1 }}
-                        placeholder="Search MatrixDB e.g GAG_1"
-                        inputProps={{ 'aria-label': 'e.g Heparin' }}
-                        onChange={handleSearchTextChange}
-                        onKeyDown={keyDownHandler}
-                    />
-                    <IconButton
-                        type="button"
-                        sx={{ p: '10px' }}
-                        aria-label="search"
-                        onClick={handleSearch}
+                <div className={"App-search"}>
+                    <Paper
+                        component="form"
+                        sx={{
+                            p: '2px 4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: 600,
+                            borderRadius: 0
+                        }}
                     >
-                        <SearchIcon/>
-                    </IconButton>
-                </Paper>
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search MatrixDB e.g GAG_1"
+                            inputProps={{ 'aria-label': 'e.g Heparin' }}
+                            onChange={handleSearchTextChange}
+                            onKeyDown={keyDownHandler}
+                        />
+                        <IconButton
+                            type="button"
+                            sx={{ p: '10px' }}
+                            aria-label="search"
+                            onClick={handleSearch}
+                        >
+                            <SearchIcon/>
+                        </IconButton>
+                    </Paper>
+                </div>
             </div>
             <div className={"App-search"}>
                 {
