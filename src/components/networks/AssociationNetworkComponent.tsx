@@ -785,7 +785,36 @@ function CytoscapeComponent(props: any) {
     const [participants, setParticipants] = useState<Array<any>>([]);
     const [layout, setLayout] = useState<string>("preset");
     const cyRef = useRef(null);
-    const radius = 200;
+
+    const circularLayout = {
+        name: 'circle',
+        radius: 150,
+        fit: true,
+        transform: (node: any, position: any) => {
+            position.y -= 350;
+            position.x -= 350;
+            return position;
+        },
+    }
+
+    const coseLayout = {
+        name: 'cose',
+        idealEdgeLength: ( edge: any ) =>  {return 32},
+        nodeOverlap: 20,
+        fit: true,
+        padding: 30,
+        randomize: false,
+        componentSpacing: 100,
+        nodeRepulsion: ( node: any ) => { return 2048; },
+        edgeElasticity: ( edge: any ) => { return 32; },
+        nestingFactor: 5,
+        gravity: 80,
+        numIter: 1000,
+        initialTemp: 200,
+        coolingFactor: 0.95,
+        minTemp: 1.0
+    }
+
     let cy : any = null;
 
     useEffect(() => {
@@ -886,35 +915,16 @@ function CytoscapeComponent(props: any) {
             });
 
             if(!cy) {
+                let layout;
+                if(filteredParticipants.size < 20) {
+                    layout = circularLayout;
+                } else {
+                    layout = coseLayout;
+                }
                 cy = cytoscape({
                     container: cyRef.current,
                     elements: elements,
-                    /*layout: {
-                        name: 'concentric',
-                        concentric: function( node ){
-                            return node.degree();
-                        },
-                        levelWidth: function( nodes ){
-                            return 2;
-                        }
-                    },*/
-                    layout: {
-                        name: 'cose',
-                        idealEdgeLength: function( edge ){ return 32; },
-                        nodeOverlap: 20,
-                        fit: true,
-                        padding: 30,
-                        randomize: false,
-                        componentSpacing: 100,
-                        nodeRepulsion: function( node ){ return 2048; },
-                        edgeElasticity: function( edge ){ return 32; },
-                        nestingFactor: 5,
-                        gravity: 80,
-                        numIter: 1000,
-                        initialTemp: 200,
-                        coolingFactor: 0.95,
-                        minTemp: 1.0
-                    },
+                    layout: layout,
                     style: [
                         {
                             selector: 'node[type="center"]',
@@ -995,7 +1005,6 @@ function CytoscapeComponent(props: any) {
                     const node = event.target;
                     let sortedIds = [props.biomoleculeId, node.id()].sort();
                     let selectedInteraction = associations.find((association: any) => association.id === sortedIds[0] + '__' + sortedIds[1]);
-                    console.log(node.id())
                     if (selectedInteraction) {
                         setSelectedInteraction(selectedInteraction);
                         setSelectedPartnerId(null);
