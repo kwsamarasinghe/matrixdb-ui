@@ -16,11 +16,11 @@ import http from "../../commons/http-commons";
 import AssociationsOverviewComponent from "./AssociationsOverviewComponent";
 import KeywordComponent from './KeywordComponent';
 import ExpressionComponent from "./ExpressionComponent";
+import StructureComponent from "./StructureComponent";
 
 function BiomoleculeComponent() {
     const { biomoleculeId } = useParams();
     const [biomolecule, setBiomolecule] = useState(null);
-    const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
         if(!biomolecule) {
@@ -103,6 +103,12 @@ function BiomoleculeComponent() {
                                 biomolecule &&
                                 <div style={{marginBottom: '10px'}}>
                                     <KeywordComponent biomolecule={biomolecule}/>
+                                </div>
+                            }
+                            {
+                                biomolecule &&
+                                <div style={{marginBottom: '10px'}}>
+                                    <StructureComponent pdbId={""}/>
                                 </div>
                             }
                         </div>
