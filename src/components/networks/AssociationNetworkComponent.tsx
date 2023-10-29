@@ -26,6 +26,10 @@ interface Filter {
     subCriteria: {
         property: string,
         value: string
+        propertyAttributes?: [
+            attribute: string,
+            value: string
+        ]
     }[],
     active: boolean
 }
@@ -252,7 +256,7 @@ function FilterComponent(props: any) {
                     expressedIn: {
                         values: [...expressionTissues],
                         subProperties: {
-                            score: {
+                            expressionScore: {
                                 type: 'numeric',
                                 min: 0,
                                 max: 100
@@ -302,7 +306,8 @@ function FilterComponent(props: any) {
                 } else {
                     lastFilter.subCriteria.push({
                         property: filter.property,
-                        value: filter.value
+                        value: filter.value,
+                        propertyAttributes: filter?.propertyAttributes
                     });
                 }
             } else {
@@ -314,7 +319,8 @@ function FilterComponent(props: any) {
                 if(filter.property && filter.value) {
                     newFilter.subCriteria.push({
                         property: filter.property,
-                        value: filter.value
+                        value: filter.value,
+                        propertyAttributes: filter?.propertyAttributes
                     });
                 }
                 filters.push(newFilter);
@@ -329,7 +335,8 @@ function FilterComponent(props: any) {
             if(filter.property && filter.value) {
                 newFilter.subCriteria.push({
                     property: filter.property,
-                    value: filter.value
+                    value: filter.value,
+                    propertyAttributes: filter?.propertyAttributes
                 });
             }
             setFilters([newFilter]);
@@ -390,6 +397,7 @@ function FilterComponent(props: any) {
         const [editing, setEditing] = useState(false);
         const [subPropertyEditing, setSubPropertyEditing] = useState(false);
         const [property, setProperty] = useState<string | null>(null);
+        const [propertyAttributes, setPropertyAttributes] = useState<any>({});
         const [value, setValue] = useState<string | null>(null);
         const [filterType, setFilterType] = useState<string>();
 
@@ -421,7 +429,8 @@ function FilterComponent(props: any) {
             props.onFilterAdd({
                 type: filterType,
                 property: property,
-                value: value
+                value: value,
+                propertyAttributes: propertyAttributes
             }, editing);
             setShowEditing(true);
         });
@@ -432,8 +441,10 @@ function FilterComponent(props: any) {
             setEditing(true);
         }
 
-        const onExpressionValueChange = ((event : any, newValue : any) => {
-            //setSliderValue(newValue);
+        const onPropertyAttributeChange = ((event : any, newValue : any) => {
+            let newPropertyAttributes = propertyAttributes;
+            newPropertyAttributes[event.target.name] = newValue;
+            setPropertyAttributes(newPropertyAttributes);
         });
 
         return(
@@ -581,12 +592,13 @@ function FilterComponent(props: any) {
                                                             onClick={() => setSubPropertyEditing(true)}
                                                             disabled={subPropertyEditing}
                                                         >
-                                                            score
+                                                            {subproperty}
                                                         </Button>
                                                     </div>
                                                     {subPropertyEditing &&
                                                     <div style={{width: '40%', marginRight: '10px'}}>
                                                         <Slider
+                                                            name={subproperty}
                                                             aria-label="Small steps"
                                                             defaultValue={50}
                                                             step={10}
@@ -594,6 +606,7 @@ function FilterComponent(props: any) {
                                                             min={0}
                                                             max={100}
                                                             valueLabelDisplay="auto"
+                                                            onChange={onPropertyAttributeChange}
                                                         />
                                                     </div>
                                                     }
@@ -603,7 +616,6 @@ function FilterComponent(props: any) {
                                 }
                             </div>
                         }
-
                     </>
                     }
             </>
@@ -783,7 +795,6 @@ function CytoscapeComponent(props: any) {
     const [selectedInteraction, setSelectedInteraction] = useState(null);
     const [associations, setAssociations] = useState<Array<any>>([]);
     const [participants, setParticipants] = useState<Array<any>>([]);
-    const [layout, setLayout] = useState<string>("preset");
     const cyRef = useRef(null);
 
     const circularLayout = {
