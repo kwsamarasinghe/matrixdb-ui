@@ -29,7 +29,7 @@ const DefaultViewerOptions = {
     extensions: ObjectKeys({}),
     layoutIsExpanded: true,
     layoutShowControls: false,
-    layoutShowRemoteState: false,
+    layoutShowRemoteState: true,
     layoutControlsDisplay: 'reactive' as PluginLayoutControlsDisplay,
     layoutShowSequence: true,
     layoutShowLog: false,
@@ -55,15 +55,15 @@ const StructureViewerComponent: React.FC<StructureViewerProps> = ({ pdbId }) => 
                 ...DefaultViewerOptions, ...{
                     layoutIsExpanded: false,
                     layoutShowControls: false,
-                    layoutShowRemoteState: false,
+                    layoutShowRemoteState: true,
                     layoutShowSequence: true,
                     layoutShowLog: false,
-                    layoutShowLeftPanel: true,
+                    layoutShowLeftPanel: false,
 
                     viewportShowExpand: true,
                     viewportShowControls: false,
                     viewportShowSettings: false,
-                    viewportShowSelectionMode: false,
+                    viewportShowSelectionMode: true,
                     viewportShowAnimation: false,
                 }
             };
@@ -167,29 +167,6 @@ const StructureViewerComponent: React.FC<StructureViewerProps> = ({ pdbId }) => 
 
                 }
             }).then((plugin) => {
-                const params = DownloadStructure.createDefaultParams(plugin.state.data.root.obj!, plugin);
-                const provider = plugin.config.get(PluginConfig.Download.DefaultPdbProvider);
-                /*plugin.runTask(plugin.state.data.applyAction(DownloadStructure, {
-                    source: {
-                        name: 'pdb' as const,
-                        params: {
-                            provider: {
-                                id: "5elb",
-                                server: {
-                                    name: provider,
-                                    params: PdbDownloadProvider[provider].defaultValue as any
-                                }
-                            },
-                            options: { ...params.source.params.options},
-                        }
-                    }
-                })).then(() => {
-                    plugin.builders.structure.parseTrajectory(plugin.state, "mmcif")
-                        .then((traj: any)=> {
-                            plugin.builders.structure.hierarchy.applyPreset(traj, "default");
-                        })
-                })*/
-
                 plugin.builders.data.download(
                       {
                           url: "https://www.ebi.ac.uk/pdbe/entry-files/download/1tqn.bcif",
@@ -224,7 +201,10 @@ const StructureViewerComponent: React.FC<StructureViewerProps> = ({ pdbId }) => 
     };
 
     return (
-        <div style={{position: "relative"}}>
+        <div style={{
+            position: "relative",
+            height: '500px'
+        }}>
             <Paper style={paperStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
                     <span style={{paddingLeft: '10px'}}>
@@ -233,7 +213,11 @@ const StructureViewerComponent: React.FC<StructureViewerProps> = ({ pdbId }) => 
                 </div>
                 <div
                     ref={viewerContainer}
-                    style={{ position: "relative", zIndex: 0 }}></div>
+                    style={{
+                        position: "relative",
+                        zIndex: 0,
+                        height: '450px'
+                    }}></div>
             </Paper>
         </div>
     );
