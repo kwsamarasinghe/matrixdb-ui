@@ -20,11 +20,10 @@ import StructureComponent from "./StructureComponent";
 
 function BiomoleculeComponent() {
     const { biomoleculeId } = useParams();
-    const [biomolecule, setBiomolecule] = useState(null);
+    const [biomolecule, setBiomolecule] = useState<any>(null);
 
     useEffect(() => {
         if(!biomolecule) {
-            console.log("Biomole")
             http.get("/biomolecules/" + biomoleculeId)
                 .then((biomoleculeResponse) => {
                     setBiomolecule(biomoleculeResponse.data);
@@ -94,7 +93,7 @@ function BiomoleculeComponent() {
                                 </div>
                             }
                             {
-                                biomoleculeId &&
+                                biomolecule && biomolecule.type === 'protein' && biomoleculeId &&
                                 <div style={{marginBottom: '10px'}}>
                                     <ExpressionComponent biomoleculeId={biomoleculeId}/>
                                 </div>
@@ -106,9 +105,9 @@ function BiomoleculeComponent() {
                                 </div>
                             }
                             {
-                                biomolecule &&
+                                biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb &&
                                 <div style={{marginBottom: '10px'}}>
-                                    <StructureComponent pdbId={""}/>
+                                    <StructureComponent pdb={biomolecule.molecular_details.pdb}/>
                                 </div>
                             }
                         </div>
