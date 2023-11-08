@@ -69,7 +69,14 @@ function OverviewComponent(props: any) {
         biomoleculeToDisplay.name = biomolecule.names.name;
         biomoleculeToDisplay.recommendedName = biomolecule.names?.recommended_name;
         biomoleculeToDisplay.species = biomolecule.species;
-        biomoleculeToDisplay.gene = biomolecule.relations.gene_name;
+        if(biomolecule.relations) {
+            if(Array.isArray(biomolecule.relations.gene_name)) {
+                biomoleculeToDisplay.gene = biomolecule.relations.gene_name[0];
+            } else {
+                biomoleculeToDisplay.gene = biomolecule.relations.gene_name;
+            }
+        }
+
         biomoleculeToDisplay.molecularDetails= biomolecule.molecular_details;
 
         biomoleculeToDisplay.function = biomolecule.annotations?.function?.text;
