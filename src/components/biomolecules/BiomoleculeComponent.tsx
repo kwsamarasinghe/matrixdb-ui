@@ -20,13 +20,28 @@ import StructureComponent from "./StructureComponent";
 
 function BiomoleculeComponent() {
     const { biomoleculeId } = useParams();
+    const [sideBarItems, setSideBarItems] = useState<Array<string>>(["Overview", "Interactions"]);
     const [biomolecule, setBiomolecule] = useState<any>(null);
 
     useEffect(() => {
         if(!biomolecule) {
             http.get("/biomolecules/" + biomoleculeId)
                 .then((biomoleculeResponse) => {
-                    setBiomolecule(biomoleculeResponse.data);
+                    let biomoleculeData = biomoleculeResponse.data;
+                    if(biomoleculeData) {
+                        setBiomolecule(biomoleculeData);
+
+                        // Updates the side bar items
+                        let newSideBarItems = sideBarItems;
+                        if(biomoleculeData.type === 'protein') {
+                            newSideBarItems = [...sideBarItems, "Expressions"];
+                        }
+
+                        if(biomoleculeData.molecular_details && biomoleculeData.molecular_details.pdb) {
+                            newSideBarItems = [...sideBarItems, "3D Structures"];
+                        }
+                        setSideBarItems(newSideBarItems);
+                    }
                 });
         }
     }, []);
@@ -39,7 +54,10 @@ function BiomoleculeComponent() {
 
     return(
         <div>
-            <AppBar style={{ zIndex: theme.zIndex.drawer + 1 }} position="static">
+            <AppBar
+                style={{ zIndex: theme.zIndex.drawer + 1, position: "fixed", top: 0 }}
+                position="static"
+            >
                 <Toolbar className={'App-search-header'}>
                     <div>
                         <a href="/">
@@ -48,33 +66,54 @@ function BiomoleculeComponent() {
                     </div>
                 </Toolbar>
             </AppBar>
-            <Box display="flex">
-                    <Box style={{width: "10%"}}>
-                            <List>
-                                {['Overview', 'Interactions', 'Expression', 'Keywords'].map((text, index) =>
-                                    {
-                                        if(biomolecule) {
-                                            return (
-                                                <ListItem 
-                                                    key={text} 
-                                                    disablePadding
-                                                    sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "2px" }}
-                                                >
-                                                    <ListItemButton 
-                                                        component="a" 
-                                                        href="#your-url-here"  
-                                                        sx={{ marginY: -1, paddingY: 2, paddingX: 0 }}
-                                                        >
-                                                        <ListItemText sx={{color: "rgb(12, 30, 88)"}} primary={text}/>
-                                                    </ListItemButton>
-                                                </ListItem>
-                                            )
-                                        }
-                                    }
-                                )}
-                            </List>
-                    </Box>
-                    <Box style={{width: "88%"}}>
+            {/*<Box display="flex" marginTop="64px">
+                <Box style={{
+                    width: "10%",
+                    backgroundColor: "#f0f0f0",
+                    boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.1)",
+                    paddingLeft: "5px",
+                    position: "sticky",
+                }}>
+                    <List>
+                        {sideBarItems.map((text, index) => {
+                            if (biomolecule) {
+                                return (
+                                    <ListItem
+                                        key={text}
+                                        sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
+                                    >
+                                        <ListItemButton
+                                            component="a"
+                                            href={`#${text}`}
+                                            sx={{
+                                                marginY: -1,
+                                                paddingY: 2,
+                                                paddingX: 0,
+                                                transition: "background 0.3s",
+                                                '&:hover': {
+                                                    backgroundColor: "rgba(12, 30, 88, 0.1)",
+                                                },
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    color: "rgb(12, 30, 88)",
+                                                    fontWeight: "bold",
+                                                    fontSize: "14px",
+                                                }}
+                                            >
+                                                {text}
+
+                                            </span>
+
+                                        </ListItemButton>
+                                    </ListItem>
+                                );
+                            }
+                        })}
+                    </List>
+                </Box>
+                <Box style={{width: "88%"}}>
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -112,6 +151,102 @@ function BiomoleculeComponent() {
                             }
                         </div>
                     </Box>
+            </Box>*/}
+
+            <Box display="flex" marginTop="64px">
+                <Box
+                    style={{
+                        width: "10%",
+                        backgroundColor: "#f0f0f0",
+                        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.1)",
+                        paddingLeft: "5px",
+                        position: "sticky",
+                        top: "64px", // Adjust the top value to match the height of your AppBar
+                        height: "100vh", // Set a maximum height for the sidebar to enable scrolling
+                        overflowY: "auto", // Enable vertical scrolling for the sidebar
+                    }}
+                >
+                    <List>
+                        {sideBarItems.map((text, index) => {
+                            if (biomolecule) {
+                                return (
+                                    <ListItem
+                                        key={text}
+                                        sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
+                                    >
+                                        <ListItemButton
+                                            component="a"
+                                            href={`#${text}`}
+                                            sx={{
+                                                marginY: -1,
+                                                paddingY: 2,
+                                                paddingX: 0,
+                                                transition: "background 0.3s",
+                                                '&:hover': {
+                                                    backgroundColor: "rgba(12, 30, 88, 0.1)",
+                                                },
+                                            }}
+                                        >
+                <span
+                    style={{
+                        color: "rgb(12, 30, 88)",
+                        fontWeight: "bold",
+                        fontSize: "14px",
+                    }}
+                >
+                  {text}
+                </span>
+                                        </ListItemButton>
+                                    </ListItem>
+                                );
+                            }
+                        })}
+                    </List>
+                </Box>
+                <Box style={{ width: "88%" }}>
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between'
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between'
+                        }}>
+                            {
+                                biomolecule &&
+                                <div style={{marginBottom: '10px'}}>
+                                    <OverviewComponent biomolecule={biomolecule}/>
+                                </div>
+                            }
+                            {
+                                biomoleculeId &&
+                                <div style={{marginBottom: '10px'}}>
+                                    <AssociationsOverviewComponent biomoleculeId={biomoleculeId}/>
+                                </div>
+                            }
+                            {
+                                biomolecule && biomolecule.type === 'protein' && biomoleculeId &&
+                                <div style={{marginBottom: '10px'}}>
+                                    <ExpressionComponent biomoleculeId={biomoleculeId}/>
+                                </div>
+                            }
+                            {
+                                biomolecule &&
+                                <div style={{marginBottom: '10px'}}>
+                                    <KeywordComponent biomolecule={biomolecule}/>
+                                </div>
+                            }
+                            {
+                                biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb &&
+                                <div style={{marginBottom: '10px'}}>
+                                    <StructureComponent pdb={biomolecule.molecular_details.pdb}/>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </Box>
             </Box>
     </div>
     )
