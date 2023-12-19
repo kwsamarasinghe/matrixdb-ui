@@ -4,6 +4,8 @@ import http from "../../commons/http-commons";
 import SearchIcon from "@mui/icons-material/Search";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
 import {AppBar, Box, experimentalStyled, Grid, IconButton, InputBase, Paper, Toolbar, Typography, useTheme} from "@mui/material";
+import Header from "../home/HeaderComponent";
+import Footer from "../home/Footer";
 
 
 interface ParticipantToDisplay {
@@ -53,7 +55,7 @@ function ExperimentComponent() {
                         comment: experimentData.comment,
                         intactId: experimentData?.intact_xref,
                         imaxId: experimentData?.imex_id_experiment,
-                        participants: Object.keys(experimentData.Participants).map(pk  => {
+                        participants: experimentData.Participants && Object.keys(experimentData.Participants).map(pk  => {
                             return {
                                 id: experimentData.Participants[pk].id,
                                 biomolecule: experimentData.Participants[pk].biomolecule,
@@ -92,93 +94,91 @@ function ExperimentComponent() {
     }
 
     const theme = useTheme();
+
+    const paperStyle = {
+        background: 'rgba(255, 255, 255, 0.9)',
+        boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
+        padding: '16px',
+        width: '100%',
+        borderRadius: 0
+    };
+
     return (<>
-            <Box sx={{ display: 'flex', bgcolor: 'white' , alignItems: 'center'}}>
-                <AppBar style={{zIndex: theme.zIndex.drawer + 1}} position="fixed">
-                    <Toolbar className={'App-search-header'}>
-                        <div>
-                            <a href="/">
-                                <img src={logo} style={{width: '50px', height: '50px'}} className={"App-logo"}/>
-                            </a>
-                        </div>
-                        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 'auto'}}>
-                            <Paper sx={{p: '2px 20px', display: 'flex', alignItems: 'center', flex: 1}}>
-                                <InputBase
-                                    placeholder="Search MatrixDB e.g GAG_1"
-                                    inputProps={{'aria-label': 'e.g Heparin'}}
-                                    sx={{ml: 1, flex: 1}}
-                                />
-                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                                    <SearchIcon/>
-                                </IconButton>
-                            </Paper>
-                        </div>
-                    </Toolbar>
-                </AppBar>
-            </Box>
-            <Box sx={{ display: 'flex', bgcolor: 'white' , justifyContent: 'center'}}>
-                <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
-                    {experiment && <Paper variant="outlined" style={{background: '#cbdef2'}}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Typography variant="h6">
-                                    {generateExperimentName(experiment)}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography align="left"><b>Identifier:</b> {experiment.id}</Typography>
-                            </Grid>
-                            {experiment.intactId && <Grid item xs={12}>
+            <Header pageDetails={{
+                type: "experiment",
+                id: experimentId
+            }}/>
+            {
+                experiment &&
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    marginTop="4px"
+                    style={{
+                        height: "80vh"
+                    }}
+                >
+                <Box style={{ width: "60%" }}>
+                    <Paper style={paperStyle}>
+
+                            <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                                <div style={{ paddingLeft: '20px'}}>
+                                    <h2>{generateExperimentName(experiment)}</h2>
+                                </div>
+                            </div>
+
+
+                            <Typography align="left"><b>Identifier:</b> {experiment.id}</Typography>
+
+                            {experiment.intactId &&
                                 <Typography align="left"><b>Intact Identifier:</b>
                                     <a href={"http://www.ebi.ac.uk/intact/interaction/EBI-15184828/" + experiment.intactId}>
                                         {experiment.intactId}
                                     </a>
                                 </Typography>
-                            </Grid>}
-                            {experiment.imaxId && <Grid item xs={12}>
+                            }
+                            {experiment.imaxId &&
                                 <Typography align="left"><b>IMAX Identifier:</b>
                                     <a href={"https://www.ebi.ac.uk/intact/imex/main.xhtml?query="+experiment.imaxId+"&Search=1#"}>
                                         {experiment.imaxId}
                                     </a>
                                 </Typography>
-                            </Grid>}
-                            {experiment.comment && <Grid item xs={12}>
+                            }
+                            {experiment.comment &&
                                 <Typography align="left"><b>General Comment:</b> {experiment.comment}</Typography>
-                            </Grid>}
-                            <Grid item xs={12}>
+                            }
+
                                 <Typography align="left">
                                     <b>Detection Method:</b>
                                     <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
                                         {experiment.detectionMethod}
                                     </a>
                                 </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
+
+
                                 <Typography align="left"><b>Interaction Type:</b>
                                     <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.type }>
                                         {experiment.type}
                                     </a>
                                 </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
+
+
                                 <Typography align="left"><b>PMID:</b>
                                     <a href={"https://pubmed.ncbi.nlm.nih.gov/"+experiment.pmid} target="_blank">{experiment.pmid}</a>
                                 </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
+
+
                                 <Typography align="left"><b>Source:</b>
                                     <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.source }>
                                         {experiment.source}
                                     </a>
                                 </Typography>
-                            </Grid>
-                            {experiment.directlysupports && <Grid item xs={12}>
+                            {experiment.directlysupports &&
                                 <Typography align="left"><b>Directly Supports:</b> {experiment.directlysupports}</Typography>
-                            </Grid>}
-                        </Grid>
-                    </Paper>}
+                            }
+                    </Paper>
 
-                    <Paper variant="outlined">
+                    {experiment && experiment.participants && <Paper style={paperStyle}>
                         <Typography variant="h5">Participants</Typography>
                         {
                             experiment && experiment.participants && experiment.participants.sort((p1,p2) => {return p1.biomolecule.localeCompare(p2.biomolecule)}).map(participant => {
@@ -193,14 +193,16 @@ function ExperimentComponent() {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Typography align="left"><b>Experiment Role:</b> {participant.experimentalRole}</Typography>
-                                        </Grid> 
+                                        </Grid>
                                     </Paper>
                                 )
                             })
                         }
-                    </Paper>
+                    </Paper>}
                 </Box>
             </Box>
+            }
+            <Footer/>
         </>
     );
 }

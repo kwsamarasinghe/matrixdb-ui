@@ -1,35 +1,37 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import { useLocation } from 'react-router-dom';
+
 import {
-    CircularProgress,
-    IconButton,
-    InputBase,
-    List,
-    Paper
+    Box, Button,
+    CircularProgress,useTheme
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import http from "../../commons/http-commons";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
-import ResultComponent from './ResultComponent';
+import SearchBoxComponent from "./SearchBoxComponent";
+import { useNavigate } from 'react-router-dom';
+import ResultComponent from "./ResultComponent";
 
 function SearchComponents() {
 
-    const [searchText, setSearchText] = useState("");
+    const [searchText, setSearchText] = useState<string|null>(null);
     const [searchStart, setSearchStart] = useState(false);
     const [searchDone, setSearchDone] = useState(false);
-    const [searchResults, setSearchResults] = useState([]);
+    const [searchResults, setSearchResults] = useState<any>({});
+    const navigate = useNavigate();
 
+    const location = useLocation();
 
-    const keyDownHandler = (e: React.KeyboardEvent) =>{
-        if( e.key === 'Enter' ){
-            e.preventDefault();
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const query = searchParams.get('query')
+        setSearchText(query);
+    }, []);
+
+    useEffect(() => {
+        /*if(searchText && searchText != '') {
             handleSearch();
-            setSearchStart(true);
-        }
-    };
-
-    const handleSearchTextChange = (e : any) => {
-        setSearchText(e.target.value);
-    }
+        }*/
+    }, [searchText]);
 
     const handleSearch = () => {
         http.get("/search?text=" + searchText)
@@ -40,62 +42,91 @@ function SearchComponents() {
             });
     }
 
+    const onPressEnter = (e: React.KeyboardEvent) =>{
+        if( e.key === 'Enter' ){
+            e.preventDefault();
+            handleSearch();
+            navigate('/search?query=' + searchText);
+            setSearchStart(true);
+        }
+    };
+
+    const onClickSearch = (query: string) => {
+        setSearchText(query);
+        navigate('/search?query=' + query);
+    }
+
+    const onSearchTextChange = (e : any) => {
+        const query = e.target.value;
+        setSearchText(query);
+        //navigate('/search?query=' + query);
+    }
+
+    const theme = useTheme();
+
     return (
         <>
-            <div className={"App App-header"}>
-                <div>
-                    <img src={logo} className={"App-logo"}/>
-                </div>
-                <div>
-                    <h4>The extracellular matrix interaction database</h4>
-                </div>
+            { !searchDone &&
                 <div className={"App-search"}>
-                    <Paper
-                        component="form"
-                        sx={{
-                            p: '2px 4px',
+                        <div>
+                            <img src={logo} className={"App-logo"}/>
+                        </div>
+                        <div style={{textAlign: 'center'}}>
+                            <h3>The extracellular matrix interaction database</h3>
+                            <h5>Database focused on interactions established by extracellular matrix proteins, proteoglycans and polysaccharide</h5>
+                        </div>
+                        <div className={"App-search"}>
+                            <SearchBoxComponent
+                                onClickSearch={onClickSearch}
+                                onPressEnter={onPressEnter}
+                                onSearchTextChange={onSearchTextChange}
+                            />
+                        </div>
+                </div>
+            }
+            {
+                searchStart && <div style={{paddingTop: '20px'}}>
+                    <CircularProgress />
+                    </div>
+            }
+            {
+                /*!searchStart && searchDone && <h5>{searchResults.length} Results</h5>*/
+            }
+            {
+                !searchStart && searchDone && searchResults.length === 0  && <h5>Sorry we couldn't find what you looking for</h5>
+            }
+            {
+                searchDone &&
+                <><div style={{
+                    alignItems: 'center',
+                    position: 'sticky',
+                    top: '0',
+                    zIndex: theme.zIndex.drawer + 1,
+                }}>
+                    {
+                        searchDone && Object.keys(searchResults).length > 0 &&
+                        <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            width: 600,
-                            borderRadius: 0
-                        }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search MatrixDB e.g GAG_1"
-                            inputProps={{ 'aria-label': 'e.g Heparin' }}
-                            onChange={handleSearchTextChange}
-                            onKeyDown={keyDownHandler}
-                        />
-                        <IconButton
-                            type="button"
-                            sx={{ p: '10px' }}
-                            aria-label="search"
-                            onClick={handleSearch}
-                        >
-                            <SearchIcon/>
-                        </IconButton>
-                    </Paper>
-                </div>
-            </div>
-            <div className={"App-search"}>
-                {
-                    searchStart && <div style={{paddingTop: '20px'}}>
-                        <CircularProgress />
+                            justifyContent: 'center',
+                            width: '100%',
+                            paddingTop: '20px'
+                        }}>
+                            <div>
+                                <SearchBoxComponent
+                                    searchQuery={searchText}
+                                    onClickSearch={onClickSearch}
+                                    onPressEnter={onPressEnter}
+                                    onSearchTextChange={onSearchTextChange}
+                                />
+                            </div>
                         </div>
-                }
-                {
-                    !searchStart && searchDone && <h5>{searchResults.length} Results</h5>
-                }
-                {
-                    !searchStart && searchDone && searchResults.length === 0  && <h5>Sorry we couldn't find what you looking for</h5>
-                }
-                <List>
-                    {
-                        searchResults && <ResultComponent searchResults={searchResults}/>
                     }
-                </List>
-            </div>
+                </div>
+                <div>
+                    <ResultComponent searchResults={searchResults}/>
+                </div></>
+            }
         </>
     );
 }

@@ -3,7 +3,23 @@ import {useEffect, useState} from "react";
 import http from "../../commons/http-commons";
 import SearchIcon from "@mui/icons-material/Search";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
-import {AppBar, Box, Grid, IconButton, InputBase, Paper, Toolbar, Typography, useTheme} from "@mui/material";
+import {
+    AppBar,
+    Box, Divider,
+    Grid,
+    IconButton,
+    InputBase,
+    List,
+    ListItem, ListItemButton,
+    Paper,
+    Toolbar,
+    Typography,
+    useTheme
+} from "@mui/material";
+import Header from "../home/HeaderComponent";
+import Footer from "../home/Footer";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPerson} from "@fortawesome/free-solid-svg-icons";
 
 interface AssociationToDisplay {
     id: string,
@@ -65,118 +81,96 @@ function AssociationComponent() {
                     setAssociation(association);
                 }
             });
-    });
+    },[]);
 
     const theme = useTheme();
-    return (<>
-            <Box sx={{ display: 'flex', bgcolor: 'white' , alignItems: 'center'}}>
-                <AppBar style={{zIndex: theme.zIndex.drawer + 1}} position="fixed">
-                    <Toolbar className={'App-search-header'}>
-                        <div>
-                            <a href="/">
-                                <img src={logo} alt={""} style={{width: '50px', height: '50px'}} className={"App-logo"}/>
-                            </a>
-                        </div>
-                        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 'auto'}}>
-                            <Paper sx={{p: '2px 20px', display: 'flex', alignItems: 'center', flex: 1}}>
-                                <InputBase
-                                    placeholder="Search MatrixDB e.g GAG_1"
-                                    inputProps={{'aria-label': 'e.g Heparin'}}
-                                    sx={{ml: 1, flex: 1}}
-                                />
-                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                                    <SearchIcon/>
-                                </IconButton>
-                            </Paper>
-                        </div>
-                    </Toolbar>
-                </AppBar>
-            </Box> 
-            {
-                association &&
-                    <>
-                        <Grid container direction="column" justifyContent="center" alignItems="center" paddingTop={'70px'}>
-                            <Grid item width='50%'>
-                                {association &&
-                                <Paper variant="outlined" style={{background: '#cbdef2'}}>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12}>
-                                            <Typography variant="h6">
-                                                Interaction
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Typography align="left"><b>Biomolecules:</b> {
-                                                association.participants.map(b => {
-                                                        let link = "/biomolecule/" + b;
-                                                        return (
-                                                            <Grid item xs={6}>
-                                                                <a href={link}>{b}</a>
-                                                            </Grid>)
-                                                    }
-                                                )}</Typography>
-                                        </Grid>
-                                        {association.directlysupportedby && <Grid item xs={12}>
-                                            <Typography align="left"><b>Supporting experiment(s):</b>
-                                                {
-                                                    association.directlysupportedby.map(b => {
-                                                        let link = "/experiment/" + b;
-                                                        return (
-                                                            <Grid item xs={6}>
-                                                                <a href={link}>{b}</a>
-                                                            </Grid>
-                                                        )
-                                                    })
-                                                }
-                                            </Typography>
-                                        </Grid>}
-                                        {association.spokeexpandedfrom && <Grid item xs={12}>
-                                            <Typography align="left"><b>Spoke Expanded From:</b>
-                                                {
-                                                    association.spokeexpandedfrom.map(b => {
-                                                        let link = "/experiment/" + b;
-                                                        return (
-                                                            <Grid item xs={6}>
-                                                                <a href={link}>{b}</a>
-                                                            </Grid>
-                                                        )
-                                                    })
-                                                }
-                                            </Typography>
-                                        </Grid>}
-                                        {association.pmid && <Grid item xs={12}>
-                                            <Typography align="left"><b>PMID:</b> <a href={"https://pubmed.ncbi.nlm.nih.gov/"+association.pmid} target="_blank">{association.pmid}</a></Typography>
-                                        </Grid>}
-                                        {association.source && <Grid item xs={12}>
-                                            <Typography align="left"><b>Source:</b> {association.source}</Typography>
-                                        </Grid>}
-                                    </Grid>
-                                 </Paper>
-                                }
-                            </Grid>
-                                {association.inferredfrom &&
-                                <Grid item width='50%'>
-                                    <Paper variant="outlined" style={{background: '#dff1e4'}}>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={12}>
-                                                <Typography align="left"><b>Inferred from:</b> {
-                                                    association.inferredfrom.map(b => {
-                                                            let link = "/association/" + b;
-                                                            return (
-                                                                <Grid item xs={6}>
-                                                                    <a href={link}>{b}</a>
-                                                                </Grid>)
-                                                        }
-                                                    )}</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </Paper>
-                                </Grid>
-                                }
-                        </Grid>
-                    </>
 
-            }
+    const paperStyle = {
+        background: 'rgba(255, 255, 255, 0.9)',
+        boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
+        padding: '16px',
+        width: '100%',
+        borderRadius: 0
+    };
+
+    return (
+        <>
+        <div>
+            <Header pageDetails={{
+                type: "association",
+                id: associationId
+            }}/>
+            <Box
+                display="flex"
+                justifyContent="center"
+                marginTop="4px"
+                style={{
+                    height: "80vh"
+                }}
+            >
+                <Box style={{ width: "60%" }}>
+                    {association &&
+                        <Paper style={paperStyle}>
+                            <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                                <div style={{ paddingLeft: '20px'}}>
+                                    <h2>{associationId}</h2>
+                                </div>
+                            </div>
+                            <div style={{textAlign: 'left' , width: '200px', paddingLeft: '20px'}}>
+                                <h4>Biomolecules</h4>
+                                <Typography align="left"> {
+                                    association.participants.map(b => {
+                                            let link = "/biomolecule/" + b;
+                                            return (
+                                                <Grid item xs={6}>
+                                                    <a href={link}>{b}</a>
+                                                </Grid>)
+                                        }
+                                    )}
+                                </Typography>
+
+                                {
+                                    association.directlysupportedby && <Typography align="left"><b>Supporting experiment(s):</b>
+                                    {
+                                        association.directlysupportedby.map(b => {
+                                            let link = "/experiment/" + b;
+                                            return (
+                                                <Grid item xs={6}>
+                                                    <a href={link}>{b}</a>
+                                                </Grid>
+                                            )
+                                        })
+                                    }
+                                </Typography>
+                                }
+                                {
+                                    association.spokeexpandedfrom &&
+                                    <Typography align="left"><b>Spoke Expanded From:</b>
+                                        {
+                                            association.spokeexpandedfrom.map(b => {
+                                                let link = "/experiment/" + b;
+                                                return (
+                                                    <Grid item xs={6}>
+                                                        <a href={link}>{b}</a>
+                                                    </Grid>
+                                                )
+                                            })
+                                        }
+                                    </Typography>
+                                }
+                                <Typography align="left" style={{paddingTop: '10px'}}>
+                                    <h4>Source</h4>
+                                    {association.source}
+                                </Typography>
+                                <Typography align="left">
+                                    <h4>Publications</h4>
+                                    <a href={"https://pubmed.ncbi.nlm.nih.gov/"+association.pmid} target="_blank">{association.pmid}</a>
+                                </Typography>
+                            </div>
+                        </Paper>
+                    }
+                </Box>
+            </Box>
             {
                 !association &&
                 <Box sx={{ display: 'flex', bgcolor: 'black' , justifyContent: 'center'}}>
@@ -190,6 +184,8 @@ function AssociationComponent() {
                     </Box>
                 </Box>
             }
+            <Footer/>
+        </div>
         </>
     );
 }

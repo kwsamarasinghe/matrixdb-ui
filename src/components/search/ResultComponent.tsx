@@ -2,21 +2,83 @@ import React, { useState } from 'react';
 import {
     Box,
     Card,
-    CardContent,
+    CardContent, Container, Grid, IconButton,
     List,
-    ListItem,
-    Pagination,
+    ListItem, ListItemIcon, ListItemText,
+    Pagination, Paper, Tab, Tabs, Tooltip,
     Typography
 } from "@mui/material";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAtom, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 
-
-function ResultComponent(props : any) {
+function ResultDetailsComponent(props: any) {
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedTab, setSelectedTab] = useState('biomolecules');
 
-    return (
+    interface TabPanelProps {
+        children?: React.ReactNode;
+        index: number;
+        value: number;
+    }
+    const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
+        return (
+            <div role="tabpanel" hidden={value !== index}>
+                {value === index && <Box p={3}>{children}</Box>}
+            </div>
+        );
+    };
+
+    return(
         <>
-            <div className={"App-search"}>
+        {
+
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingTop: '20px'
+                }}>
+                    <Tabs value={0} onChange={() => {}} centered>
+                        {
+                            <Tab
+                                label="Biomolecules"
+                                icon={<IconButton>
+                                    <FontAwesomeIcon icon={faAtom} size={"2xs"}/>
+                                </IconButton>}
+                                iconPosition="start"
+                                style={{ padding: '4px', margin: '0' }}
+                            />
+                        }
+                        {
+                            <Tab
+                                label="Associations"
+                                icon={<IconButton>
+                                    <FontAwesomeIcon icon={faProjectDiagram} size={"2xs"}/>
+                                </IconButton>}
+                                iconPosition="start"
+                            />
+                        }
+                    </Tabs>
+                </div>
+        }
+        {
+            /*selectedTab === 'biomolecules' &&
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
+                <TabPanel value={1} index={1}>
+                    <List>
+                        {
+                            searchResults && <ResultComponent searchResults={searchResults}/>
+                        }
+                    </List>
+                </TabPanel>
+            </div>*/
+        }
+            <div>
                 <List>
                     {
                         props.searchResults &&
@@ -34,14 +96,14 @@ function ResultComponent(props : any) {
                                                 </Typography>
                                             }
                                             {
-                                                result.names && result.names.other_name 
+                                                result.names && result.names.other_name
                                                 && !Array.isArray(result.names.other_name)
                                                 && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                                                     {result.names.other_name}
                                                 </Typography>
                                             }
                                             {
-                                                result.names && result.names.other_name 
+                                                result.names && result.names.other_name
                                                 && Array.isArray(result.names.other_name)
                                                 && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                                                     {result.names.other_name[0]}
@@ -52,14 +114,6 @@ function ResultComponent(props : any) {
                                                     {result.description}
                                                 </Typography>
                                             }
-                                            {
-                                                result.xrefs && Object.values(result.xrefs).map((xref : any) => {
-                                                    return(<Typography variant="body2">
-                                                        {xref}
-                                                    </Typography>)
-                                                }) 
-                                            }
-                                            
                                         </CardContent>
                                     </Card>
                                 </ListItem>
@@ -68,16 +122,177 @@ function ResultComponent(props : any) {
                     }
                 </List>
                 {
-                    props.searchResults && props.searchResults.length > 0 && 
+                    props.searchResults && props.searchResults.length > 0 &&
                     <Box display="flex" justifyContent="center" marginTop={2}>
                         <Pagination
-                        count={Math.ceil(props.searchResults.length / 10)}
-                        page={currentPage}
-                        onChange={(event, page) => setCurrentPage(page)}
-                        color="primary"
+                            count={Math.ceil(props.searchResults.length / 10)}
+                            page={currentPage}
+                            onChange={(event, page) => setCurrentPage(page)}
+                            color="primary"
                         />
                     </Box>
                 }
+            </div>
+        </>
+    )
+}
+
+interface TruncatedListItemTextProps {
+    text: string;
+    url: string;
+}
+const TruncatedListItemText: React.FC<TruncatedListItemTextProps> = ({ text, url }) => {
+    const truncatedText = text.length > 80 ? `${text.substring(0, 80)}...` : text;
+
+    return (
+        <Tooltip title={text.length > 80 ? text : ''} arrow>
+            <Typography variant="body2" noWrap>
+                {text.length > 80 ? (
+                    <a href={url} target="_blank">
+                        {truncatedText}
+                    </a>
+                ) : (
+                    <a href={url} target="_blank">
+                        {truncatedText}
+                    </a>
+                )}
+            </Typography>
+        </Tooltip>
+    );
+};
+
+function ResultComponent(props : any) {
+
+    const truncateText = (text : string, maxLength: number) => {
+        return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+    };
+
+    return (
+        <>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '30px'}}>
+                <div style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px', paddingLeft: '100px', paddingRight: '100px' }}>
+                    {props.searchResults.biomolecules &&
+                        <>
+                            <div style={{ textAlign: 'left', marginBottom: '20px'}}>
+                                <div style={{
+                                    background: 'lightblue',
+                                    height: '40px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'left',
+                                    paddingLeft: '20px'
+                                }}>
+                                    <Typography style={{fontWeight: 'bold', color: 'darkblue' }}>
+                                        Biomolecules
+                                    </Typography>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                    <List>
+                                        {props.searchResults.biomolecules.slice(0,5).map((result: any, index: number) => (
+                                            <ListItem key={index}>
+                                                <Typography>
+                                                    <div>
+                                                        <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
+                                                            {result.name}
+                                                        </a>
+                                                    </div>
+                                                    <div>
+                                                        <Typography variant="body2">
+                                                            {result.biomolecule_id}
+                                                        </Typography>
+                                                    </div>
+                                                </Typography>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                    <List>
+                                        {props.searchResults.biomolecules &&
+                                            props.searchResults.biomolecules.slice(5,10).map((result: any, index: number) => (
+                                                <ListItem key={index}>
+                                                    <Typography>
+                                                        <div>
+                                                            <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
+                                                                {result.name}
+                                                            </a>
+                                                        </div>
+                                                        <div>
+                                                            <Typography variant="body2">
+                                                                {result.biomolecule_id}
+                                                            </Typography>
+                                                        </div>
+                                                    </Typography>
+                                                </ListItem>
+                                            ))}
+                                    </List>
+                                </div>
+                            </div>
+                        </>
+                    }
+                </div>
+                <div style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px', paddingLeft: '100px', paddingRight: '100px' }}>
+                    {props.searchResults.biomolecules &&
+                        <>
+                            <div style={{ textAlign: 'left', marginBottom: '20px'}}>
+                                <div style={{
+                                    background: 'lightblue',
+                                    height: '40px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'left',
+                                    paddingLeft: '20px'
+                                }}>
+                                    <Typography style={{fontWeight: 'bold', color: 'darkblue' }}>
+                                        Publications
+                                    </Typography>
+                                </div>
+                                <div style={{paddingLeft: '100px', paddingRight: '100px' }}>
+                                    <List>
+                                        {props.searchResults.publications &&
+                                            props.searchResults.publications.slice(0,5).map((result: any, index: number) => (
+                                                <ListItem key={index}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+
+                                                        <div style={{ marginLeft: '10px' }}>
+                                                            <TruncatedListItemText text={result.title[0]} url={`/details/${result.publication_id}`}/>
+
+                                                            <Typography variant="body2">
+                                                                {result.abstract && truncateText(result.abstract[0], 200)}
+                                                            </Typography>
+                                                        </div>
+                                                    </div>
+
+                                                </ListItem>
+                                            ))}
+                                    </List>
+                                </div>
+                            </div>
+                        </>
+                    }
+                </div>
+
+                {/*<div style={{ padding: '10px', textAlign: 'center', width: '60%', paddingLeft: '20px', paddingRight: '20px' }}>
+                    <Typography variant="h6">Publications</Typography>
+                    <div style={{paddingLeft: '100px', paddingRight: '100px' }}>
+                        <List>
+                            {props.searchResults.publications &&
+                                props.searchResults.publications.slice(0,5).map((result: any, index: number) => (
+                                    <ListItem key={index}>
+                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+
+                                            <div style={{ marginLeft: '10px' }}>
+                                                <TruncatedListItemText text={result.title[0]} url={`/details/${result.publication_id}`}/>
+
+                                                <Typography variant="body2">
+                                                    {result.abstract && truncateText(result.abstract[0], 200)}
+                                                </Typography>
+                                            </div>
+                                        </div>
+
+                                    </ListItem>
+                                ))}
+                        </List>
+                    </div>
+                </div>*/}
             </div>
         </>
     );

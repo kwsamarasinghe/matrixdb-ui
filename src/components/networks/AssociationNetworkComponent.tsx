@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFilter} from '@fortawesome/free-solid-svg-icons';
+import React from "react";
 
 
 interface Filter {
@@ -77,8 +78,10 @@ const filterAssociations = ((biomoleculeId: any, associations: any, participants
             } else if (lastFilter.type === 'interaction') {
                 associations.forEach((association: any) => {
                     let subCriteria = lastFilter.subCriteria[lastFilter.subCriteria.length - 1 ];
-                    if(subCriteria) {
-                       // if(association)
+                    if(subCriteria.property === 'score') {
+                        if(association.score && association.score >= subCriteria.value) {
+                            filteredAssociations.push(association);
+                        }
                     }
                 });
             }
@@ -105,8 +108,7 @@ function PartnerOverview(props: any) {
 
     if (partner) {
         return (
-            <Card style={{width: '220px'}}>
-                <CardContent>
+                <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
                         <a href={"/biomolecule/" + partner.id}>{partner.names && partner.names.name || partner.id}</a>
                     </Typography>
@@ -117,7 +119,6 @@ function PartnerOverview(props: any) {
                         {partner.ecm}
                     </Typography>
                 </CardContent>
-            </Card>
         );
     } else {
         return <></>
@@ -134,35 +135,85 @@ function AssociationOverview(props: any) {
 
     if (association) {
         return (
-            <Card style={{width: '220px'}}>
-                <CardContent>
+                <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
                         <a href={"/association/" + association.id}>
                             {association.id && association.id}
                         </a>
                     </Typography>
+                    {association.score && <Typography variant="body2">
+                        <strong>Score: {association.score} </strong>
+                    </Typography>}
                     {
-                        association.experiments.map((experiment: any) => {
-                            return (
-                                <div style={{wordWrap: 'break-word'}}>
-                                    <Typography variant="caption" color="textSecondary">
-                                        <strong>Experiments:</strong> {experiment}
-                                    </Typography>
-                                </div>
-                            );
-                        })
-                    }
-                    <div style={{wordWrap: 'break-word'}}>
-                        <Typography variant="caption" color="textSecondary">
-                            <strong>Pubmed Id:</strong> {association.pubmed}
+                        association.prediction && <Typography variant="body2" color="#946011">
+                            <strong>Predicted</strong>
                         </Typography>
-                    </div>
+                    }
+                    {association.experiments &&
+                            association.experiments.direct &&
+                            Object.keys(association.experiments.direct).map((experimentType: any) => (
+                                <React.Fragment key={experimentType}>
+                                    {
+                                        association.experiments.direct[experimentType].length > 0 &&
+                                        experimentType === 'spoke_expanded_from' &&
+                                        <Typography variant="caption" color="textSecondary">
+                                            <strong>Spoke Expanded From</strong>
+                                        </Typography>
+                                    }
+                                    {
+                                        association.experiments.direct[experimentType].length > 0 &&
+                                        experimentType === 'binary' &&
+                                        <Typography variant="caption" color="textSecondary">
+                                            <strong>Binary</strong>
+                                        </Typography>
+                                    }
+                                    {association.experiments.direct[experimentType].map((experiment: any, index: number) => (
+                                        <div key={index} style={{ wordWrap: 'break-word' }}>
+                                            <Typography variant="caption" color="textSecondary">
+                                                {experiment}
+                                            </Typography>
+                                        </div>
+                                    ))}
+                                </React.Fragment>
+                            ))
+                    }
                 </CardContent>
-            </Card>
         );
     } else {
         return <></>
     }
+}
+
+function Legend(){
+    return(
+        <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
+            {/* Legend */}
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'blue', marginRight: '10px' }}></div>
+                <span>Protein</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'green', marginRight: '10px' }}></div>
+                <span>GAG</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'orange', marginRight: '10px' }}></div>
+                <span>Multimer</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'lightblue', marginRight: '10px' }}></div>
+                <span>PFRAG</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <hr style={{ width: '20px', border: '2px solid #1e4f0c', marginRight: '10px' }} />
+                <span>Experimentally Supported</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <hr style={{ width: '20px', border: '2px solid #946011', marginRight: '10px' }} />
+                <span>Predicted</span>
+            </div>
+        </CardContent>
+    )
 }
 
 function FilterComponent(props: any) {
@@ -180,8 +231,13 @@ function FilterComponent(props: any) {
         let experimentIds = new Set();
         if(props.associations.length > 0 && experiments.length === 0) {
             props.associations.forEach((association: any) => {
-                association.experiments.forEach((experimentId: string) =>
-                    experimentIds.add(experimentId))
+                if(association.experiments) {
+                    let binaryExperiments = association.experiments.direct.binary;
+                    let spokeExpandedExperiments = association.experiments.direct.spoke_expanded_from;
+                    let allExperiments = binaryExperiments.concat(spokeExpandedExperiments);
+                    allExperiments.forEach((experimentId: string) =>
+                        experimentIds.add(experimentId))
+                    }
                 }
             );
 
@@ -222,9 +278,18 @@ function FilterComponent(props: any) {
             let interactorIds = new Set();
             let interactorTypes = new Set();
             let expressionTissues = new Set();
+            let expressionScore = new Array();
+
+            // For interactions
             let detectionMethods = new Set();
+            let interactionScore = new Array();
 
             filteredAssociations.forEach((association: any) => {
+                // Interaction Score
+                if(association.score) {
+                    interactionScore.push(association.score);
+                }
+
                 association.participants.forEach((participantId: any) => {
                     interactorIds.add(participantId);
                     let participant = participants.find((participant: any) => participant.id === participantId);
@@ -232,8 +297,13 @@ function FilterComponent(props: any) {
 
                     // Expression tissues
                     if (participant.geneExpression) {
-                        participant.geneExpression.forEach((expression: any) => expressionTissues.add(expression.tissueUberonName));
+                        participant.geneExpression.forEach((expression: any) => {
+                            expressionTissues.add(expression.tissueUberonName);
+                            expressionScore.push(expression.tpm);
+                        });
                     }
+
+                    // ECM-ness
                 });
             });
 
@@ -247,13 +317,30 @@ function FilterComponent(props: any) {
             setFilterOptions({
                 interactor: {
                     type: {
-                        values: [...interactorTypes],
-                        conjugation: ['OR']
+                        values: [...interactorTypes]
                     },
                     ecm: {
-                        values: ["ECM", "Non-ECM"]
+                        values: ["ECM", "Non-ECM"],
+                        condition: {
+                            on: 'type',
+                            value: 'protein'
+                        }
                     },
                     expressedIn: {
+                        values: [...expressionTissues],
+                        subProperties: {
+                            expressionScore: {
+                                type: 'numeric',
+                                min: Math.min(...expressionScore),
+                                max: Math.max(...expressionScore)
+                            }
+                        },
+                        condition: {
+                            on: 'type',
+                            value: 'protein'
+                        }
+                    },
+                    proteomicsExpression: {
                         values: [...expressionTissues],
                         subProperties: {
                             expressionScore: {
@@ -262,7 +349,6 @@ function FilterComponent(props: any) {
                                 max: 100
                             }
                         },
-                        conjugation: ['OR','AND'],
                         condition: {
                             on: 'type',
                             value: 'protein'
@@ -273,19 +359,19 @@ function FilterComponent(props: any) {
                     detectionMethod: {
                         values: [...detectionMethods]
                     },
+                    score: {
+                        type: 'numeric',
+                        min: Math.min(...interactionScore),
+                        max: Math.max(...interactionScore)
+                    },
+                    predicted: {
+                        values: [true, false]
+                    },
                 }
             });
         }
     }, [filteredAssociations, experiments]);
 
-    useEffect(() => {
-        // Derives the filter options from associations
-        if (filteredAssociations) {
-
-        }
-
-        // Apply the filters
-    }, [filters]);
 
     const onFilterAdd = ((filter: any, editing: boolean) => {
         // By definition only two filters are supported, interactor and interaction
@@ -444,7 +530,12 @@ function FilterComponent(props: any) {
         const onPropertyAttributeChange = ((event : any, newValue : any) => {
             let newPropertyAttributes = propertyAttributes;
             newPropertyAttributes[event.target.name] = newValue;
+            console.log(newPropertyAttributes)
             setPropertyAttributes(newPropertyAttributes);
+        });
+
+        const onNumericValueChange = ((event : any, newValue : any) => {
+            setValue(newValue);
         });
 
         return(
@@ -492,6 +583,7 @@ function FilterComponent(props: any) {
                             }
                             {
                                 editable && property  && filterType !== undefined && props.filterOptions[filterType][property] &&
+                                props.filterOptions[filterType][property].type !== 'numeric'&&
                                     <div style={{width: '40%',  marginRight: '10px'}}>
                                         {
                                             <Autocomplete
@@ -511,6 +603,23 @@ function FilterComponent(props: any) {
                                             />
                                         }
                                     </div>
+                            }
+                            {
+                                editable && property  && filterType !== undefined && props.filterOptions[filterType][property] &&
+                                props.filterOptions[filterType][property].type === 'numeric'&&
+                                <div style={{width: '40%', marginRight: '10px'}}>
+                                            <Slider
+                                                name={property}
+                                                aria-label="Small steps"
+                                                defaultValue={props.value | props.filterOptions[filterType][property].min}
+                                                step={(props.filterOptions[filterType][property].max - props.filterOptions[filterType][property].min) / 10}
+                                                marks
+                                                min={props.filterOptions[filterType][property].min}
+                                                max={props.filterOptions[filterType][property].max}
+                                                valueLabelDisplay="auto"
+                                                onChange={onNumericValueChange}
+                                            />
+                                </div>
                             }
                             {
                                 props.value && !editable &&
@@ -537,8 +646,7 @@ function FilterComponent(props: any) {
                                     </div>
                             }
                             {
-                                property && value && showEditing &&
-                                    <>
+                                property && value && showEditing && <>
                                         <div style={{flex: '1' , marginRight: '4px', width: '3px'}}>
                                             <IconButton style={{color: 'orange'}} size={'small'} aria-label="Remove">
                                                 <EditIcon onClick={onFilterEdit}/>
@@ -571,6 +679,8 @@ function FilterComponent(props: any) {
                                     props.filterOptions[filterType][property].subProperties && editable &&
                                     Object.keys(props.filterOptions[filterType][property].subProperties).map((subproperty: any) => {
                                         if(props.filterOptions[filterType][property].subProperties[subproperty].type === 'numeric') {
+                                            let min = props.filterOptions[filterType][property].subProperties[subproperty].min;
+                                            let max = props.filterOptions[filterType][property].subProperties[subproperty].max;
                                             return(
                                                 <div style={{
                                                     display: 'flex',
@@ -579,37 +689,87 @@ function FilterComponent(props: any) {
                                                     width: '80%'
                                                 }}>
                                                     <div style={{width: '40%', marginRight: '10px'}}>
-                                                        <Button
-                                                            variant="outlined"
-                                                            size="small"
-                                                            color="primary"
-                                                            style={{
-                                                                borderColor: 'green',
-                                                                color: 'green',
-                                                                height: '20px',
-                                                                fontSize: '8px'
-                                                            }}
-                                                            onClick={() => setSubPropertyEditing(true)}
-                                                            disabled={subPropertyEditing}
-                                                        >
+                                                        <InputLabel style={{
+                                                            border: '1px solid blue',
+                                                            padding: '5px',
+                                                            textAlign: 'center',
+                                                            color: 'blue',
+                                                            fontWeight: 'bold',
+                                                            borderRadius: '4px',
+                                                            fontSize: '12px',
+                                                            textTransform: 'capitalize'
+                                                        }}>
                                                             {subproperty}
-                                                        </Button>
+                                                        </InputLabel>
                                                     </div>
-                                                    {subPropertyEditing &&
+
                                                     <div style={{width: '40%', marginRight: '10px'}}>
                                                         <Slider
                                                             name={subproperty}
                                                             aria-label="Small steps"
-                                                            defaultValue={50}
+                                                            defaultValue={0}
                                                             step={10}
                                                             marks
-                                                            min={0}
-                                                            max={100}
+                                                            min={min}
+                                                            max={max}
                                                             valueLabelDisplay="auto"
                                                             onChange={onPropertyAttributeChange}
                                                         />
                                                     </div>
-                                                    }
+                                                </div>)
+                                        }
+                                    })
+                                }
+                            </div>
+                        }
+                        {
+                            <div style={{
+                                display: 'flex',
+                                paddingTop: '4px',
+                                justifyContent: 'flex-end',
+                                width: '80%'
+                            }}>
+                                {
+                                    property && value && filterType && props.filterOptions && props.filterOptions[filterType][property] &&
+                                    props.filterOptions[filterType][property].subProperties  && !editable &&
+                                    Object.keys(props.filterOptions[filterType][property].subProperties).map((subproperty: any) => {
+                                        if(props.filterOptions[filterType][property].subProperties[subproperty].type === 'numeric') {
+                                            return(
+                                                <div style={{
+                                                    display: 'flex',
+                                                    paddingTop: '4px',
+                                                    justifyContent: 'flex-end',
+                                                    width: '100%'
+                                                }}>
+                                                    <div style={{width: '40%', marginRight: '10px'}}>
+                                                        <InputLabel style={{
+                                                            border: '1px solid blue',
+                                                            padding: '5px',
+                                                            textAlign: 'center',
+                                                            color: 'green',
+                                                            fontWeight: 'bold',
+                                                            borderRadius: '4px',
+                                                            fontSize: '12px',
+                                                            textTransform: 'capitalize'
+                                                        }}>
+                                                            {subproperty}
+                                                        </InputLabel>
+                                                    </div>
+
+                                                    <div style={{width: '40%', marginRight: '10px'}}>
+                                                        <InputLabel style={{
+                                                            border: '1px solid blue',
+                                                            padding: '5px',
+                                                            textAlign: 'center',
+                                                            color: 'blue',
+                                                            fontWeight: 'bold',
+                                                            borderRadius: '4px',
+                                                            fontSize: '12px',
+                                                            textTransform: 'capitalize'
+                                                        }}>
+                                                            {props.propertyAttributes[subproperty]}
+                                                        </InputLabel>
+                                                    </div>
                                                 </div>)
                                         }
                                     })
@@ -727,6 +887,7 @@ function FilterComponent(props: any) {
                             filterType={filterType}
                             property={filterSubCriteria.property}
                             value={filterSubCriteria.value}
+                            propertyAttributes={filterSubCriteria.propertyAttributes}
                             filterOptions={props.filterOptions}
                             onFilterAdd={onFilterAdd}
                             onFilterEdit={onFilterEdit}
@@ -920,7 +1081,8 @@ function CytoscapeComponent(props: any) {
                     data: {
                         source: association.participants[0],
                         target: association.participants[1],
-                        label: association.id
+                        label: association.id,
+                        type:  association.prediction && association.prediction ? 'predicted' : 'direct'
                     }
                 });
             });
@@ -940,10 +1102,10 @@ function CytoscapeComponent(props: any) {
                         {
                             selector: 'node[type="center"]',
                             style: {
+                                label: 'data(label)',
                                 width: "30px",
                                 height: "30px",
                                 'background-color': "green !important",
-                                'label': 'data(label)',
                                 'text-valign': 'center',
                                 'text-halign': 'center',
                                 'font-size': '4px',
@@ -986,8 +1148,15 @@ function CytoscapeComponent(props: any) {
                         {
                             selector: 'edge',
                             style: {
-                                width: "0.5px",
-                                backgroundColor: "blue"
+                                width: "1px",
+                                'line-color': '#1e4f0c'
+                            },
+                        },
+                        {
+                            selector: 'edge[type="predicted"]',
+                            style: {
+                                width: "1px",
+                                'line-color': '#946011'
                             },
                         },
                     ],
@@ -1045,9 +1214,15 @@ function CytoscapeComponent(props: any) {
 
     return (
         <div style={{display: 'flex'}}>
-            <div style={{flex: 0.65, backgroundColor: 'lightgray'}}>
-                {selectedPartnerId && <PartnerOverview partnerId={selectedPartnerId}/>}
-                {selectedInteraction && <AssociationOverview interaction={selectedInteraction}/>}
+            <div style={{ flex: 0.65, backgroundColor: 'lightgray', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                <div style={{ width: '220px', padding: '10px' }}>
+                    {/* Existing content */}
+                    {selectedPartnerId && <PartnerOverview partnerId={selectedPartnerId}/>}
+                    {selectedInteraction && <AssociationOverview interaction={selectedInteraction}/>}
+                </div>
+                <div style={{ marginTop: 'auto', padding: '10px' }}>
+                    <Legend/>
+                </div>
             </div>
             <div
                 ref={cyRef}

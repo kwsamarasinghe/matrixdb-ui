@@ -196,8 +196,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
 
     return (
         <div style={{
-            display: 'relative',
-            height: '600px',
+            display: 'relative'
         }}>
             <Paper style={paperStyle}>
                 <div>

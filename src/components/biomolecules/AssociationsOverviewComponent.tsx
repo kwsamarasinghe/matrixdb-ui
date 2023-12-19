@@ -12,6 +12,7 @@ interface Interactors{
     count: number,
     direct: number,
     inferred: number,
+    predictions: number,
     details: {
         [partner: string]: {
             association: string,
@@ -220,7 +221,8 @@ function AssociationsOverviewComponent(props: any) {
                             <div>
                                 <div style={{clear: 'left', textAlign: 'left'}}>
                                     <h4 >Interactors {interactors.count}</h4>
-                                    {interactors.direct > 0 && <h4>Directly supported by experiments : <span style={{ color : 'red'}}>{interactors.direct}</span> </h4>}
+                                    {interactors.direct > 0 && <h4>Directly Supporting Experiments : <span style={{ color : 'darkblue'}}>{interactors.direct}</span> </h4>}
+                                    {interactors.direct > 0 && <h4>Predicted : <span style={{ color : 'darkgreen'}}>{interactors.predictions}</span> </h4>}
                                     {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
                                 </div>
                                 <div style={{float: 'right'}}>

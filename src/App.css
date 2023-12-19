@@ -25,12 +25,15 @@
   align-items: center;
   justify-content: center;
   background-color: #96b5e200;
+  padding-top: 50px;
+  padding-bottom: 10px;
+  background-color: #e0e7f2;
 }
 
 .App-search-header {
   position: sticky;
   top: 0;
-  background-color: rgb(3, 4, 7);
+  background-color: #050a30;
   height: 5px;
   z-index: 1;
 }
