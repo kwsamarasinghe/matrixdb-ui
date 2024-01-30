@@ -45,6 +45,7 @@ const DefaultViewerOptions = {
 const StructureViewerComponent: React.FC<any> = (props: any) => {
     const viewerContainer = useRef<HTMLDivElement>(null);
     const [pdbIds, setPDBIds] = useState<Array<string>>([]);
+    const [plugin, setPlugin] = useState<any>(null);
     const [selectedPDB, setSelectedPDB] = useState<string>();
 
     const handleOptionChange = (event : any) => {
@@ -124,7 +125,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                 setSelectedPDB(pdb);
             }
 
-            if(selectedPDB) {
+            //if(selectedPDB) {
                 createPluginUI(viewerContainer.current, spec, {
                     onBeforeUIRender: plugin => {
                         plugin.builders.structure.representation.registerPreset(StructureRepresentationPresetProvider({
@@ -159,29 +160,34 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
 
                     }
                 }).then((plugin) => {
-                    if(selectedPDB) {
-                        plugin.builders.data.download(
-                            {
-                                url: "https://www.ebi.ac.uk/pdbe/entry-files/download/" + selectedPDB.toLowerCase() + ".bcif",
-                                isBinary: true
-                            },
-                            {
-                                state:
-                                    {
-                                        isGhost: true
-                                    }
-                            }
-                        )
-                            .then((data: any) => {
-                                plugin.builders.structure.parseTrajectory(data, "mmcif")
-                                    .then((trajectory: any) => {
-                                        plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
-                                    });
-                            });
-                    }
+                    setPlugin(plugin);
                 });
-            }
+            //}
 
+        }
+    }, []);
+
+    useEffect(() => {
+        if(selectedPDB) {
+            plugin.clear()
+            plugin.builders.data.download(
+                {
+                    url: "https://www.ebi.ac.uk/pdbe/entry-files/download/" + selectedPDB.toLowerCase() + ".bcif",
+                    isBinary: true
+                },
+                {
+                    state:
+                        {
+                            isGhost: true
+                        }
+                }
+            )
+                .then((data: any) => {
+                    plugin.builders.structure.parseTrajectory(data, "mmcif")
+                        .then((trajectory: any) => {
+                            plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
+                        });
+                });
         }
     }, [selectedPDB]);
 

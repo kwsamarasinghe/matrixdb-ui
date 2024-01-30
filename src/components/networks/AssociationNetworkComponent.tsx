@@ -110,7 +110,9 @@ function PartnerOverview(props: any) {
         return (
                 <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
-                        <a href={"/biomolecule/" + partner.id}>{partner.names && partner.names.name || partner.id}</a>
+                        <a href={"/biomolecule/" + partner.id} style={{ wordBreak: 'break-all' }}>
+                            {partner.names && partner.names.name || partner.id}
+                        </a>
                     </Typography>
                     <Typography color="textSecondary">
                         {partner.type}
@@ -137,7 +139,7 @@ function AssociationOverview(props: any) {
         return (
                 <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
-                        <a href={"/association/" + association.id}>
+                        <a href={"/association/" + association.id} style={{ wordBreak: 'break-all' }}>
                             {association.id && association.id}
                         </a>
                     </Typography>
@@ -210,7 +212,7 @@ function Legend(){
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <hr style={{ width: '20px', border: '2px solid #946011', marginRight: '10px' }} />
-                <span>Predicted</span>
+                <span>Predicted Interactions</span>
             </div>
         </CardContent>
     )

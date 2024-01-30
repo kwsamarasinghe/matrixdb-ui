@@ -144,32 +144,61 @@ function MainContentComponent() {
                                     }
                                 />
 
+                                <ListItemText
+                                    primary={
+                                        <Typography variant="body2">
+                                            <strong>Directly supported:</strong> {statistics.interactions.protein_protein.directly_supported}
+                                        </Typography>
+                                    }
+                                />
+                                <ListItemText
+                                    primary={
+                                        <Typography variant="body2">
+                                            <strong>Predicted:</strong> {statistics.interactions.protein_protein.predicted}
+                                        </Typography>
+                                    }
+                                />
+
                             </List>
                         </CardContent>
                     </Card>}
-                    <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
+                    {statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Experiments (70000)
+                            Experiments ({statistics.experiments.all})
                         </Typography>
                         <CardContent>
                             <List>
                                 <ListItemText
                                     primary={
                                         <Typography variant="body2">
-                                            <strong>Directly supported:</strong> {100}
+                                            <strong>Binary:</strong> {statistics.experiments.binary}
                                         </Typography>
                                     }
                                 />
                                 <ListItemText
                                     primary={
                                         <Typography variant="body2">
-                                            <strong>Spoke expanded:</strong> {100}
+                                            <strong>n-ary:</strong> {statistics.experiments.n_ary}
+                                        </Typography>
+                                    }
+                                />
+                                <ListItemText
+                                    primary={
+                                        <Typography variant="body2">
+                                            <strong>Single Participant:</strong> {statistics.experiments.unary}
+                                        </Typography>
+                                    }
+                                />
+                                <ListItemText
+                                    primary={
+                                        <Typography variant="body2">
+                                            <strong>Publications:</strong> {statistics.experiments.publications}
                                         </Typography>
                                     }
                                 />
                             </List>
                         </CardContent>
-                    </Card>
+                    </Card>}
                 </div>
             </div>
 

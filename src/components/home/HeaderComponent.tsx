@@ -89,7 +89,7 @@ function Header(props: HeaderProps) {
                             style={{ position: 'absolute', top: '-8px', fontSize: '0.8em' }}
                             color={'green'}
                         />}
-                        {selectedBiomolecules.length > 0 && (
+                        {selectedBiomolecules && selectedBiomolecules.length > 0 && (
                             <div style={{ position: 'absolute', top: '-8px', fontSize: '0.8em', color: 'green' }}>
                                 {selectedBiomolecules.length}
                             </div>
@@ -107,7 +107,7 @@ function Header(props: HeaderProps) {
                                 color={!biomoleculeAdded ? 'green': 'blue' }
 
                             />
-                            {selectedBiomolecules.length > 0 && (
+                            {selectedBiomolecules && selectedBiomolecules.length > 0 && (
                                 <div style={{ position: 'absolute', top: '-8px', fontSize: '0.8em', color: 'green' }}>
                                     {selectedBiomolecules.length}
                                 </div>

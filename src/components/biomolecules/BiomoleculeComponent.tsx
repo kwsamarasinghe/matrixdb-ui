@@ -62,93 +62,6 @@ function BiomoleculeComponent() {
                         type: "biomolecule",
                         id: biomoleculeId
                     }}/>
-                    {/*<Box display="flex" marginTop="64px">
-                    <Box style={{
-                        width: "10%",
-                        backgroundColor: "#f0f0f0",
-                        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.1)",
-                        paddingLeft: "5px",
-                        position: "sticky",
-                    }}>
-                        <List>
-                            {sideBarItems.map((text, index) => {
-                                if (biomolecule) {
-                                    return (
-                                        <ListItem
-                                            key={text}
-                                            sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
-                                        >
-                                            <ListItemButton
-                                                component="a"
-                                                href={`#${text}`}
-                                                sx={{
-                                                    marginY: -1,
-                                                    paddingY: 2,
-                                                    paddingX: 0,
-                                                    transition: "background 0.3s",
-                                                    '&:hover': {
-                                                        backgroundColor: "rgba(12, 30, 88, 0.1)",
-                                                    },
-                                                }}
-                                            >
-                                                <span
-                                                    style={{
-                                                        color: "rgb(12, 30, 88)",
-                                                        fontWeight: "bold",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                    {text}
-
-                                                </span>
-
-                                            </ListItemButton>
-                                        </ListItem>
-                                    );
-                                }
-                            })}
-                        </List>
-                    </Box>
-                    <Box style={{width: "88%"}}>
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-between'
-                            }}>
-                                {
-                                    biomolecule &&
-                                    <div style={{marginBottom: '10px'}}>
-                                        <OverviewComponent biomolecule={biomolecule}/>
-                                    </div>
-                                }
-                                {
-                                    biomoleculeId &&
-                                    <div style={{marginBottom: '10px'}}>
-                                        <AssociationsOverviewComponent biomoleculeId={biomoleculeId}/>
-                                    </div>
-                                }
-                                {
-                                    biomolecule && biomolecule.type === 'protein' && biomoleculeId &&
-                                    <div style={{marginBottom: '10px'}}>
-                                        <ExpressionComponent biomoleculeId={biomoleculeId}/>
-                                    </div>
-                                }
-                                {
-                                    biomolecule &&
-                                    <div style={{marginBottom: '10px'}}>
-                                        <KeywordComponent biomolecule={biomolecule}/>
-                                    </div>
-                                }
-                                {
-                                    biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb &&
-                                    <div style={{marginBottom: '10px'}}>
-                                        <StructureComponent pdb={biomolecule.molecular_details.pdb}/>
-                                    </div>
-                                }
-                            </div>
-                        </Box>
-                </Box>*/}
-
                     <Box display="flex" marginTop="4px">
                         <Box
                             style={{
@@ -157,9 +70,9 @@ function BiomoleculeComponent() {
                                 boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.1)",
                                 paddingLeft: "5px",
                                 position: "sticky",
-                                top: "64px", // Adjust the top value to match the height of your AppBar
-                                height: "100vh", // Set a maximum height for the sidebar to enable scrolling
-                                overflowY: "auto", // Enable vertical scrolling for the sidebar
+                                top: "64px",
+                                height: "100vh",
+                                overflowY: "auto",
                             }}
                         >
                             <List>
@@ -223,9 +136,13 @@ function BiomoleculeComponent() {
                                         </div>
                                     }
                                     {
-                                        biomolecule && biomolecule.type === 'protein' && biomoleculeId &&
+                                        (biomolecule && biomolecule.type === 'protein' ||
+                                        biomolecule && biomolecule.type === 'pfrag' ||
+                                        biomolecule && biomolecule.type === 'multimer' ) && biomoleculeId &&
                                         <div style={{marginBottom: '10px'}}>
-                                            <ExpressionComponent biomoleculeId={biomoleculeId}/>
+                                            <ExpressionComponent
+                                                biomolecule={biomolecule}
+                                            />
                                         </div>
                                     }
                                     {
@@ -238,6 +155,12 @@ function BiomoleculeComponent() {
                                         biomolecule && biomolecule.xrefs && biomolecule.xrefs.pdb && biomolecule.xrefs.pdb.length > 0 &&
                                         <div style={{marginBottom: '10px'}}>
                                             <StructureComponent pdb={biomolecule.xrefs.pdb}/>
+                                        </div>
+                                    }
+                                    {
+                                        biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb &&
+                                        <div style={{marginBottom: '10px'}}>
+                                            <StructureComponent pdb={biomolecule.molecular_details.pdb}/>
                                         </div>
                                     }
                                 </div>

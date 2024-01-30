@@ -175,7 +175,7 @@ function ResultComponent(props : any) {
                         <>
                             <div style={{ textAlign: 'left', marginBottom: '20px'}}>
                                 <div style={{
-                                    background: 'lightblue',
+                                    background: 'rgb(225, 235, 252)',
                                     height: '40px',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -191,10 +191,17 @@ function ResultComponent(props : any) {
                                         {props.searchResults.biomolecules.slice(0,5).map((result: any, index: number) => (
                                             <ListItem key={index}>
                                                 <Typography>
-                                                    <div>
-                                                        <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
-                                                            {result.name}
-                                                        </a>
+                                                    <div key={index} style={{ display: 'flex', width: '400px', marginBottom: '10px' }}>
+                                                        <div style={{ flex: 1 }}>
+                                                            <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
+                                                                {result.name}
+                                                            </a>
+                                                        </div>
+                                                        <div style={{ flex: 1 }}>
+                                                            <Typography variant="caption">
+                                                                <strong>{result.interaction_count}</strong>
+                                                            </Typography>
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <Typography variant="body2">
@@ -208,12 +215,19 @@ function ResultComponent(props : any) {
                                     <List>
                                         {props.searchResults.biomolecules &&
                                             props.searchResults.biomolecules.slice(5,10).map((result: any, index: number) => (
-                                                <ListItem key={index}>
+                                                <ListItem key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                     <Typography>
-                                                        <div>
-                                                            <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
-                                                                {result.name}
-                                                            </a>
+                                                        <div key={index} style={{ display: 'flex', width: '400px', marginBottom: '10px' }}>
+                                                            <div style={{ flex: 1 }}>
+                                                                <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
+                                                                    {result.name}
+                                                                </a>
+                                                            </div>
+                                                            <div style={{ flex: 1 }}>
+                                                                <Typography variant="caption">
+                                                                    <strong>{result.interaction_count}</strong>
+                                                                </Typography>
+                                                            </div>
                                                         </div>
                                                         <div>
                                                             <Typography variant="body2">
@@ -229,12 +243,12 @@ function ResultComponent(props : any) {
                         </>
                     }
                 </div>
-                <div style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px', paddingLeft: '100px', paddingRight: '100px' }}>
-                    {props.searchResults.biomolecules &&
+                <div style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px' }}>
+                    {props.searchResults.publications && props.searchResults.publications.length > 0 &&
                         <>
                             <div style={{ textAlign: 'left', marginBottom: '20px'}}>
                                 <div style={{
-                                    background: 'lightblue',
+                                    background: 'rgb(225, 235, 252)',
                                     height: '40px',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -245,7 +259,7 @@ function ResultComponent(props : any) {
                                         Publications
                                     </Typography>
                                 </div>
-                                <div style={{paddingLeft: '100px', paddingRight: '100px' }}>
+                                <div>
                                     <List>
                                         {props.searchResults.publications &&
                                             props.searchResults.publications.slice(0,5).map((result: any, index: number) => (

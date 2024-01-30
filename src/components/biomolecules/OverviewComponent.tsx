@@ -1,15 +1,16 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+    Avatar,
     Box,
     CircularProgress,
-    Divider, Grid, 
-    IconButton, 
-    Paper,
+    Divider, Grid,
+    IconButton,
+    Paper, Tab,
     Table,
     TableBody,
     TableCell,
     TableContainer,
-    TableRow,
+    TableRow, Tabs,
     Typography
 } from "@mui/material";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -34,7 +35,8 @@ interface BiomoleculeToDisplay {
     molecularDetails: any | undefined,
     interpro: Array<string> | [],
     subcellularLocation: string,
-    function: string
+    function: string,
+    ecmness?: any
 }
 
 
@@ -42,6 +44,7 @@ function OverviewComponent(props: any) {
 
     const {biomolecule} = props;
     const [biomoleculeToDisplay, setBiomoleculeToDisplay] = useState<BiomoleculeToDisplay>();
+    const [tabConfig, setTabConfig] = useState<any[]>([]);
     const [isExpanded, setIsExpanded] = useState(true);
 
     useEffect(() => {
@@ -61,12 +64,12 @@ function OverviewComponent(props: any) {
             molecularDetails: undefined,
             interpro: [],
             subcellularLocation: "",
-
-            function: ""
+            function: "",
         };
         biomoleculeToDisplay.id = biomolecule.id;
         biomoleculeToDisplay.type = biomolecule.type;
         biomoleculeToDisplay.name = biomolecule.names.name;
+        biomoleculeToDisplay.otherNames = biomolecule.names.other_name;
         biomoleculeToDisplay.recommendedName = biomolecule.names?.recommended_name;
         biomoleculeToDisplay.species = biomolecule.species;
         if(biomolecule.relations) {
@@ -82,12 +85,91 @@ function OverviewComponent(props: any) {
         biomoleculeToDisplay.function = biomolecule.annotations?.function?.text;
         biomoleculeToDisplay.subcellularLocation = biomolecule.annotations?.subcellular_location?.join(",");
         biomoleculeToDisplay.crossRefs = biomolecule.xrefs;
-        
+        biomoleculeToDisplay.description = biomolecule.description;
+
+        if(biomolecule.xrefs.interpro) {
+            biomoleculeToDisplay.interpro = biomolecule.xrefs.interpro;
+        }
+        biomoleculeToDisplay.ecmness = biomolecule.ecmness;
         setBiomoleculeToDisplay(biomoleculeToDisplay);
+
+        // Define the tabs
+        let tabConfig = [];
+        if(biomoleculeToDisplay && biomoleculeToDisplay.subcellularLocation) {
+            tabConfig.push({label: 'Subcellular Location', renderContent: () => biomoleculeToDisplay.subcellularLocation.replaceAll(',', ', ') })
+        }
+
+        if(biomoleculeToDisplay && biomoleculeToDisplay.description) {
+            tabConfig.push({label: 'Comment', renderContent: () => biomoleculeToDisplay.description })
+        }
+
+        if(biomoleculeToDisplay && biomoleculeToDisplay.function) {
+            tabConfig.push({
+                label: 'Biological Function',
+                renderContent: () => biomoleculeToDisplay.function
+            })
+        }
+
+        if(biomoleculeToDisplay?.crossRefs) {
+            tabConfig.push({
+                label: 'Cross References',
+                renderContent: () => (
+                    <>
+                        {renderCrossRefContent('CheBI', 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=', biomoleculeToDisplay.crossRefs.chebi)}
+                        {renderCrossRefContent('KEGG', 'https://www.genome.jp/dbget-bin/www_bget?', biomoleculeToDisplay.crossRefs.kegg)}
+                        {biomoleculeToDisplay.type === 'protein' && renderCrossRefContent('Uniprot', 'http://www.uniprot.org/uniprot/', biomoleculeToDisplay.id)}
+                        {renderCrossRefContent('Complex Portal', 'https://www.ebi.ac.uk/complexportal/complex/', biomoleculeToDisplay.crossRefs.complex_portal)}
+                        {renderCrossRefContent('EBI', 'https://www.ebi.ac.uk/intact/query/', biomoleculeToDisplay.crossRefs.EBI_xref)}
+                        {biomoleculeToDisplay.type === 'pfrag' && renderCrossRefContent('Uniprot Fragment', 'https://www.uniprot.org/uniprotkb/', biomoleculeToDisplay.crossRefs.uniprot)}
+                    </>
+                )
+            })
+        }
+        setTabConfig(tabConfig);
     }, []);
+
+    const renderCrossRefContent = (label : string, link : string, value : string) => {
+        return (
+            value && (
+                <div key={label} style={{ display: 'flex', marginBottom: '8px', alignItems: 'left' }}>
+                    <div style={{ flexBasis: '10%', paddingRight: '10px', alignItems: 'center' }}>
+                        <Typography variant={"body2"}>
+                                {label}
+                        </Typography>
+                    </div>
+                    <div style={{ flexBasis: '50%', verticalAlign: 'center' }}>
+                        <Typography variant={"body2"}>
+                            <a href={link + value} target="_blank" rel="noreferrer">
+                                {value}
+                            </a>
+                        </Typography>
+                    </div>
+                </div>
+            )
+        );
+    };
 
     const toggleExpansion = () => {
         setIsExpanded(!isExpanded);
+    };
+
+    interface TabPanelProps {
+        children?: React.ReactNode;
+        index: number;
+        value: number;
+    }
+    const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
+        return (
+            <div role="tabpanel" hidden={value !== index}>
+                {value === index && <Box p={3}>{children}</Box>}
+            </div>
+        );
+    };
+
+    const [tabValue, setTabValue] = useState(0);
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
     };
 
     const paperStyle = {
@@ -133,11 +215,11 @@ function OverviewComponent(props: any) {
                                     }
                                 </TableCell>
                             </Grid>
-                            {biomoleculeToDisplay?.molecularDetails?.sequanceLength  && <Grid item xs={6}>
-                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Sequence Length</h4></TableCell>
+                            {biomoleculeToDisplay?.otherNames && <Grid item xs={6}>
+                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Other Names</h4></TableCell>
                                 <TableCell style={cellStyles}>
                                     {
-                                        biomoleculeToDisplay?.molecularDetails.sequenceLength
+                                        biomoleculeToDisplay?.otherNames
                                     }
                                 </TableCell>
                             </Grid>}
@@ -145,212 +227,64 @@ function OverviewComponent(props: any) {
                                 <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Gene</h4></TableCell>
                                 <TableCell style={cellStyles}>
                                     {
-                                        biomoleculeToDisplay?.gene 
+                                        biomoleculeToDisplay?.gene
                                     }
                                 </TableCell>
                             </Grid>}
-                            <Grid item xs={6}>
-                                <Typography></Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography></Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography></Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography></Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography></Typography>
-                            </Grid>
+                            {biomoleculeToDisplay?.molecularDetails?.sequence_length  && <Grid item xs={6}>
+                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Sequence Length</h4></TableCell>
+                                <TableCell style={cellStyles}>
+                                    {
+                                        biomoleculeToDisplay?.molecularDetails.sequence_length
+                                    }
+                                </TableCell>
+                            </Grid>}
+                            {biomoleculeToDisplay?.molecularDetails?.stoichiometry  && <Grid item xs={6}>
+                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Stoichiometry</h4></TableCell>
+                                <TableCell style={cellStyles}>
+                                    {
+                                        biomoleculeToDisplay?.molecularDetails.stoichiometry
+                                    }
+                                </TableCell>
+                            </Grid>}
                         </Grid>
                     </div>
-                    {
-                    biomoleculeToDisplay && biomoleculeToDisplay.type === 'gag' &&
-                    <Grid item xs={3} style={{paddingLeft: '20px'}}>
-                        <div style={{textAlign: 'left' , width: '300px'}}>
-                            <h3>Symbol Nomenclature For Glycans </h3>
-                            <Divider/>
-                        </div>
-                        <Paper style={{ width: '400px'}}>
-                            <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.molecularDetails.snfg} style={{ width: '400px'}}/>
-                        </Paper>
-                    </Grid>
-                    }
                     { isExpanded &&
                         <>
-                        <TableContainer>
-                        <TableBody>
-                            {
-                                biomoleculeToDisplay && biomoleculeToDisplay.function &&
-                                <div style={{textAlign: 'left' , width: '400px', paddingLeft: '20px'}}>
-                                    <h3>Biological function</h3>
-                                    <Divider/>
-                                </div>
+                            <Tabs value={tabValue} onChange={handleTabChange}>
+                                {tabConfig.map((config, index) => (
+                                        <Tab key={index} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>{config.label}</Typography>} />
+                                    )
+                                )}
+                            </Tabs>
+                            {tabConfig.map((config, index) => (
+                                    <TabPanel key={index} value={tabValue} index={index}>
+                                        <>
+                                            <div style={{ flexBasis: '40%', paddingRight: '10px', alignItems: 'center' }}>
+                                                <Typography variant="body2">
+                                                    {config.renderContent()}
+                                                </Typography>
+                                            </div>
+                                        </>
+                                    </TabPanel>
+                                ))
                             }
-                            {biomoleculeToDisplay && biomoleculeToDisplay.function &&
-                            <TableRow>
-                                <TableCell style={{borderBottom: 'none'}}>
-                                    {
-                                        biomoleculeToDisplay && biomoleculeToDisplay.function
-                                    }
-                                </TableCell>
-                            </TableRow>
-                            }
-                            {
-                                biomoleculeToDisplay && biomoleculeToDisplay.subcellularLocation &&
-                                <>
-                                    <div style={{textAlign: 'left' , width: '400px', paddingLeft: '20px'}}>
-                                        <h3>Subcellular Locations</h3>
-                                        <Divider/>
-                                    </div>
-                                    <TableRow>
-                                        <TableCell style={{borderBottom: 'none'}}>
-                                            {
-                                                biomoleculeToDisplay && biomoleculeToDisplay.subcellularLocation
-                                            }
-                                        </TableCell>
-                                    </TableRow>
-                                </>
-                            }
-                        </TableBody>
-                    </TableContainer>
-                        <TableContainer>
-                        <TableBody>
-                            {
-                                biomoleculeToDisplay && biomoleculeToDisplay.crossRefs &&
-                                <>
-                                    <div style={{textAlign: 'left' , width: '200px', paddingLeft: '20px'}}>
-                                        <h3>Cross References</h3>
-                                        <Divider/>
-                                    </div>
-                                    {
-                                        biomoleculeToDisplay.crossRefs.chebi &&
-                                        <TableRow>
-                                        <TableCell>
-                                            <h4>CheBI</h4>
-                                        </TableCell>
-                                        <TableCell>
-                                            <a href={"https://www.ebi.ac.uk/chebi/searchId.do?chebiId="+biomoleculeToDisplay.crossRefs.chebi}>
-                                                {
-                                                    biomoleculeToDisplay && biomoleculeToDisplay.crossRefs
-                                                    && biomoleculeToDisplay.crossRefs.chebi
-                                                }
-                                            </a>
-                                        </TableCell>
-                                    </TableRow>
-                                    }
-                                    {
-                                        biomoleculeToDisplay.crossRefs.kegg && <TableRow>
-                                                <TableCell>
-                                                    <h4>KEGG</h4>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <a href={"https://www.genome.jp/dbget-bin/www_bget?" + biomoleculeToDisplay.crossRefs.kegg}>
-                                                        {
-                                                            biomoleculeToDisplay && biomoleculeToDisplay.crossRefs
-                                                            && biomoleculeToDisplay.crossRefs.kegg
-                                                        }
-                                                    </a>
-                                                </TableCell>
-                                        </TableRow>
-                                    }
-
-                                </>
-                            }
-                            {biomoleculeToDisplay && biomoleculeToDisplay.crossRefs
-                            && biomoleculeToDisplay.crossRefs.complexPortal &&
-
-                            <TableRow>
-                                <TableCell>
-                                    <h4>Complex Portal</h4>
-                                </TableCell>
-                                <TableCell>
-                                    <a href={"https://www.ebi.ac.uk/complexportal/complex/" + biomoleculeToDisplay.crossRefs.complexPortal }>{
-                                        biomoleculeToDisplay && biomoleculeToDisplay.crossRefs
-                                        && biomoleculeToDisplay.crossRefs.complexPortal
-                                    }</a>
-                                </TableCell>
-                            </TableRow>
-                            }
-                            {biomoleculeToDisplay && biomoleculeToDisplay.crossRefs
-                            && biomoleculeToDisplay.crossRefs.EBI_xref &&
-
-                            <TableRow>
-                                <TableCell>
-                                    <h4>EBI</h4>
-                                </TableCell>
-                                <TableCell>
-                                    <a href={"https://www.ebi.ac.uk/intact/query/" + biomoleculeToDisplay.crossRefs.EBI_xref }>{
-                                        biomoleculeToDisplay && biomoleculeToDisplay.crossRefs
-                                        && biomoleculeToDisplay.crossRefs.EBI_xref
-                                    }</a>
-                                </TableCell>
-                            </TableRow>
-                            }
-                            {biomoleculeToDisplay && biomoleculeToDisplay.type === 'protein' && 
-                            <TableRow>
-                                <TableCell>
-                                    <h4>Uniprot reference</h4>
-                                </TableCell>
-                                <TableCell style={{textAlign: 'left'}}>
-                                    <a href={"https://www.uniprot.org/uniprotkb/" + biomoleculeToDisplay.id }>{
-                                        biomoleculeToDisplay && biomoleculeToDisplay.id
-                                    }</a>
-                                </TableCell>
-                            </TableRow>
-                            }
-                            {
-                                biomoleculeToDisplay && biomoleculeToDisplay.interpro.length > 0 &&
-                                <div style={{textAlign: 'left' , width: '200px', paddingLeft: '20px'}}>
-                                    <h3>Domain annotations</h3>
-                                    <Divider/>
-                                </div>
-                            }
-                            {biomoleculeToDisplay && biomoleculeToDisplay.interpro.length > 0 &&
-                            <TableRow>
-                                <TableCell>
-                                    <h4>InterPro</h4>
-                                </TableCell>
-                                <TableCell>
-                                    {
-                                        biomoleculeToDisplay && biomoleculeToDisplay.interpro.map((ip) => {
-                                            return <a href={"https://www.ebi.ac.uk/interpro/entry/InterPro/"+ip}>{ip} </a>
-                                        })
-                                    }
-                                </TableCell>
-                            </TableRow>
-                            }
-                            {
-                                biomoleculeToDisplay && biomoleculeToDisplay.biologicalProcessing.length > 0 &&
-                                <div style={{textAlign: 'left', width: '200px', paddingLeft: '20px'}}>
-                                    <h3>Biological Processing</h3>
-                                    <Divider/>
-                                </div>
-                            }
-                            {biomoleculeToDisplay && biomoleculeToDisplay.biologicalProcessing.length > 0
-                            &&
-                            <TableRow>
-                                <TableCell>
-                                    <h4>Cleaved Into</h4>
-                                </TableCell>
-                                <TableCell style={{width: 200,
-                                    maxWidth: 400,
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    borderStyle: "border-box"}}>
-                                    {
-                                        biomoleculeToDisplay && biomoleculeToDisplay.biologicalProcessing.map((bp) => {
-                                            return <a href={'/biomolecule/' + bp}>{bp}</a>
-                                        })
-                                    }
-                                </TableCell>
-                            </TableRow>
-                            }
-                        </TableBody>
-                    </TableContainer>
                         </>    
+                    }
+                    {
+                        isExpanded && biomoleculeToDisplay && biomoleculeToDisplay.type === 'gag' &&
+                        <>
+                            <Tabs value={tabValue}>
+                                <Tab key={0} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
+                                    Symbol Nomenclature For Glycans
+                                </Typography>} />
+                            </Tabs>
+                            <div style={{paddingTop: '10px'}}>
+                                <Paper style={{ width: '400px'}}>
+                                    <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.molecularDetails.snfg} style={{ width: '400px'}}/>
+                                </Paper>
+                            </div>
+                        </>
                     }
             </Paper>
         </>

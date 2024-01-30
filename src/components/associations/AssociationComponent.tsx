@@ -5,7 +5,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
 import {
     AppBar,
-    Box, Divider,
+    Box, Chip, Divider,
     Grid,
     IconButton,
     InputBase,
@@ -23,9 +23,10 @@ import {faPerson} from "@fortawesome/free-solid-svg-icons";
 
 interface AssociationToDisplay {
     id: string,
-    pmid?: string,
+    pmid?: [string],
     participants: [string],
     source: string,
+    score: string,
     spokeexpandedfrom?: [string],
     directlysupportedby?: [string],
     inferredfrom?: [string]
@@ -44,28 +45,19 @@ function AssociationComponent() {
 
                     let association : AssociationToDisplay = {
                         id: associationData.id,
-                        pmid: associationData.pubmed,
+                        pmid: associationData.pmids,
                         participants: associationData.participants,
-                        source: associationData.source
+                        source: associationData.source,
+                        score: associationData.score?.replace('intact-miscore:','')
                     }
-                    if(associationData.directlysupportedby) {
-                        let directlysupported = [];
-                        if(Array.isArray(associationData.directlysupportedby)) {
-                            directlysupported = associationData.directlysupportedby;
-                        } else {
-                            directlysupported.push(associationData.directlysupportedby);
-                        }
-                        association.directlysupportedby = directlysupported;
+                    if(associationData.experiments && associationData.experiments.direct && associationData.experiments.direct.binary &&
+                        associationData.experiments.direct.binary.length > 0) {
+                        association.directlysupportedby = associationData.experiments.direct.binary;
                     }
 
-                    if(associationData.spokeexpandedfrom) {
-                        let spokeexpandedfrom = [];
-                        if(Array.isArray(associationData.spokeexpandedfrom)) {
-                            spokeexpandedfrom = associationData.spokeexpandedfrom;
-                        } else {
-                            spokeexpandedfrom.push(associationData.spokeexpandedfrom);
-                        }
-                        association.spokeexpandedfrom = spokeexpandedfrom;
+                    if(associationData.experiments && associationData.experiments.direct && associationData.experiments.direct.spoke_expanded_from &&
+                        associationData.experiments.direct.spoke_expanded_from.length > 0) {
+                        association.spokeexpandedfrom = associationData.experiments.direct.spoke_expanded_from;
                     }
 
                     if(associationData.inferredfrom) {
@@ -93,6 +85,13 @@ function AssociationComponent() {
         borderRadius: 0
     };
 
+    const mapScoreToColor = (score: number) => {
+        const green = 128;
+        const alpha = score;
+        const color = `rgba(0, ${green}, 0, ${alpha})`;
+        return color;
+    };
+
     return (
         <>
         <div>
@@ -117,54 +116,84 @@ function AssociationComponent() {
                                 </div>
                             </div>
                             <div style={{textAlign: 'left' , width: '200px', paddingLeft: '20px'}}>
-                                <h4>Biomolecules</h4>
-                                <Typography align="left"> {
-                                    association.participants.map(b => {
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: '4px' }}>
+                                    {/* First Column: h4 */}
+                                    <div style={{ flex: 1 }}>
+                                        <h4>Biomolecules</h4>
+                                    </div>
+
+                                    <div style={{ flex: 1 }}>
+                                        {association.participants.map((b, index) => {
                                             let link = "/biomolecule/" + b;
                                             return (
-                                                <Grid item xs={6}>
+                                                <div key={index}>
                                                     <a href={link}>{b}</a>
-                                                </Grid>)
-                                        }
-                                    )}
-                                </Typography>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: '5px' }}>
+                                    <div style={{ flex: 1 }}>
+                                        <h4>Experiment(s)</h4>
+                                    </div>
 
-                                {
-                                    association.directlysupportedby && <Typography align="left"><b>Supporting experiment(s):</b>
-                                    {
-                                        association.directlysupportedby.map(b => {
-                                            let link = "/experiment/" + b;
-                                            return (
-                                                <Grid item xs={6}>
-                                                    <a href={link}>{b}</a>
-                                                </Grid>
-                                            )
-                                        })
-                                    }
-                                </Typography>
-                                }
-                                {
-                                    association.spokeexpandedfrom &&
-                                    <Typography align="left"><b>Spoke Expanded From:</b>
+                                    <div style={{ flex: 1 }}>
                                         {
-                                            association.spokeexpandedfrom.map(b => {
-                                                let link = "/experiment/" + b;
-                                                return (
-                                                    <Grid item xs={6}>
-                                                        <a href={link}>{b}</a>
-                                                    </Grid>
-                                                )
-                                            })
+                                            association.directlysupportedby &&
+                                            <div style={{paddingBottom: '5px'}}>
+                                                <Typography align="left">Directly Supported By
+                                                    {
+                                                        association.directlysupportedby.map(b => {
+                                                            let link = "/experiment/" + b;
+                                                            return (
+                                                                <Grid item xs={6}>
+                                                                    <a href={link}>{b}</a>
+                                                                </Grid>
+                                                            )
+                                                        })
+                                                    }
+                                                </Typography>
+                                            </div>
                                         }
-                                    </Typography>
-                                }
+                                        {
+                                            association.spokeexpandedfrom &&
+                                            <div>
+                                                <Typography align="left">Spoke Expanded From
+                                                    {
+                                                        association.spokeexpandedfrom.map(b => {
+                                                            let link = "/experiment/" + b;
+                                                            return (
+                                                                <Grid item xs={6}>
+                                                                    <a href={link}>{b}</a>
+                                                                </Grid>
+                                                            )
+                                                        })
+                                                    }
+                                                </Typography>
+                                            </div>
+                                        }
+                                    </div>
+                                    {association.score && <div style={{ flex: 1 }}>
+                                        <Typography align="left">
+                                            <h4>Score</h4>
+                                            <Chip label={`MIScore: ${association.score}`} style={{ backgroundColor: mapScoreToColor(parseFloat(association.score)) }} />
+                                        </Typography>
+                                    </div>}
+                                </div>
                                 <Typography align="left" style={{paddingTop: '10px'}}>
                                     <h4>Source</h4>
                                     {association.source}
                                 </Typography>
                                 <Typography align="left">
                                     <h4>Publications</h4>
-                                    <a href={"https://pubmed.ncbi.nlm.nih.gov/"+association.pmid} target="_blank">{association.pmid}</a>
+                                    {association.pmid && association.pmid.map((pmid: string, index: number) => (
+                                        <div key={index}>
+                                            <a href={`https://pubmed.ncbi.nlm.nih.gov/${pmid}`} target="_blank" rel="noopener noreferrer">
+                                                {pmid}
+                                            </a>
+                                        </div>
+                                    ))}
                                 </Typography>
                             </div>
                         </Paper>

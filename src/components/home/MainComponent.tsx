@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import { useLocation } from 'react-router-dom';
-import { AppBar, 
-    IconButton, 
-    Toolbar,
+import {
     useTheme
  } from "@mui/material";
 import SearchComponents from '../search/SearchComponent';

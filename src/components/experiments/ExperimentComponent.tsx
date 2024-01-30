@@ -19,9 +19,8 @@ interface ParticipantToDisplay {
 interface ExperimentToDisplay {
     id: string,
     intactId: string,
-    imaxId: string,
+    imexId: string,
     pmid: string,
-    biomolecule: Array<string>,
     source: string,
     spokeexpandedto?: Array<string>,
     directlysupports?: Array<string>,
@@ -45,7 +44,6 @@ function ExperimentComponent() {
                     let experiment = {
                         id: experimentData.id,
                         pmid: experimentData.pmid,
-                        biomolecule: experimentData.biomolecule,
                         source: experimentData.source,
                         spokeexpandedfrom: experimentData?.spokeexpandedfrom,
                         directlysupports: experimentData?.directlysupports,
@@ -53,18 +51,25 @@ function ExperimentComponent() {
                         detectionMethod: experimentData.interaction_detection_method,
                         type: experimentData.interaction_type,
                         comment: experimentData.comment,
-                        intactId: experimentData?.intact_xref,
-                        imaxId: experimentData?.imex_id_experiment,
-                        participants: experimentData.Participants && Object.keys(experimentData.Participants).map(pk  => {
+                        intactId: experimentData.xrefs.intact,
+                        imexId: experimentData?.xrefs.imex,
+                        participants: experimentData.participants && Object.keys(experimentData.participants).map(pk  => {
                             return {
-                                id: experimentData.Participants[pk].id,
-                                biomolecule: experimentData.Participants[pk].biomolecule,
-                                detectionMethod: experimentData.Participants[pk].participant_detection_method,
-                                biologicalRole: experimentData.Participants[pk].biorole,
-                                experimentalRole: experimentData.Participants[pk].exprole
+                                id: experimentData.participants[pk].id || experimentData.participants[pk].biomolecule ,
+                                detectionMethod: experimentData.participants[pk].identification_method,
+                                biologicalRole: experimentData.participants[pk].biological_role,
+                                experimentalRole: experimentData.participants[pk].experimental_role
                             }
                         })
                     }
+                    experiment.participants.sort((a: any, b: any) => {
+                        const aBait = a.experimentalRole.includes('bait');
+                        const bBait = b.experimentalRole.includes('bait');
+
+                        if (aBait && !bBait) return -1;
+                        if (!aBait && bBait) return 1;
+                        return 0;
+                    });
                     setExperiment(experiment);
                 }
             });
@@ -100,8 +105,19 @@ function ExperimentComponent() {
         boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
         padding: '16px',
         width: '100%',
-        borderRadius: 0
+        borderRadius: 0,
+        paddingBottom: '10px',
+        paddingTop: '10px'
     };
+
+    const getParticipantTypeId = (id: string) => {
+        if(id) {
+            if(id.includes('PFRAG')) return 'lightblue';
+            if(id.includes('GAG')) return 'green';
+            if(id.includes('MULT')) return 'orange';
+            return 'blue';
+        } else return 'white';
+    }
 
     return (<>
             <Header pageDetails={{
@@ -115,76 +131,124 @@ function ExperimentComponent() {
                     justifyContent="center"
                     marginTop="4px"
                     style={{
-                        height: "80vh"
+                        height: "80vh",
+                        overflowY: 'auto'
                     }}
                 >
                 <Box style={{ width: "60%" }}>
                     <Paper style={paperStyle}>
 
-                            <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
-                                <div style={{ paddingLeft: '20px'}}>
-                                    <h2>{generateExperimentName(experiment)}</h2>
-                                </div>
+                        <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                            <div style={{ paddingLeft: '20px'}}>
+                                <h3>Experiment: {experiment.id}</h3>
                             </div>
+                        </div>
 
-
-                            <Typography align="left"><b>Identifier:</b> {experiment.id}</Typography>
-
-                            {experiment.intactId &&
-                                <Typography align="left"><b>Intact Identifier:</b>
-                                    <a href={"http://www.ebi.ac.uk/intact/interaction/EBI-15184828/" + experiment.intactId}>
-                                        {experiment.intactId}
-                                    </a>
-                                </Typography>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: '5px' }}>
+                            <div style={{ flex: 1 }}>
+                                {
+                                    (experiment?.intactId || experiment?.imexId) &&
+                                    <div style={{paddingBottom: '5px'}}>
+                                        <Typography align="left">
+                                            <h4>External Reference</h4>
+                                            {
+                                                experiment.intactId &&
+                                                <Typography align="left">
+                                                    Intact <a href={'https://www.ebi.ac.uk/intact/details/interaction/'+experiment.intactId}>{experiment.intactId}</a>
+                                                </Typography>
+                                            }
+                                            {
+                                                experiment.imexId &&
+                                                <Typography align="left">
+                                                    IMEX <a href={''}>{experiment.imexId}</a>
+                                                </Typography>
+                                            }
+                                        </Typography>
+                                    </div>
+                                }
+                            </div>
+                            {
+                                experiment.detectionMethod && <div style={{ flex: 1 }}>
+                                    <div style={{paddingBottom: '5px'}}>
+                                        <Typography align="left">
+                                            <h4>Detection Method</h4>
+                                            <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
+                                                {experiment.detectionMethod}
+                                            </a>
+                                        </Typography>
+                                    </div>
+                                </div>
                             }
-                            {experiment.imaxId &&
-                                <Typography align="left"><b>IMAX Identifier:</b>
-                                    <a href={"https://www.ebi.ac.uk/intact/imex/main.xhtml?query="+experiment.imaxId+"&Search=1#"}>
-                                        {experiment.imaxId}
-                                    </a>
-                                </Typography>
+                            {
+                                experiment.type && <div style={{ flex: 1 }}>
+                                    <div style={{paddingBottom: '5px'}}>
+                                        <Typography align="left">
+                                            <h4>Interaction Type:</h4>
+                                            <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.type }>
+                                                {experiment.type}
+                                            </a>
+                                        </Typography>
+                                    </div>
+                                </div>
                             }
-                            {experiment.comment &&
-                                <Typography align="left"><b>General Comment:</b> {experiment.comment}</Typography>
+                            {
+                                experiment.pmid && <div style={{ flex: 1 }}>
+                                    <div style={{paddingBottom: '5px'}}>
+                                        <Typography align="left">
+                                            <h4>PMID</h4>
+                                            <a href={"https://pubmed.ncbi.nlm.nih.gov/"+experiment.pmid} target="_blank">{experiment.pmid}</a>
+                                        </Typography>
+                                    </div>
+                                </div>
                             }
-
-                                <Typography align="left">
-                                    <b>Detection Method:</b>
-                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
-                                        {experiment.detectionMethod}
-                                    </a>
-                                </Typography>
-
-
-                                <Typography align="left"><b>Interaction Type:</b>
-                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.type }>
-                                        {experiment.type}
-                                    </a>
-                                </Typography>
-
-
-                                <Typography align="left"><b>PMID:</b>
-                                    <a href={"https://pubmed.ncbi.nlm.nih.gov/"+experiment.pmid} target="_blank">{experiment.pmid}</a>
-                                </Typography>
-
-
-                                <Typography align="left"><b>Source:</b>
-                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.source }>
-                                        {experiment.source}
-                                    </a>
-                                </Typography>
-                            {experiment.directlysupports &&
-                                <Typography align="left"><b>Directly Supports:</b> {experiment.directlysupports}</Typography>
+                            {
+                                experiment.pmid && <div style={{ flex: 1 }}>
+                                    <div style={{paddingBottom: '5px'}}>
+                                        <Typography align="left">
+                                            <h4>Source</h4>
+                                            <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.source }>
+                                                {experiment.source}
+                                            </a>
+                                        </Typography>
+                                    </div>
+                                </div>
                             }
+                            {
+                                experiment.comment && <div style={{ flex: 1 }}>
+                                    <div style={{paddingBottom: '5px'}}>
+                                        <Typography align="left">
+                                            <h4>General Comment</h4> {experiment.comment}</Typography>
+                                    </div>
+                                </div>
+                            }
+                            {
+                                experiment.directlysupports && <div style={{ flex: 1 }}>
+                                    <div style={{paddingBottom: '5px'}}>
+                                        <Typography align="left"><b>Directly Supports</b> {experiment.directlysupports}</Typography>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </Paper>
 
-                    {experiment && experiment.participants && <Paper style={paperStyle}>
-                        <Typography variant="h5">Participants</Typography>
+                    {experiment && experiment.participants && <Paper style={{
+                        background: 'rgb(169,195,225)',
+                        boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
+                        padding: '16px',
+                        width: '100%',
+                        borderRadius: 0,
+                        paddingBottom: '10px',
+                        paddingTop: '10px'}}>
+                        <div style={{padding: '10px', textAlign: 'center' }}>
+                            <Typography variant="h6">Participants ({experiment.participants.length})</Typography>
+                        </div>
                         {
-                            experiment && experiment.participants && experiment.participants.sort((p1,p2) => {return p1.biomolecule.localeCompare(p2.biomolecule)}).map(participant => {
+                            experiment && experiment.participants && experiment.participants.sort((p1,p2) => {return p1.id.localeCompare(p2.id)}).map(participant => {
                                 return(
-                                    <Paper variant="outlined">
-                                        <Typography variant="h6">{participant && participant.biomolecule}</Typography>
+                                    <Paper style={{paddingBottom: '10px', paddingTop: '10px', borderColor: getParticipantTypeId(participant.id)}} variant="outlined">
+                                        <div style={{padding: '10px', textAlign: 'center' }}>
+                                            <Typography variant="body1"><b>{participant && participant.id}</b></Typography>
+                                        </div>
                                         <Grid item xs={12}>
                                             <Typography align="left"><b>Participant Detection Method:</b> {participant.detectionMethod}</Typography>
                                         </Grid>

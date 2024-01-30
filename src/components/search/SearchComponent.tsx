@@ -23,20 +23,27 @@ function SearchComponents() {
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
-        const query = searchParams.get('query')
-        setSearchText(query);
-    }, []);
+        const query = searchParams.get('query');
+        if(query) {
+            setSearchText(query);
+            setSearchStart(true);
+            handleSearch(query);
+        }
+    }, [location.search]);
 
-    useEffect(() => {
-        /*if(searchText && searchText != '') {
+    /*useEffect(() => {
+        if(searchText && searchText != '') {
             handleSearch();
-        }*/
-    }, [searchText]);
+        }
+    }, [searchStart]);*/
 
-    const handleSearch = () => {
-        http.get("/search?text=" + searchText)
+    const handleSearch = (query: string) => {
+        http.get("/search?text=" + query)
             .then((searchResponse) => {
                 setSearchResults(searchResponse.data);
+                searchResponse.data.biomolecules.sort((a: any, b: any) => {
+                   return b.interaction_count - a.interaction_count;
+                });
                 setSearchDone(true);
                 setSearchStart(false);
             });
@@ -45,9 +52,7 @@ function SearchComponents() {
     const onPressEnter = (e: React.KeyboardEvent) =>{
         if( e.key === 'Enter' ){
             e.preventDefault();
-            handleSearch();
             navigate('/search?query=' + searchText);
-            setSearchStart(true);
         }
     };
 
@@ -85,7 +90,7 @@ function SearchComponents() {
                 </div>
             }
             {
-                searchStart && <div style={{paddingTop: '20px'}}>
+                searchStart && <div style={{textAlign: 'center', paddingTop: '20px'}}>
                     <CircularProgress />
                     </div>
             }

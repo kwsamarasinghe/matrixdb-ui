@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {
-    Box, Button,
+    Box, Button, CardContent, Grid,
     InputLabel,
     Paper,
     Tab,
@@ -8,7 +8,7 @@ import {
     TableCell,
     TableContainer,
     TableRow,
-    Tabs
+    Tabs, Typography
 } from "@mui/material";
 import {useState} from "react";
 import Anatomogram from "@ebi-gene-expression-group/anatomogram";
@@ -129,7 +129,7 @@ const BarChart: React.FC<BarChartProps> = ({ data }) => {
 
 function ExpressionComponent(props: any) {
 
-    const {biomoleculeId} = props;
+    const {biomolecule} = props;
     const [protein, setProtein] = useState<string>("");
     const [gene, setGene] = useState<string>("");
     const [geneExpressionData, setGeneExpressionData] = useState<any>([]);
@@ -147,7 +147,23 @@ function ExpressionComponent(props: any) {
     };
 
     useEffect(() => {
-        if(biomoleculeId) {
+        if(biomolecule) {
+            // For proteins
+            let biomoleculeId = null;
+            if(biomolecule.type === 'protein') {
+                 biomoleculeId = biomolecule.id;
+            }
+
+            if(biomolecule.type === 'pfrag') {
+                if(biomolecule.relations) {
+                    if(Array.isArray(biomolecule.relations.belongs_to)) {
+                        biomoleculeId = biomolecule.relations.belongs_to[0];
+                    } else {
+                        biomoleculeId = biomolecule.relations.belongs_to;
+                    }
+                }
+            }
+
             http.get("/biomolecules/proteins/expressions/" + biomoleculeId)
                 .then((expressionDataResponse) => {
                     let geneExpressionData = new Array<any>;
@@ -195,7 +211,7 @@ function ExpressionComponent(props: any) {
                 });
         }
 
-    }, []);
+    }, [biomolecule]);
 
     interface TabPanelProps {
         children?: React.ReactNode;
@@ -221,6 +237,58 @@ function ExpressionComponent(props: any) {
         setSelectedProteomicsSampleIndex(index);
     };
 
+    const [isHovered, setIsHovered] = useState(false);
+    const [hoveredTissue, setHoveredTissue] = useState<string | null>(null);
+
+    const handleMouseEnter = (tissue: string) => {
+        setIsHovered(true);
+        setHoveredTissue(tissue);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+    };
+
+    function ExpressionCard() {
+        const tissueData = geneExpressionData.filter((expression: any) => {
+            return expression.tissueUberonName === hoveredTissue;
+        })[0];
+        return(
+            <CardContent style={{ flex: 0.35, backgroundColor: 'lightgray', padding: '20px' }}>
+                <Grid container spacing={0}>
+                    <Grid item xs={6}>
+                        <Typography variant="body2" gutterBottom>
+                            Tissue:
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2" gutterBottom>
+                            {hoveredTissue}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2" gutterBottom>
+                            TPM:
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2" gutterBottom>
+                            <span
+                                style={{
+                                    display: 'inline-block',
+                                    width: '10px',
+                                    height: '10px',
+                                    backgroundColor: `rgb(0, 0, ${Math.floor(255 - (tissueData.tpm * 2.55))})`,
+                                    marginRight: '5px',
+                                }}
+                            ></span>
+                            {tissueData.tpm}
+                        </Typography>
+                    </Grid>
+                </Grid>
+            </CardContent>
+        )
+    }
     function GeneExpressionComponent(){
         return(
             <div style={{ display: 'flex' }}>
@@ -231,39 +299,55 @@ function ExpressionComponent(props: any) {
                         showIds={geneExpressionData.map((expression: any) => expression.tissueUberonName)} />
                 </div>
 
-                <div style={{ flex: 1 , paddingTop: '150px', paddingLeft: '150px'}}>
-                    <>
-                        {
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                {geneExpressionData.map((expression: any) => {
-                                    const key = expression.tissueUberonName;
-                                    const value = expression.tpm;
-                                    return (
-                                        <div key={key} style={{ marginRight: '8px', position: 'relative' }}>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}>
+                    <div style={{ flex: 1 , paddingTop: '150px', paddingLeft: '150px', maxHeight: '60px'}}>
+                        <>
+                            {
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    {geneExpressionData.map((expression: any) => {
+                                        const key = expression.tissueUberonName;
+                                        const value = expression.tpm;
+                                        return (
                                             <div
-                                                style={{
-                                                    width: '20px',
-                                                    height: '40px',
-                                                    backgroundColor: `rgb(0, 0, ${Math.floor(255 - (value * 2.55))})`,
-                                                }}
-                                            ></div>
-                                            <span
-                                                style={{
-                                                    fontSize: '8px',
-                                                    position: 'absolute',
-                                                    top: '-20px',
-                                                    left: '9px',
-                                                    transform: 'rotate(-45deg)',
-                                                    transformOrigin: 'left bottom',
-                                                    width: '100px'
-                                                }}
-                                            >{key}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        }
-                    </>
+                                                key={key}
+                                                style={{ marginRight: '8px', position: 'relative' }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        width: '20px',
+                                                        height: '40px',
+                                                        backgroundColor: `rgb(0, 0, ${Math.floor(255 - (value * 2.55))})`,
+                                                    }}
+                                                    onMouseEnter={() => handleMouseEnter(key)}
+                                                    onMouseLeave={handleMouseLeave}
+                                                ></div>
+                                                <span
+                                                    style={{
+                                                        fontSize: '8px',
+                                                        position: 'absolute',
+                                                        top: '-20px',
+                                                        left: '9px',
+                                                        transform: 'rotate(-45deg)',
+                                                        transformOrigin: 'left bottom',
+                                                        width: '100px'
+                                                    }}
+                                                >{key}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            }
+                        </>
+                    </div>
+                    {
+
+                        isHovered && <div style={{ flex: 1, paddingLeft: '150px', paddingTop: '20px', width: '300px' }}>
+                            <ExpressionCard />
+                        </div>
+                    }
                 </div>
             </div>
         )
