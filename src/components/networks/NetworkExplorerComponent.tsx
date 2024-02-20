@@ -26,7 +26,7 @@ function NetworkExplorer(props: any){
     const [suggestions, setSuggestions] = useState<Array<string>>([]);
     const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false);
     const [loadingNetwork, setLoadingNetwork] = useState<boolean>(false);
-    const [biomolecules, setBiomolecules] = useState<Array<any>>([]);
+    const [biomolecules, setBiomolecules] = useState<[string] | []>([]);
     const [network, setNetwork] = useState<any | null>(null);
     const theme = useTheme();
 
@@ -125,7 +125,8 @@ function NetworkExplorer(props: any){
                                 )}
                                 onChange={(event: React.ChangeEvent<{}>, newValue: string | null) => {
                                     if (newValue) {
-                                        setBiomolecules([...biomolecules, newValue]);
+                                        //setBiomolecules([...biomolecules, newValue]);
+                                        setBiomolecules(biomolecules);
                                     }
                                 }}
                             />
@@ -187,7 +188,6 @@ function NetworkExplorer(props: any){
                         <>
                             <AssociationNetworkComponent
                                 biomoleculeIds={biomolecules}
-                                network={network}
                             />
                         </>
                     }

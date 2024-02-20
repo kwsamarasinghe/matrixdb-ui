@@ -20,7 +20,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFilter} from '@fortawesome/free-solid-svg-icons';
 import React from "react";
-
+import NewFilterComponent from "./filter/FilterComponent";
+import {FilterConfigurationManager} from "./filter/FilterConfigurationManager";
+import {RootState} from "../../stateManagement/store";
+import {connect, ConnectedProps} from "react-redux";
 
 interface Filter {
     type : string,
@@ -207,11 +210,11 @@ function Legend(){
                 <span>PFRAG</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <hr style={{ width: '20px', border: '2px solid #1e4f0c', marginRight: '10px' }} />
+                <hr style={{ width: '20px', border: '2px solid black', marginRight: '10px' }} />
                 <span>Experimentally Supported</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-                <hr style={{ width: '20px', border: '2px solid #946011', marginRight: '10px' }} />
+                <hr style={{ width: '20px', border: '2px solid red', marginRight: '10px' }} />
                 <span>Predicted Interactions</span>
             </div>
         </CardContent>
@@ -319,16 +322,12 @@ function FilterComponent(props: any) {
             setFilterOptions({
                 interactor: {
                     type: {
+                        label: 'Type',
+                        key: 'type',
                         values: [...interactorTypes]
                     },
-                    ecm: {
-                        values: ["ECM", "Non-ECM"],
-                        condition: {
-                            on: 'type',
-                            value: 'protein'
-                        }
-                    },
-                    expressedIn: {
+                    transcriptomicsExpression: {
+                        label: 'Transcriptomic Expression',
                         values: [...expressionTissues],
                         subProperties: {
                             expressionScore: {
@@ -355,19 +354,32 @@ function FilterComponent(props: any) {
                             on: 'type',
                             value: 'protein'
                         }
+                    },
+                    ecm: {
+                        label: 'ECM protein',
+                        key: 'ecmness',
+                        values: ['Yes', 'No']
+                    },
+                    hasStrcture: {
+                        label: '3D strcture',
+                        key: 'xrefs.pmids',
+                        values: ['Yes', 'No']
                     }
                 },
                 interaction: {
                     detectionMethod: {
                         values: [...detectionMethods]
                     },
+                    experimentallySupported: {
+                        values: ['Yes', 'No']
+                    },
+                    predicted: {
+                        values: ['Yes', 'No']
+                    },
                     score: {
                         type: 'numeric',
                         min: Math.min(...interactionScore),
                         max: Math.max(...interactionScore)
-                    },
-                    predicted: {
-                        values: [true, false]
                     },
                 }
             });
@@ -1151,14 +1163,14 @@ function CytoscapeComponent(props: any) {
                             selector: 'edge',
                             style: {
                                 width: "1px",
-                                'line-color': '#1e4f0c'
+                                'line-color': 'black'
                             },
                         },
                         {
                             selector: 'edge[type="predicted"]',
                             style: {
                                 width: "1px",
-                                'line-color': '#946011'
+                                'line-color': 'red'
                             },
                         },
                     ],
@@ -1218,7 +1230,6 @@ function CytoscapeComponent(props: any) {
         <div style={{display: 'flex'}}>
             <div style={{ flex: 0.65, backgroundColor: 'lightgray', display: 'flex', flexDirection: 'column', position: 'relative' }}>
                 <div style={{ width: '220px', padding: '10px' }}>
-                    {/* Existing content */}
                     {selectedPartnerId && <PartnerOverview partnerId={selectedPartnerId}/>}
                     {selectedInteraction && <AssociationOverview interaction={selectedInteraction}/>}
                 </div>
@@ -1234,14 +1245,19 @@ function CytoscapeComponent(props: any) {
     );
 }
 
-function AssociationNetworkComponent({biomoleculeIds, network}: any) {
+const mapStateToProps = (state: RootState) => ({
+    network: state.network,
+});
 
-    const {associations, participantIds} = network;
-    const [participants, setParticipants] = useState<any[] | null>(null);
-    const [filteredAssociation, setFilteredAssociations] = useState<any[]>([]);
+const connector = connect(mapStateToProps);
 
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
-    useEffect(() => {
+type AssociationNetworkProps = PropsFromRedux & {biomoleculeIds: [string] | []}
+
+const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({network, biomoleculeIds}) => {
+
+    /*useEffect(() => {
         if(associations) {
             setFilteredAssociations(associations);
         }
@@ -1285,37 +1301,38 @@ function AssociationNetworkComponent({biomoleculeIds, network}: any) {
             const filteredAssociations = filterAssociations(biomoleculeIds[0], associations, participants, filters);
             setFilteredAssociations(filteredAssociations);
         }
-    });
+    });*/
 
-    if (associations && associations.length > 0 && participants && participants.length > 0) {
+    //if (participants && participants.length > 0) {
         return (
             <div style={{display: 'flex'}}>
                 <div
                     style={{flex: 3.65, height: "800px"}}
                 >
                     {
-                        filteredAssociation && filteredAssociation.length > 0 && <CytoscapeComponent
+                        <CytoscapeComponent
                             biomoleculeId={biomoleculeIds[0]}
-                            participants={participants}
-                            associations={filteredAssociation}
+                            participants={network.interactors}
+                            associations={network.interactions}
                         />
                     }
                 </div>
 
                 <div style={{flex: 1.35, backgroundColor: 'lightgray'}}>
-                    <FilterComponent
+                    {/*<FilterComponent
                         associations={associations}
                         participants={participants}
                         onFilterAdd={onFilterAdd}
                         onFilterDelete={onFilterDelete}
-                    />
+                    />*/}
+                    <NewFilterComponent/>
                 </div>
             </div>
         );
-    } else {
+    /*} else {
         return <></>
-    }
+    }*/
 
 }
 
-export default AssociationNetworkComponent;
+export default connector(AssociationNetworkComponent);
