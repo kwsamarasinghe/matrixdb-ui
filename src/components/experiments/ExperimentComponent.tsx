@@ -1,9 +1,21 @@
 import {useParams} from "react-router";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import http from "../../commons/http-commons";
 import SearchIcon from "@mui/icons-material/Search";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
-import {AppBar, Box, experimentalStyled, Grid, IconButton, InputBase, Paper, Toolbar, Typography, useTheme} from "@mui/material";
+import {
+    AppBar,
+    Box,
+    experimentalStyled,
+    Grid,
+    IconButton,
+    InputBase,
+    Paper, Tab,
+    TableCell, Tabs,
+    Toolbar,
+    Typography,
+    useTheme
+} from "@mui/material";
 import Header from "../home/HeaderComponent";
 import Footer from "../home/Footer";
 
@@ -110,6 +122,22 @@ function ExperimentComponent() {
         paddingTop: '10px'
     };
 
+    const participantPaperStyle = {
+        background: 'rgba(255, 255, 255, 0.9)',
+        boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
+        width: '100%',
+        borderRadius: 0,
+        paddingLeft: '4px',
+        paddingBottom: '4px',
+        paddingTop: '4px'
+    };
+
+    const cellStyles = {
+        padding: '0px',
+        borderBottom: 'none',
+        width: '250px'
+    };
+
     const getParticipantTypeId = (id: string) => {
         if(id) {
             if(id.includes('PFRAG')) return 'lightblue';
@@ -126,145 +154,211 @@ function ExperimentComponent() {
             }}/>
             {
                 experiment &&
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    marginTop="4px"
+                <div
                     style={{
+                        display: 'flex',
                         height: "80vh",
-                        overflowY: 'auto'
+                        overflowY: 'auto',
+                        alignItems: 'center',
+                        flexDirection: 'column'
                     }}
                 >
-                <Box style={{ width: "60%" }}>
-                    <Paper style={paperStyle}>
+                    <Box style={{ width: "60%", paddingTop: '20px' }}>
+                        <Paper style={paperStyle}>
 
-                        <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
-                            <div style={{ paddingLeft: '20px'}}>
-                                <h3>Experiment: {experiment.id}</h3>
+                            <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                                <div style={{ paddingLeft: '20px'}}>
+                                    <h3>Experiment: {experiment.id}</h3>
+                                </div>
                             </div>
-                        </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: '5px' }}>
-                            <div style={{ flex: 1 }}>
+                            {/*<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: '5px' }}>
+                                <div style={{ flex: 1 }}>
+                                    {
+                                        (experiment?.intactId || experiment?.imexId) &&
+                                        <div style={{paddingBottom: '5px'}}>
+                                            <Typography align="left">
+                                                <h4>External Reference</h4>
+                                                {
+                                                    experiment.intactId &&
+                                                    <Typography align="left">
+                                                        Intact <a href={'https://www.ebi.ac.uk/intact/details/interaction/'+experiment.intactId}>{experiment.intactId}</a>
+                                                    </Typography>
+                                                }
+                                                {
+                                                    experiment.imexId &&
+                                                    <Typography align="left">
+                                                        IMEX <a href={''}>{experiment.imexId}</a>
+                                                    </Typography>
+                                                }
+                                            </Typography>
+                                        </div>
+                                    }
+                                </div>
                                 {
-                                    (experiment?.intactId || experiment?.imexId) &&
-                                    <div style={{paddingBottom: '5px'}}>
-                                        <Typography align="left">
-                                            <h4>External Reference</h4>
-                                            {
-                                                experiment.intactId &&
-                                                <Typography align="left">
-                                                    Intact <a href={'https://www.ebi.ac.uk/intact/details/interaction/'+experiment.intactId}>{experiment.intactId}</a>
-                                                </Typography>
-                                            }
-                                            {
-                                                experiment.imexId &&
-                                                <Typography align="left">
-                                                    IMEX <a href={''}>{experiment.imexId}</a>
-                                                </Typography>
-                                            }
-                                        </Typography>
+                                    experiment.detectionMethod && <div style={{ flex: 1 }}>
+                                        <div style={{paddingBottom: '5px'}}>
+                                            <Typography align="left">
+                                                <h4>Detection Method</h4>
+                                                <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
+                                                    {experiment.detectionMethod}
+                                                </a>
+                                            </Typography>
+                                        </div>
                                     </div>
                                 }
-                            </div>
-                            {
-                                experiment.detectionMethod && <div style={{ flex: 1 }}>
-                                    <div style={{paddingBottom: '5px'}}>
-                                        <Typography align="left">
-                                            <h4>Detection Method</h4>
-                                            <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
-                                                {experiment.detectionMethod}
-                                            </a>
-                                        </Typography>
-                                    </div>
-                                </div>
-                            }
-                            {
-                                experiment.type && <div style={{ flex: 1 }}>
-                                    <div style={{paddingBottom: '5px'}}>
-                                        <Typography align="left">
-                                            <h4>Interaction Type:</h4>
-                                            <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.type }>
-                                                {experiment.type}
-                                            </a>
-                                        </Typography>
-                                    </div>
-                                </div>
-                            }
-                            {
-                                experiment.pmid && <div style={{ flex: 1 }}>
-                                    <div style={{paddingBottom: '5px'}}>
-                                        <Typography align="left">
-                                            <h4>PMID</h4>
-                                            <a href={"https://pubmed.ncbi.nlm.nih.gov/"+experiment.pmid} target="_blank">{experiment.pmid}</a>
-                                        </Typography>
-                                    </div>
-                                </div>
-                            }
-                            {
-                                experiment.pmid && <div style={{ flex: 1 }}>
-                                    <div style={{paddingBottom: '5px'}}>
-                                        <Typography align="left">
-                                            <h4>Source</h4>
-                                            <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.source }>
-                                                {experiment.source}
-                                            </a>
-                                        </Typography>
-                                    </div>
-                                </div>
-                            }
-                            {
-                                experiment.comment && <div style={{ flex: 1 }}>
-                                    <div style={{paddingBottom: '5px'}}>
-                                        <Typography align="left">
-                                            <h4>General Comment</h4> {experiment.comment}</Typography>
-                                    </div>
-                                </div>
-                            }
-                            {
-                                experiment.directlysupports && <div style={{ flex: 1 }}>
-                                    <div style={{paddingBottom: '5px'}}>
-                                        <Typography align="left"><b>Directly Supports</b> {experiment.directlysupports}</Typography>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </Paper>
-
-                    {experiment && experiment.participants && <Paper style={{
-                        background: 'rgb(169,195,225)',
-                        boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
-                        padding: '16px',
-                        width: '100%',
-                        borderRadius: 0,
-                        paddingBottom: '10px',
-                        paddingTop: '10px'}}>
-                        <div style={{padding: '10px', textAlign: 'center' }}>
-                            <Typography variant="h6">Participants ({experiment.participants.length})</Typography>
-                        </div>
-                        {
-                            experiment && experiment.participants && experiment.participants.sort((p1,p2) => {return p1.id.localeCompare(p2.id)}).map(participant => {
-                                return(
-                                    <Paper style={{paddingBottom: '10px', paddingTop: '10px', borderColor: getParticipantTypeId(participant.id)}} variant="outlined">
-                                        <div style={{padding: '10px', textAlign: 'center' }}>
-                                            <Typography variant="body1"><b>{participant && participant.id}</b></Typography>
+                                {
+                                    experiment.type && <div style={{ flex: 1 }}>
+                                        <div style={{paddingBottom: '5px'}}>
+                                            <Typography align="left">
+                                                <h4>Interaction Type:</h4>
+                                                <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.type }>
+                                                    {experiment.type}
+                                                </a>
+                                            </Typography>
                                         </div>
-                                        <Grid item xs={12}>
-                                            <Typography align="left"><b>Participant Detection Method:</b> {participant.detectionMethod}</Typography>
+                                    </div>
+                                }
+                                {
+                                    experiment.pmid && <div style={{ flex: 1 }}>
+                                        <div style={{paddingBottom: '5px'}}>
+                                            <Typography align="left">
+                                                <h4>PMID</h4>
+                                                <a href={"https://pubmed.ncbi.nlm.nih.gov/"+experiment.pmid} target="_blank">{experiment.pmid}</a>
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                }
+                                {
+                                    experiment.pmid && <div style={{ flex: 1 }}>
+                                        <div style={{paddingBottom: '5px'}}>
+                                            <Typography align="left">
+                                                <h4>Source</h4>
+                                                <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.source }>
+                                                    {experiment.source}
+                                                </a>
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                }
+                                {
+                                    experiment.comment && <div style={{ flex: 1 }}>
+                                        <div style={{paddingBottom: '5px'}}>
+                                            <Typography align="left">
+                                                <h4>General Comment</h4> {experiment.comment}</Typography>
+                                        </div>
+                                    </div>
+                                }
+                                {
+                                    experiment.directlysupports && <div style={{ flex: 1 }}>
+                                        <div style={{paddingBottom: '5px'}}>
+                                            <Typography align="left"><b>Directly Supports</b> {experiment.directlysupports}</Typography>
+                                        </div>
+                                    </div>
+                                }
+                            </div>*/}
+
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                width: '60%',
+                                paddingLeft: '10%',
+                                paddingRight: '10%'
+                            }}>
+                                <Grid container spacing={0}>
+                                        <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Interaction Type</h4></TableCell>
+                                            <TableCell style={cellStyles}> Direct</TableCell>
                                         </Grid>
-                                        <Grid item xs={12}>
-                                            <Typography align="left"><b>Biological Role:</b> {participant.biologicalRole}</Typography>
+                                        <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Detection Method</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                <Typography variant={"body2"} align="left">
+                                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
+                                                        {experiment.detectionMethod}
+                                                    </a>
+                                                </Typography>
+                                            </TableCell>
                                         </Grid>
-                                        <Grid item xs={12}>
-                                            <Typography align="left"><b>Experiment Role:</b> {participant.experimentalRole}</Typography>
+                                        <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>External References</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                {
+                                                    experiment.intactId &&
+                                                    <Typography variant={"body2"} align="left">
+                                                        Intact <a href={'https://www.ebi.ac.uk/intact/details/interaction/'+experiment.intactId}>{experiment.intactId}</a>
+                                                    </Typography>
+                                                }
+                                                {
+                                                    experiment.imexId &&
+                                                    <Typography variant={"body2"} align="left">
+                                                        IMEX <a href={''}>{experiment.imexId}</a>
+                                                    </Typography>
+                                                }
+                                            </TableCell>
                                         </Grid>
-                                    </Paper>
-                                )
-                            })
-                        }
-                    </Paper>}
-                </Box>
-            </Box>
+                                        <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (pubmed)</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                <div>
+                                                    <span style={{ marginRight: '10px' }}>
+                                                        {experiment.pmid}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Source</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                MatrixDB
+                                            </TableCell>
+                                        </Grid>
+                                    </Grid>
+                            </div>
+                        </Paper>
+                    </Box>
+                    <Box style={{ width: "60%", paddingTop: '10px' }}>
+                        {experiment && experiment.participants &&
+                            <Paper style={paperStyle}>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    background: '#e1ebfc',
+                                    paddingLeft: '20px',
+                                }}>
+                                        <h4>Participants ({experiment.participants.length})</h4>
+                                </div>
+                                {
+                                    <div style={{
+                                        paddingTop: '10px'
+                                    }}>
+                                        <Grid container spacing={1}>
+                                            {experiment && experiment.participants && experiment.participants.sort((p1,p2) => {return p1.id.localeCompare(p2.id)}).map(participant => {
+                                                return(
+                                                    <Grid item xs={6}>
+                                                        <Paper style={participantPaperStyle}>
+                                                            <div style={{padding: '10px', textAlign: 'center' }}>
+                                                                <Typography variant="body1"><b>{participant && participant.id}</b></Typography>
+                                                            </div>
+                                                            <Grid item xs={12}>
+                                                                <Typography variant={"body2"} align="left"><b>Participant Detection Method:</b> {participant.detectionMethod}</Typography>
+                                                            </Grid>
+                                                            <Grid item xs={12}>
+                                                                <Typography variant={"body2"} align="left"><b>Biological Role:</b> {participant.biologicalRole}</Typography>
+                                                            </Grid>
+                                                            <Grid item xs={12}>
+                                                                <Typography variant={"body2"} align="left"><b>Experiment Role:</b> {participant.experimentalRole}</Typography>
+                                                            </Grid>
+                                                        </Paper>
+                                                    </Grid>
+                                                )
+                                            })}
+                                        </Grid>
+                                    </div>
+                                }
+                            </Paper>}
+                    </Box>
+                </div>
             }
             <Footer/>
         </>

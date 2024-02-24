@@ -1,8 +1,8 @@
 import React, {useEffect, useRef} from 'react';
 import {
     Box, Button, CardContent, Grid,
-    InputLabel,
-    Paper,
+    InputLabel, List, ListItem, ListItemText, makeStyles,
+    Paper, Popover,
     Tab,
     TableBody,
     TableCell,
@@ -132,6 +132,7 @@ function ExpressionComponent(props: any) {
     const {biomolecule} = props;
     const [protein, setProtein] = useState<string>("");
     const [gene, setGene] = useState<string>("");
+    const [uberonTissues, setUberonTissues] = useState<Array<string> | []>([]);
     const [geneExpressionData, setGeneExpressionData] = useState<any>([]);
     const [proteomicsExpressionData, setProteomicsExpressionData] = useState<BarChartData[]>([]);
     const [expressionTypes, setExpressionTypes] = useState<string[]>([]);
@@ -150,38 +151,77 @@ function ExpressionComponent(props: any) {
         if(biomolecule) {
             // For proteins
             let biomoleculeId = null;
+            let biomoleculeIds = []
             if(biomolecule.type === 'protein') {
                  biomoleculeId = biomolecule.id;
+                 biomoleculeIds.push(biomoleculeId)
             }
 
             if(biomolecule.type === 'pfrag') {
                 if(biomolecule.relations) {
                     if(Array.isArray(biomolecule.relations.belongs_to)) {
                         biomoleculeId = biomolecule.relations.belongs_to[0];
+                        biomoleculeIds.push(biomoleculeId)
                     } else {
                         biomoleculeId = biomolecule.relations.belongs_to;
+                        biomoleculeIds.push(biomoleculeId)
                     }
                 }
             }
 
-            http.get("/biomolecules/proteins/expressions/" + biomoleculeId)
+            if(biomolecule.type == 'multimer') {
+                if(biomolecule.molecular_details && biomolecule.molecular_details.component) {
+                    biomoleculeIds = Array.isArray(biomolecule.molecular_details.component) ?
+                        biomolecule.molecular_details.component :
+                        [biomolecule.molecular_details.component];
+                }
+            }
+
+            http.post("/biomolecules/proteins/expressions/", biomoleculeIds)
                 .then((expressionDataResponse) => {
                     let geneExpressionData = new Array<any>;
-                    const {geneExpression, proteomicsExpression, protein, gene} = expressionDataResponse.data;
-                    geneExpression.forEach((e:any)=> {
-                        geneExpressionData.push({
-                            tissueUberonName: e.tissueUberonName,
-                            tpm: e.tpm
+
+                    // Extract all tissue data
+                    let maxTPM = 0;
+                    let uberonTissuesSet = new Set<string>();
+                    Object.keys(expressionDataResponse.data).forEach((protein: string) => {
+                        interface ExpressionData {
+                            expressions: { [key: string]: number };
+                            protein: string;
+                            gene: string;
+                            maxTPM: number
+                        }
+
+                        let expressionData: ExpressionData = {
+                            expressions: {},
+                            protein: "",
+                            gene: "",
+                            maxTPM: 0
+                        };
+                        expressionDataResponse.data[protein].geneExpression.forEach((e:any)=> {
+                            let tissueName : string = e.tissueUberonName;
+                            let tpm = parseFloat(e.tpm);
+                            expressionData.expressions[tissueName] = tpm;
+                            uberonTissuesSet.add(e.tissueUberonName);
+                            if(maxTPM < tpm) {
+                                maxTPM = tpm;
+                            }
                         });
-                    });
-                    geneExpressionData = geneExpressionData.sort((a : any,b : any) => {
-                        if(a.tissueUberonName > b.tissueUberonName) return 1
-                        else return -1;
-                    });
+                        expressionData.protein = protein;
+                        expressionData.gene = expressionDataResponse.data[protein].gene;
+                        expressionData.maxTPM = maxTPM;
+                        geneExpressionData.push(expressionData);
+                    })
+
+                    // Sort tissue data
+                    let uberonTissues = new Array<string>();
+                    uberonTissuesSet.forEach((tissue: string) => uberonTissues.push(tissue));
+                    uberonTissues = uberonTissues.sort((a: string, b: string) => a.localeCompare(b));
+                    setUberonTissues(uberonTissues);
                     setGeneExpressionData(geneExpressionData);
 
                     // Prepare bar chart data
-                    let barchartData : any[] = [];
+                    /*let barchartData : any[] = [];
                     Object.keys(proteomicsExpression).forEach((tissueId: string) => {
                         proteomicsExpression[tissueId].expressionValues.forEach((expression: any) => {
                             let data: BarChartData = {
@@ -194,19 +234,19 @@ function ExpressionComponent(props: any) {
                             barchartData.push(data);
                         });
                     });
-                    setProteomicsExpressionData(barchartData);
+                    setProteomicsExpressionData(barchartData);*/
 
                     setProtein(protein);
                     setGene(gene);
 
                     let expressionTypes : string[] = [];
-                    if(geneExpressionData && geneExpressionData.length > 0) {
+                    if(geneExpressionData && Object.keys(geneExpressionData).length > 0) {
                         expressionTypes.push('geneExpression');
                     }
 
-                    if(proteomicsExpression && Object.keys(proteomicsExpression).length > 0 ) {
+                    /*if(proteomicsExpression && Object.keys(proteomicsExpression).length > 0 ) {
                         expressionTypes.push('proteomicsExpression');
-                    }
+                    }*/
                     setExpressionTypes(expressionTypes);
                 });
         }
@@ -237,58 +277,90 @@ function ExpressionComponent(props: any) {
         setSelectedProteomicsSampleIndex(index);
     };
 
-    const [isHovered, setIsHovered] = useState(false);
-    const [hoveredTissue, setHoveredTissue] = useState<string | null>(null);
-
-    const handleMouseEnter = (tissue: string) => {
-        setIsHovered(true);
-        setHoveredTissue(tissue);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
-
-    function ExpressionCard() {
-        const tissueData = geneExpressionData.filter((expression: any) => {
-            return expression.tissueUberonName === hoveredTissue;
-        })[0];
-        return(
-            <CardContent style={{ flex: 0.35, backgroundColor: 'lightgray', padding: '20px' }}>
-                <Grid container spacing={0}>
-                    <Grid item xs={6}>
-                        <Typography variant="body2" gutterBottom>
-                            Tissue:
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2" gutterBottom>
-                            {hoveredTissue}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2" gutterBottom>
-                            TPM:
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2" gutterBottom>
-                            <span
-                                style={{
-                                    display: 'inline-block',
-                                    width: '10px',
-                                    height: '10px',
-                                    backgroundColor: `rgb(0, 0, ${Math.floor(255 - (tissueData.tpm * 2.55))})`,
-                                    marginRight: '5px',
-                                }}
-                            ></span>
-                            {tissueData.tpm}
-                        </Typography>
-                    </Grid>
-                </Grid>
-            </CardContent>
-        )
+    interface ExpressionData {
+        protein: string;
+        gene: string;
+        tissue: string;
+        tpm: number;
     }
+
+    const ExpressionBox: React.FC<{ tissue: string; protein: string; gene: string; tpm: number, maxTPM: number }> =
+        ({ tissue, protein, gene, tpm, maxTPM }) => {
+        const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+        const backgroundColor = tpm === 0
+            ? 'rgb(220, 220, 220)'
+            : `rgb(${Math.floor(175+(-175/maxTPM)*tpm)},${Math.floor(208+(-208/maxTPM)*tpm)},${Math.floor((145/maxTPM)*tpm + 95*maxTPM)})`
+
+        const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
+            setAnchorEl(event.currentTarget);
+        };
+
+        const handleMouseLeave = () => {
+            setAnchorEl(null);
+        };
+
+        return (
+            <Box
+                key={tissue}
+                sx={{ position: 'relative', paddingRight: '7px' }}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                <Box
+                    component="div"
+                    sx={{
+                        width: '20px',
+                        height: '40px',
+                        backgroundColor: {backgroundColor},
+                        cursor: 'pointer',
+                    }}
+                />
+                <ExpressionPopOver
+                    anchorEl={anchorEl}
+                    expressionData={{ protein, gene, tissue, tpm }}
+                    handleMouseLeave={handleMouseLeave} />
+            </Box>
+        );
+    };
+
+    const ExpressionPopOver: React.FC<{ anchorEl: HTMLElement | null; expressionData: ExpressionData; handleMouseLeave: () => void }> = ({ anchorEl, expressionData, handleMouseLeave }) => {
+        const open = Boolean(anchorEl);
+
+        return (
+            <Popover
+                id="simple-popover"
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleMouseLeave}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                onMouseLeave={handleMouseLeave}
+            >
+                <Paper sx={{ padding: '10px' }}>
+                    <Typography>
+                        Protein: {expressionData.protein}
+                    </Typography>
+                    <Typography>
+                        Gene: {expressionData.gene}
+                    </Typography>
+                    <Typography>
+                        Tissue: {expressionData.tissue}
+                    </Typography>
+                    <Typography>
+                        TPM: {expressionData.tpm.toFixed(2)}
+                    </Typography>
+                </Paper>
+            </Popover>
+        );
+    };
+
     function GeneExpressionComponent(){
         return(
             <div style={{ display: 'flex' }}>
@@ -296,7 +368,7 @@ function ExpressionComponent(props: any) {
                     <Anatomogram
                         species={'homo_sapiens'}
                         atlasUrl={'/'}
-                        showIds={geneExpressionData.map((expression: any) => expression.tissueUberonName)} />
+                        showIds={uberonTissues} />
                 </div>
 
                 <div style={{
@@ -307,47 +379,73 @@ function ExpressionComponent(props: any) {
                         <>
                             {
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    {geneExpressionData.map((expression: any) => {
-                                        const key = expression.tissueUberonName;
-                                        const value = expression.tpm;
+                                    {
+                                        uberonTissues &&
+                                        uberonTissues.map((tissue: string) => {
                                         return (
                                             <div
-                                                key={key}
-                                                style={{ marginRight: '8px', position: 'relative' }}
+                                                key={tissue}
+                                                style={{ position: 'relative', paddingRight: '7px' }}
                                             >
                                                 <div
                                                     style={{
                                                         width: '20px',
                                                         height: '40px',
-                                                        backgroundColor: `rgb(0, 0, ${Math.floor(255 - (value * 2.55))})`,
                                                     }}
-                                                    onMouseEnter={() => handleMouseEnter(key)}
-                                                    onMouseLeave={handleMouseLeave}
-                                                ></div>
-                                                <span
-                                                    style={{
-                                                        fontSize: '8px',
-                                                        position: 'absolute',
-                                                        top: '-20px',
-                                                        left: '9px',
-                                                        transform: 'rotate(-45deg)',
-                                                        transformOrigin: 'left bottom',
-                                                        width: '100px'
-                                                    }}
-                                                >{key}</span>
+                                                >
+                                                    <span
+                                                        style={{
+                                                            fontSize: '12px',
+                                                            position: 'absolute',
+                                                            top: '-10px',
+                                                            left: '9px',
+                                                            transform: 'rotate(-45deg)',
+                                                            transformOrigin: 'left bottom',
+                                                            width: '200px'
+                                                        }}
+                                                    >
+                                                      {tissue}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        );
-                                    })}
+                                    )
+                                })
+                                    }
                                 </div>
+                            }
+                            {
+                                geneExpressionData.map((data: any) => {
+                                    const protein = data.protein;
+                                    const gene = data.gene;
+                                    const maxTPM = data.maxTPM;
+                                    return(
+                                        <div style={{ display: 'flex', alignItems: 'center', paddingBottom: '5px' }}>
+
+                                        {
+                                            Object.keys(data.expressions).map((key: string) => {
+                                                let value : number;
+                                                if(key in data.expressions) {
+                                                    value = data.expressions[key];
+                                                } else {
+                                                    value = 0;
+                                                }
+                                                return (
+                                                    <ExpressionBox
+                                                        tissue={key}
+                                                        protein={protein}
+                                                        gene={gene}
+                                                        tpm={value}
+                                                        maxTPM={maxTPM}
+                                                    />
+                                                );
+                                            })
+                                        }
+                                        </div>
+                                    )
+                                })
                             }
                         </>
                     </div>
-                    {
-
-                        isHovered && <div style={{ flex: 1, paddingLeft: '150px', paddingTop: '20px', width: '300px' }}>
-                            <ExpressionCard />
-                        </div>
-                    }
                 </div>
             </div>
         )
@@ -453,7 +551,7 @@ function ExpressionComponent(props: any) {
                                 <>
                                     <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
                                         <span style={{paddingLeft: '10px'}}>
-                                            <h3>Expression & Proteomics</h3>
+                                            <h3>Transcriptomic & Proteomic Data</h3>
                                         </span>
                                     </div>
 

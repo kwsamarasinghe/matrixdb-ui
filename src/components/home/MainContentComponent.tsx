@@ -59,7 +59,7 @@ function MainContentComponent() {
             }}>
 
                 <Typography  variant={'h6'} style={{fontWeight: 'bold', marginBottom: '5px' }}>
-                    Statistics
+                    MatrixDB Content
                 </Typography>
                 <div style={{ display: 'flex', width: '90%' }}>
                     {statistics.biomolecules &&
@@ -147,7 +147,7 @@ function MainContentComponent() {
                                 <ListItemText
                                     primary={
                                         <Typography variant="body2">
-                                            <strong>Directly supported:</strong> {statistics.interactions.protein_protein.directly_supported}
+                                            <strong>Experimentally supported:</strong> {statistics.interactions.protein_protein.directly_supported}
                                         </Typography>
                                     }
                                 />
@@ -242,7 +242,7 @@ function MainContentComponent() {
                     </Card>
                     <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue' , textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Publications
+                            How to Cite
                         </Typography>
                         <CardContent>
                             <List>

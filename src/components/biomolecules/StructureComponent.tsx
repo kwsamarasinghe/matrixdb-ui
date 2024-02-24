@@ -6,7 +6,7 @@ import { PluginConfig } from 'molstar/lib/mol-plugin/config';
 import { PluginSpec } from 'molstar/lib/mol-plugin/spec';
 import { DefaultPluginUISpec, PluginUISpec } from 'molstar/lib/mol-plugin-ui/spec';
 import { PluginBehaviors } from 'molstar/lib/mol-plugin/behavior';
-import {Paper} from "@mui/material";
+import {List, ListItem, Paper, Typography} from "@mui/material";
 import {
     PresetStructureRepresentations,
     StructureRepresentationPresetProvider
@@ -19,6 +19,8 @@ import {
 } from "molstar/lib/extensions/model-archive/quality-assessment/behavior";
 import {SbNcbrPartialChargesPreset, SbNcbrPartialChargesPropertyProvider} from "molstar/lib/extensions/sb-ncbr";
 import "molstar/build/viewer/molstar.css"
+
+import pdblogo from "../../assets/images/pdb.png";
 
 
 const DefaultViewerOptions = {
@@ -42,14 +44,51 @@ const DefaultViewerOptions = {
     emdbProvider: PluginConfig.Download.DefaultEmdbProvider.defaultValue,
 };
 
+function PDBList(props: any) {
+    const {selectedPDB, pdbIds, onPDBChange} = props;
+
+    const rowColor = (pdbId: string, index: number) => {
+        if(selectedPDB === pdbId) {
+            return {border: '1px solid #3498db'};
+        } else {
+            if(index % 2 === 0) {
+                return {background: 'white'}
+            } else {
+                return {background: 'rgb(223,236,243)'};
+            }
+        }
+    }
+
+    return (
+        <List style={{
+            height: '500px',
+            overflowY: 'auto'
+        }}>
+            {pdbIds.map((pdbId: string, index: number) => (
+                <ListItem key={index}
+                          style={rowColor(pdbId, index)}
+                          onClick={() => onPDBChange(pdbId)}
+                >
+                    <img src={pdblogo} style={{width: '20px', paddingRight: '10px'}}/>
+                    <Typography variant={'body2'}>
+                        <a href={`http://pdb.org/${pdbId}`} target='_blank'>
+                            {pdbId}
+                        </a>
+                    </Typography>
+                </ListItem>
+            ))}
+        </List>
+    );
+};
+
 const StructureViewerComponent: React.FC<any> = (props: any) => {
     const viewerContainer = useRef<HTMLDivElement>(null);
     const [pdbIds, setPDBIds] = useState<Array<string>>([]);
     const [plugin, setPlugin] = useState<any>(null);
     const [selectedPDB, setSelectedPDB] = useState<string>();
 
-    const handleOptionChange = (event : any) => {
-        setSelectedPDB(event.target.value);
+    const handleOptionChange = (pdb : any) => {
+        setSelectedPDB(pdb);
     };
 
     useEffect(() => {
@@ -220,7 +259,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                     <div style={{ display: 'flex' }}>
                         <div style={{ flex: 0.5 }}>
                             <div style={{padding: '10px' }}>
-                                <select
+                                {/*<select
                                     value={selectedPDB}
                                     onChange={handleOptionChange}>
                                     {
@@ -230,7 +269,12 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                                             </option>
                                         ))
                                     }
-                                </select>
+                                </select>*/}
+                                <PDBList
+                                    selectedPDB={selectedPDB}
+                                    pdbIds={pdbIds}
+                                    onPDBChange={handleOptionChange}
+                                />
                             </div>
                         </div>
                         <div

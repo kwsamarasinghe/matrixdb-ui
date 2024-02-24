@@ -10,7 +10,7 @@ const store = configureStore({
 interface State {
     currentState: 'init' | 'type_selected';
     filterConfiguration: FilterConfiguration;
-    filters: Filter[];
+    filters: Filter;
     network: any;
 }
 

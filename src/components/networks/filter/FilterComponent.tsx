@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {AppDispatch, RootState} from '../../../stateManagement/store';
 import * as actions from '../../../stateManagement/actions';
-import {Button, IconButton, Paper, Typography} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Button, IconButton, Paper, Typography} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAtom, faCircleNodes, faFilter, faCancel} from "@fortawesome/free-solid-svg-icons";
 import {
@@ -11,9 +11,8 @@ import {
     FilterCriterionConfiguration
 } from "./FilterConfigurationManager";
 import FilterManager, {Filter, FilterCriterion} from "./FilterManager";
-import FilterCriterionComponent, {
-    EditingFilterCriterionComponent, EditingSubCriteriaComponent
-} from "./FilterCriterionComponent";
+import FilterCriterionComponent, {FilterWithSubCriteriaComponent} from "./FilterCriterionComponent";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const mapStateToProps = (state: RootState) => ({
     currentState: state.currentState,
@@ -23,8 +22,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
-    addFilterCriterionAction: (filterConfiguration: FilterConfiguration) => dispatch(actions.addFilterCriteria(filterConfiguration)),
-    updateFilterAction: (networkData: any) => dispatch(actions.setNetworkDataAction(networkData))
+    updateFilterAction: (filters: Filter) => dispatch(actions.updateFilter(filters))
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -37,54 +35,59 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                                             network,
                                                             updateFilterAction,
                                                       }) => {
-    const [currentFilters, setCurrentFilters] = useState<Filter[]>(filters);
-    const [currentFilterConfiguration, setCurrentFilterConfiguration]  = useState<FilterConfiguration>(filterConfiguration);
-    const filterManager = new FilterManager(network);
+
+    const [currentFilters, setCurrentFilters] = useState<Filter>(filters);
+    const [filterViewConfiguration, setFilterViewConfiguration]  = useState<FilterConfiguration>(filterConfiguration);
+
     const filterConfigurationManger = new FilterConfigurationManager(network);
 
     useEffect(() => {
         let currentFilterConfiguration = filterConfigurationManger.getFilterConguration(currentFilters);
-        setCurrentFilterConfiguration(currentFilterConfiguration);
+        setFilterViewConfiguration(currentFilterConfiguration);
     }, [currentFilters]);
 
-    const onFilterTypeSelect = (filterType: string) => {
-        let existingFilterTypes = new Set();
-        currentFilters.forEach((filter) => existingFilterTypes.add([...Object.keys(filter)]));
+    const onFilterCriterionAdd = (newFilterType: string, newFilterCriterion: FilterCriterion) => {
+        let newFilters:Filter = JSON.parse(JSON.stringify(currentFilters));
 
-        // Filter are empty
-        if(!existingFilterTypes.has(filterType)) {
-            let currentFilters : Filter[] = [];
-            currentFilters.push({
-                type: filterType,
-                criteria: []
-            });
-            let currentFilterConfiguration = filterConfigurationManger.getFilterConguration(currentFilters);
-            setCurrentFilterConfiguration(currentFilterConfiguration);
-            setCurrentFilters(currentFilters);
+        // Add criterion to the filters
+        if(newFilterType === 'interactor' && newFilters.interactors.length === 0) {
+            newFilters.interactors.push(newFilterCriterion);
         }
 
-        // Filters exist and new type selected
+        if(newFilterType === 'interaction' && newFilters.interactions.length === 0) {
+            newFilters.interactions.push(newFilterCriterion);
+        }
 
-    };
-
-    const onFilterCriterionAdd = (filterType: string, filterCriterion: FilterCriterion) => {
-        // Add criterion to the filters
-        let lastFilter = currentFilters[currentFilters.length - 1];
-        if(filterCriterion) {
-            if(lastFilter.criteria.length > 0) {
-                let lastFilterCriteria = lastFilter.criteria[lastFilter.criteria.length - 1];
-                if(lastFilterCriteria.id === filterCriterion.id) {
-                    lastFilterCriteria.value = filterCriterion.value;
-                } else {
-                    lastFilter.criteria.push(filterCriterion);
+        let isExisting = false
+        if(newFilterType === 'interactor') {
+            newFilters.interactors.forEach((filterCriterion: FilterCriterion) => {
+                if(newFilterCriterion.id === filterCriterion.id) {
+                    filterCriterion.value = newFilterCriterion.value;
+                    isExisting = true;
                 }
-            } else {
-                lastFilter.criteria.push(filterCriterion);
+            });
+
+            // Add the filter if not existing
+            if(!isExisting) {
+                newFilters.interactors.push(newFilterCriterion);
             }
         }
-        let currentFilterConfiguration = filterConfigurationManger.getFilterConguration(currentFilters);
-        setCurrentFilterConfiguration(currentFilterConfiguration);
-        setCurrentFilters(currentFilters);
+
+        if(newFilterType === 'interaction') {
+            newFilters.interactions.forEach((filterCriterion: FilterCriterion) => {
+                if(newFilterCriterion.id === filterCriterion.id) {
+                    filterCriterion.value = newFilterCriterion.value;
+                    isExisting = true;
+                }
+            });
+
+            // Add the filter if not existing
+            if(!isExisting) {
+                newFilters.interactions.push(newFilterCriterion);
+            }
+        }
+        //setCurrentFilters(newFilters);
+        updateFilterAction(newFilters);
     }
 
     return (
@@ -103,75 +106,93 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                             justifyContent: 'center',
                             paddingBottom: '10px'
                         }}>
-                            <Typography variant={'body1'}>
-                                Filter Interactions
+                            <Typography variant='body1' fontWeight='bold'>
+                                Filter Partner Interactions
                             </Typography>
                         </div>
                         <div>
                             {
-                                currentFilterConfiguration && Object.keys(currentFilterConfiguration).map((filterType:string) => (
-                                    <>
-                                        <div style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}>
-                                            <Button
-                                                variant="outlined"
-                                                size="small"
-                                                color="primary"
-                                                style={{ borderColor: 'green', color: 'green', height: '30px' }}
-                                                disabled={false}
-                                                onClick={() => onFilterTypeSelect(filterType)}
-                                            >
-                                                <IconButton>
-                                                    <FontAwesomeIcon icon={filterType === 'interactor' ? faAtom: faCircleNodes} size={"2xs"} color={'green'}/>
-                                                </IconButton>
-                                                {filterType}
-                                            </Button>
-                                        </div>
-                                        {
-                                            currentFilterConfiguration[filterType] &&
-                                            <div>
-                                                {currentFilterConfiguration[filterType]?.map((filterCriterionConfiguration: FilterCriterionConfiguration) => {
-
-                                                    if(filterCriterionConfiguration?.options &&
-                                                        filterCriterionConfiguration.options.length > 0) {
+                                <>
+                                    <Accordion key={0} defaultExpanded>
+                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                            <Typography variant='body2' fontWeight='bold'>
+                                                <FontAwesomeIcon icon={faAtom} size='2xs'/>
+                                                <span style={{
+                                                    paddingLeft: '5px'
+                                                }}>
+                                                    Interactor
+                                                </span>
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            {
+                                                filterViewConfiguration['interactor']?.map((filterCriterionConfiguration: FilterCriterionConfiguration) => {
+                                                    if(!filterCriterionConfiguration.enable) return (<></>);
+                                                    if(filterCriterionConfiguration.subCriteria) {
                                                         return(
-                                                            <EditingFilterCriterionComponent
-                                                                filterType={filterType}
-                                                                criterion={filterCriterionConfiguration}
-                                                                onValueChanged={onFilterCriterionAdd}
-                                                            />
-                                                        )
-                                                    } else if(filterCriterionConfiguration?.subCriteria &&
-                                                        filterCriterionConfiguration.subCriteria.length > 0 ){
-                                                        return(
-                                                            <EditingSubCriteriaComponent
-                                                                filterType={filterType}
+                                                            <FilterWithSubCriteriaComponent
+                                                                filterType='interactor'
                                                                 criterion={filterCriterionConfiguration}
                                                                 onAdd={onFilterCriterionAdd}
                                                             />
-                                                        )
+                                                        );
                                                     } else {
                                                         return(
                                                             <FilterCriterionComponent
-                                                                filterType={filterType}
+                                                                filterType='interactor'
+                                                                criterion={filterCriterionConfiguration}
+                                                                onAdd={onFilterCriterionAdd}
+                                                            />
+                                                        );
+                                                    }
+                                                })
+                                            }
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion key={1} defaultExpanded>
+                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                            <Typography variant='body2' fontWeight='bold'>
+                                                <FontAwesomeIcon icon={faCircleNodes} size='2xs'/>
+                                                <span style={{
+                                                    paddingLeft: '5px'
+                                                }}>
+                                                    Interaction
+                                                </span>
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            {
+                                                filterViewConfiguration['interaction']?.map((filterCriterionConfiguration: FilterCriterionConfiguration) => {
+                                                    if(!filterCriterionConfiguration.enable) return (<></>);
+                                                    if(filterCriterionConfiguration.subCriteria) {
+                                                        filterCriterionConfiguration.subCriteria.map((filterCriterionConfiguration: FilterCriterionConfiguration) => {
+                                                            return(
+                                                                <FilterCriterionComponent
+                                                                    filterType='interaction'
+                                                                    criterion={filterCriterionConfiguration}
+                                                                    onAdd={onFilterCriterionAdd}
+                                                                />
+                                                            )
+                                                        })
+                                                    } else {
+                                                        return(
+                                                            <FilterCriterionComponent
+                                                                filterType='interaction'
                                                                 criterion={filterCriterionConfiguration}
                                                                 onAdd={onFilterCriterionAdd}
                                                             />
                                                         )
                                                     }
-
-                                                })}
-                                            </div>
-                                        }
-                                    </>
-                                ))
+                                                })
+                                            }
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </>
                             }
                             {
-                                currentFilters.length > 0 &&
-                                <div style={{
+                                ((currentFilters.interactors && currentFilters.interactors.length > 0) ||
+                                    (currentFilters.interactions && currentFilters.interactions.length > 0))  &&
+                                (<div style={{
                                     paddingTop: '20px'
                                 }}>
                                     <Button
@@ -182,7 +203,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                             marginRight: '10px',
                                             marginLeft: '5px'
                                         }}
-                                        onClick={() => {setCurrentFilters([])}}
+                                        onClick={() => {setCurrentFilters({interactors: [], interactions: []})}}
                                     >
                                         <IconButton>
                                             <FontAwesomeIcon
@@ -208,7 +229,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                         </IconButton>
                                         Apply
                                     </Button>
-                                </div>
+                                </div>)
                             }
                         </div>
                     </>

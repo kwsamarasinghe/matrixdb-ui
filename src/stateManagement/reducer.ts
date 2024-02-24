@@ -9,33 +9,22 @@ type Action = ActionType<typeof actions>;
 const initialState: State = {
     currentState: 'init',
     filterConfiguration: {
-        interactor: [],
-        interaction: []
+        interactors: [],
+        interactions: []
     },
-    filters: [],
+    filters: {
+        interactors: [],
+        interactions: []
+    },
     network: {}
 };
 
 const NetworkViewReducer = (state: State = initialState, action: Action): State => {
     switch (action.type) {
-        case actions.SELECT_TYPE:
-            return {
-                currentState: 'type_selected',
-                filterConfiguration: {},
-                filters: [],
-                network: {}
-            };
-        case actions.DELETE:
-            return {
-                currentState: 'init',
-                filterConfiguration: {},
-                filters: [],
-                network: {}
-            };
-        case actions.ADD_FILTER_CRITERION:
+        case actions.UPDATE_FILTER:
             return {
                 ...state,
-                filterConfiguration: action.payload
+                filters: action.payload
             }
         case actions.SET_NETWORK_DATA:
             return {

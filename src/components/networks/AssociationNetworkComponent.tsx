@@ -24,6 +24,7 @@ import NewFilterComponent from "./filter/FilterComponent";
 import {FilterConfigurationManager} from "./filter/FilterConfigurationManager";
 import {RootState} from "../../stateManagement/store";
 import {connect, ConnectedProps} from "react-redux";
+import FilterManager from "./filter/FilterManager";
 
 interface Filter {
     type : string,
@@ -966,10 +967,9 @@ function FilterComponent(props: any) {
 
 function CytoscapeComponent(props: any) {
 
+    const {participants, associations} = props;
     const [selectedPartnerId, setSelectedPartnerId] = useState(null);
     const [selectedInteraction, setSelectedInteraction] = useState(null);
-    const [associations, setAssociations] = useState<Array<any>>([]);
-    const [participants, setParticipants] = useState<Array<any>>([]);
     const cyRef = useRef(null);
 
     const circularLayout = {
@@ -1003,19 +1003,10 @@ function CytoscapeComponent(props: any) {
 
     let cy : any = null;
 
-    useEffect(() => {
-        if(props.associations) {
-            setAssociations(props.associations);
-        }
-    }, [props.associations]);
 
     useEffect(() => {
-        if(props.participants) {
-            setParticipants(props.participants);
-        }
-    }, [props.participants]);
-
-    useEffect(() => {
+        console.log(participants)
+        console.log(associations)
         if (cyRef.current && associations.length > 0) {
             //let elements = [];
             /*elements.push({
@@ -1224,7 +1215,7 @@ function CytoscapeComponent(props: any) {
             };
         }
 
-    }, [associations]);
+    }, [participants, associations]);
 
     return (
         <div style={{display: 'flex'}}>
@@ -1247,6 +1238,7 @@ function CytoscapeComponent(props: any) {
 
 const mapStateToProps = (state: RootState) => ({
     network: state.network,
+    filters: state.filters
 });
 
 const connector = connect(mapStateToProps);
@@ -1255,24 +1247,21 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 type AssociationNetworkProps = PropsFromRedux & {biomoleculeIds: [string] | []}
 
-const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({network, biomoleculeIds}) => {
+const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
+                                                                             network,
+                                                                             filters,
+                                                                             biomoleculeIds}) => {
 
-    /*useEffect(() => {
-        if(associations) {
-            setFilteredAssociations(associations);
-        }
+    const [currentNetwork, setCurrentNetwork] = useState<any>(network);
 
-        if(participantIds && !participants) {
-            http.post("/biomolecules/", {
-                ids: [...participantIds]
-            })
-                .then((biomoleculeResponse) => {
-                    setParticipants(biomoleculeResponse.data);
-                });
-        }
-    },[]);
+    useEffect(() => {
+        const filterManager = new FilterManager(network);
+        const currentNetwork = filterManager.getFilteredNetwork(filters);
+        setCurrentNetwork(currentNetwork);
+        console.log("assoc component")
+    }, [filters]);
 
-    const onFilterAdd = ((filters: any, editing: boolean) => {
+    /*const onFilterAdd = ((filters: any, editing: boolean) => {
         let associationsToFilter = [];
 
         if(filters.length === 0) {
@@ -1312,8 +1301,8 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({networ
                     {
                         <CytoscapeComponent
                             biomoleculeId={biomoleculeIds[0]}
-                            participants={network.interactors}
-                            associations={network.interactions}
+                            participants={currentNetwork.interactors}
+                            associations={currentNetwork.interactions}
                         />
                     }
                 </div>

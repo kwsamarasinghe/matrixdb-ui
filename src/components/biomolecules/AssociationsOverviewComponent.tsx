@@ -1,12 +1,19 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-    Box, CircularProgress, IconButton, Paper, Tab, Tabs, Tooltip
+    Box, CircularProgress, IconButton, Paper, Tab, Tabs, Tooltip, Typography
 } from "@mui/material";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import http from "../../commons/http-commons";
 import AssociationNetworkComponent from "../networks/AssociationNetworkComponent";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { CSVLink } from 'react-csv';
+import {faFileDownload} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {connect, ConnectedProps} from "react-redux";
+import * as actions from "../../stateManagement/actions";
+import AssociationListComponent from "../tables/AssociationListComponent";
+import {AppDispatch, RootState} from "../../stateManagement/store";
 
 interface Interactors{
     count: number,
@@ -27,157 +34,47 @@ interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
     value: number;
-  }
+}
 
-function AssociationsOverviewComponent(props: any) {
+const mapStateToProps = (state: RootState) => ({
+    currentState: state.currentState,
+    filterConfiguration: state.filterConfiguration,
+    filters: state.filters,
+    network: state.network
+});
 
-    const {biomoleculeId} = props;
-    const [interactors, setInteractors] = useState<Interactors>();
-    const [interactorNetwork, setInteractorNetwork] = useState<any | null>(null);
-    const [rows, setRows] = useState<any[]>([]);
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+    setNetworkDataAction: (networkData: any) => dispatch(actions.setNetworkDataAction(networkData))
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type AssociationOverviewComponentProps = PropsFromRedux & { biomoleculeId : string};
+
+
+const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps> = ({biomoleculeId, setNetworkDataAction}) => {
+
+    const [interactors, setInteractors] = useState<any | null>();
     const [loaded, setLoaded] = useState(false);
     const [isExpanded, setIsExpanded] = useState(true);
-
-    const toggleExpansion = () => {
-        setIsExpanded(!isExpanded);
-    };
-
-    const columns: GridColDef[] = [
-        { 
-            field: 'id', 
-            headerName: 'Partner', 
-            width: 150,
-            renderCell: (params: any) =>  (
-                <>
-                    <a href={params.value}>{params.value}</a>
-                </>)
-        },
-        { 
-            field: 'association', 
-            headerName: 'Association', 
-            width: 250,
-            renderCell: (params: any) =>  (
-                <>
-                    <a href={process.env.REACT_APP_PUBLIC_URL + "association/"+params.value}>{params.value}</a>
-                </>)
-        },
-        {
-          field: 'directlySupportedBy',
-          headerName: 'Directly Supported',
-          width: 180,
-          renderCell: (params: any) =>  (
-            <>
-                {
-                    params.value.length > 0 && <Tooltip title={
-                            params.value.map((ex :any) => {
-                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL + "experiment/"+ ex}>{ex}</a></li>)
-                            })
-                    }>
-                        <span className="table-cell-trucate">{params.value.length}</span>
-                    </Tooltip>
-                }
-                {
-                    params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
-                }
-            </>
-           ),
-           sortComparator: (v1, v2) =>  v2.length - v1.length
-        },
-        {
-          field: 'spokeExpandedFrom',
-          headerName: 'Spoke Expanded',
-          width: 180,
-          renderCell: (params: any) =>  (
-            <>
-                {
-                    params.value.length > 0 && <Tooltip title={
-                            params.value.map((ex :any) => {
-                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL + "experiment/"+ ex}>{ex}</a></li>)
-                            })
-                    }>
-                        <span className="table-cell-trucate">{params.value.length}</span>
-                    </Tooltip>
-                }
-                {
-                    params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
-                }
-            </>
-           ),
-           sortComparator: (v1, v2) =>  v2.length - v1.length
-        },
-        {
-          field: 'inferredfrom',
-          headerName: 'Inferred From',
-          width: 180,
-          renderCell: (params: any) =>  (
-            <>
-                {
-                    params.value.length > 0 && <Tooltip title={
-                            params.value.map((ex :any) => {
-                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL  + "experiment/"+ ex}>{ex}</a></li>)
-                            })
-                    }>
-                        <span className="table-cell-trucate">{params.value.length}</span>
-                    </Tooltip>
-                }
-                {
-                    params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
-                }
-            </>
-           ),
-           sortComparator: (v1, v2) =>  v2.length - v1.length
-        }
-      ];
+    const [tabValue, setTabValue] = useState(0);
 
     useEffect(() => {
-        if(!loaded) {
-            http.get("/biomolecules/" + biomoleculeId + "/interactors/")
-                .then((interactorResponse) => {
-                    setInteractors(interactorResponse.data);
-                    let interactors = interactorResponse.data;
-                    if(interactors) {
-                        let rows = Object.keys(interactors.details).map((partner : any) => {
-                            let ds : string[] = [];
-                            let se : string[] = [];
-                            let inf : string[] = [];
-                            let detail = interactors.details[partner];
-                            if(detail.directlySupportedBy) {
-                                ds = detail.directlySupportedBy;
-                            }
-
-                            if(detail?.spokeExpandedFrom) {
-                                se = detail.spokeExpandedFrom;
-                            }
-
-                            return {
-                                id: partner,
-                                association: interactors.details[partner]["association"] ,
-                                directlySupportedBy: ds,
-                                spokeExpandedFrom: se,
-                                inferredfrom: inf
-                            }
-                        });
-                        setRows(rows);
-                    }
-                });
-        }
-
-        if (!interactorNetwork) {
-
-            http.post("/networks", {
-                biomolecules: [biomoleculeId]
-            })
-                .then((networkResponse) => {
-                    if (networkResponse.data) {
-                        setInteractorNetwork({
-                            participantIds: networkResponse.data.participants,
-                            associations: networkResponse.data.associations
-                        });
-                    }
-                    setLoaded(true);
-                })
-        }
-    }, []);
+        // Get network for biomoleculeId
+        http.post('/network', {
+            biomolecules: [biomoleculeId]
+        })
+            .then((networkResponse) => {
+                let networkData = networkResponse.data;
+                networkData.biomolecules = [biomoleculeId];
+                setNetworkDataAction(networkData);
+                if(networkData) {
+                    setInteractors(networkData.interactors);
+                }
+            });
+    }, [biomoleculeId]);
 
     const paperStyle = {
         background: 'rgba(255, 255, 255, 0.9)',
@@ -185,6 +82,10 @@ function AssociationsOverviewComponent(props: any) {
         padding: '16px',
         width: '100%',
         borderRadius: 0
+    };
+
+    const toggleExpansion = () => {
+        setIsExpanded(!isExpanded);
     };
 
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
@@ -195,8 +96,6 @@ function AssociationsOverviewComponent(props: any) {
         );
       };
 
-    const [tabValue, setTabValue] = useState(0);
-
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
@@ -204,12 +103,12 @@ function AssociationsOverviewComponent(props: any) {
     return (
         <>
             {
-                    !loaded && <div style={{paddingTop: '20px'}}>
-                        <CircularProgress />
-                        </div>
+             /*   !loaded && <div style={{paddingTop: '20px'}}>
+                    <CircularProgress />
+                    </div>*/
             }
             {
-                interactors && interactors.count > 0 &&
+                interactors && interactors.length > 0 &&
                 <div>
                     <Paper style={paperStyle}>
                         <>
@@ -221,7 +120,7 @@ function AssociationsOverviewComponent(props: any) {
                             <div>
                                 <div style={{clear: 'left', textAlign: 'left'}}>
                                     <h4 >Interactors {interactors.count}</h4>
-                                    {interactors.direct > 0 && <h4>Directly Supporting Experiments : <span style={{ color : 'darkblue'}}>{interactors.direct}</span> </h4>}
+                                    {interactors.direct > 0 && <h4>Experimentally Supported Experiments: <span style={{ color : 'darkblue'}}>{interactors.direct}</span> </h4>}
                                     {interactors.predictions > 0 && <h4>Predicted : <span style={{ color : 'darkgreen'}}>{interactors.predictions}</span> </h4>}
                                     {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
                                 </div>
@@ -232,45 +131,24 @@ function AssociationsOverviewComponent(props: any) {
                                 </div>
                             </div>
                             {
-                               /*isExpanded &&
+                               isExpanded && biomoleculeId &&
                                <>
                                    <Tabs value={tabValue} onChange={handleTabChange} centered>
+                                       <Tab label="Interaction List View" />
                                        <Tab label="Network View" />
-                                       <Tab label="List View" />
                                    </Tabs>
-                                   {loaded  && biomoleculeId && interactorNetwork && <TabPanel value={tabValue} index={0}>
-                                       <AssociationNetworkComponent
-                                           biomoleculeIds={[biomoleculeId]}
-                                           network={interactorNetwork}
+                                   <TabPanel value={tabValue} index={0}>
+                                       <AssociationListComponent
+                                            biomoleculeIds={[biomoleculeId]}
                                        />
-                                   </TabPanel>}
-                                   <TabPanel value={tabValue} index={1}>
-                                       {
-                                           interactors.count > 0 &&
-                                           <div style={{width: '1100px'}}>
-                                               <DataGrid
-                                                   rows={rows}
-                                                   columns={columns}
-                                                   initialState={{
-                                                       pagination: {
-                                                           paginationModel: {
-                                                               pageSize: 10,
-                                                           },
-                                                       },
-                                                   }}
-                                                   pageSizeOptions={[5]}
-                                                   disableRowSelectionOnClick
-                                               />
-                                           </div>
-                                       }
                                    </TabPanel>
-                               </>*/
+                                   <TabPanel value={tabValue} index={1}>
+                                       <AssociationNetworkComponent
+                                            biomoleculeIds={[biomoleculeId]}
+                                       />
+                                   </TabPanel>
+                               </>
                             }
-                            {loaded  && biomoleculeId && interactorNetwork &&
-                                <AssociationNetworkComponent
-                                    biomoleculeIds={[biomoleculeId]}
-                                    network={interactorNetwork}
-                                />}
                         </>
                     </Paper>
                 </div>
@@ -279,4 +157,4 @@ function AssociationsOverviewComponent(props: any) {
     );
 }
 
-export default AssociationsOverviewComponent;
+export default connector(AssociationsOverviewComponent);

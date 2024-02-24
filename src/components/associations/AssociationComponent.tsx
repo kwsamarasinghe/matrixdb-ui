@@ -1,18 +1,11 @@
 import {useParams} from "react-router";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import http from "../../commons/http-commons";
-import SearchIcon from "@mui/icons-material/Search";
-import logo from "../../assets/images/matrixdb_logo_medium.png";
 import {
-    AppBar,
-    Box, Chip, Divider,
+    Box,
     Grid,
-    IconButton,
-    InputBase,
-    List,
-    ListItem, ListItemButton,
     Paper,
-    Toolbar,
+    TableCell,
     Typography,
     useTheme
 } from "@mui/material";
@@ -48,7 +41,7 @@ function AssociationComponent() {
                         pmid: associationData.pmids,
                         participants: associationData.participants,
                         source: associationData.source,
-                        score: associationData.score?.replace('intact-miscore:','')
+                        score: associationData.score
                     }
                     if(associationData.experiments && associationData.experiments.direct && associationData.experiments.direct.binary &&
                         associationData.experiments.direct.binary.length > 0) {
@@ -92,6 +85,12 @@ function AssociationComponent() {
         return color;
     };
 
+    const cellStyles = {
+        padding: '0px',
+        borderBottom: 'none',
+        width: '250px'
+    };
+
     return (
         <>
         <div>
@@ -99,25 +98,26 @@ function AssociationComponent() {
                 type: "association",
                 id: associationId
             }}/>
-            <Box
-                display="flex"
-                justifyContent="center"
-                marginTop="4px"
+            <div
                 style={{
-                    height: "80vh"
+                    display: 'flex',
+                    height: "80vh",
+                    overflowY: 'auto',
+                    alignItems: 'center',
+                    flexDirection: 'column'
                 }}
             >
-                <Box style={{ width: "60%" }}>
+                <Box
+                    style={{
+                        width: "60%",
+                        paddingTop: '20px'
+                    }}
+                >
                     {association &&
                         <Paper style={paperStyle}>
-                            <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
-                                <div style={{ paddingLeft: '20px'}}>
-                                    <h2>{associationId}</h2>
-                                </div>
-                            </div>
+                            {/*
                             <div style={{textAlign: 'left' , width: '200px', paddingLeft: '20px'}}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingBottom: '4px' }}>
-                                    {/* First Column: h4 */}
                                     <div style={{ flex: 1 }}>
                                         <h4>Biomolecules</h4>
                                     </div>
@@ -195,24 +195,117 @@ function AssociationComponent() {
                                         </div>
                                     ))}
                                 </Typography>
-                            </div>
+                            </div>*/}
+                                <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                                    <div style={{ paddingLeft: '20px'}}>
+                                        <h3>Interaction: {associationId}</h3>
+                                    </div>
+                                </div>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    width: '60%',
+                                    paddingLeft: '10%',
+                                    paddingRight: '10%'
+                                }}>
+                                    <Grid container spacing={0}>
+                                        <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Participants</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                {association.participants.map((b, index) => {
+                                                    let link = "/biomolecule/" + b;
+                                                    return (
+                                                        <div key={index}>
+                                                            <a href={link}>{b}</a>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </TableCell>
+                                        </Grid>
+                                        {association.score && <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Intact MI Score</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                {
+                                                    <Typography variant={"body2"} align="left">
+                                                        {association.score}
+                                                    </Typography>
+                                                }
+                                            </TableCell>
+                                        </Grid>}
+                                        <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Experiment(s)</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                <Typography variant={"body2"} align="left">
+                                                    {
+                                                        association.directlysupportedby &&
+                                                        <div style={{paddingBottom: '5px'}}>
+                                                            <Typography align="left">Directly Supported By
+                                                                {
+                                                                    association.directlysupportedby.map(b => {
+                                                                        let link = "/experiment/" + b;
+                                                                        return (
+                                                                            <Grid item xs={6}>
+                                                                                <a href={link}>{b}</a>
+                                                                            </Grid>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </Typography>
+                                                        </div>
+                                                    }
+                                                    {
+                                                        association.spokeexpandedfrom &&
+                                                        <div>
+                                                            <Typography align="left">Spoke Expanded From
+                                                                {
+                                                                    association.spokeexpandedfrom.map(b => {
+                                                                        let link = "/experiment/" + b;
+                                                                        return (
+                                                                            <Grid item xs={6}>
+                                                                                <a href={link}>{b}</a>
+                                                                            </Grid>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </Typography>
+                                                        </div>
+                                                    }
+                                                </Typography>
+                                            </TableCell>
+                                        </Grid>
+                                        <Grid item xs={6}>
+
+                                        </Grid>
+                                        {association.pmid && <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (pubmed)</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                <div>
+                                                        <span style={{ marginRight: '10px' }}>
+                                                            {association.pmid}
+                                                        </span>
+                                                </div>
+                                            </TableCell>
+                                        </Grid>
+                                        }
+                                    </Grid>
+                                </div>
                         </Paper>
                     }
                 </Box>
-            </Box>
-            {
-                !association &&
-                <Box sx={{ display: 'flex', bgcolor: 'black' , justifyContent: 'center'}}>
-                    <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
-                        <Paper elevation={2}>
-                          <Typography variant="subtitle1" component="span">
-                            <h5>No data currently availble on association {associationId}</h5>
-                            <h6>Will be integrated soon</h6>
-                          </Typography>
-                        </Paper>
+                {
+                    !association &&
+                    <Box sx={{ display: 'flex', bgcolor: 'black' , justifyContent: 'center'}}>
+                        <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
+                            <Paper elevation={2}>
+                              <Typography variant="subtitle1" component="span">
+                                <h5>No data currently availble on association {associationId}</h5>
+                                <h6>Will be integrated soon</h6>
+                              </Typography>
+                            </Paper>
+                        </Box>
                     </Box>
-                </Box>
-            }
+                }
+            </div>
             <Footer/>
         </div>
         </>

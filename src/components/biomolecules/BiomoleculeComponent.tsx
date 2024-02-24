@@ -146,12 +146,6 @@ function BiomoleculeComponent() {
                                         </div>
                                     }
                                     {
-                                        biomolecule &&
-                                        <div style={{marginBottom: '10px'}}>
-                                            <KeywordComponent biomolecule={biomolecule}/>
-                                        </div>
-                                    }
-                                    {
                                         biomolecule && biomolecule.xrefs && biomolecule.xrefs.pdb && biomolecule.xrefs.pdb.length > 0 &&
                                         <div style={{marginBottom: '10px'}}>
                                             <StructureComponent pdb={biomolecule.xrefs.pdb}/>
@@ -161,6 +155,16 @@ function BiomoleculeComponent() {
                                         biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb &&
                                         <div style={{marginBottom: '10px'}}>
                                             <StructureComponent pdb={biomolecule.molecular_details.pdb}/>
+                                        </div>
+                                    }
+                                    {
+                                        (biomolecule && biomolecule.annotations.go && biomolecule.annotations.go.length >0
+                                            || biomolecule && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0) &&
+                                        <div style={{marginBottom: '10px'}}>
+                                            <KeywordComponent
+                                                goTerms={biomolecule.annotations.go}
+                                                keywords={biomolecule.annotations.keywords}
+                                            />
                                         </div>
                                     }
                                 </div>

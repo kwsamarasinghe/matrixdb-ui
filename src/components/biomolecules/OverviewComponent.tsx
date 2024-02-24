@@ -17,6 +17,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPerson } from '@fortawesome/free-solid-svg-icons';
+import InterproComponent from "./overview/InterproComponent";
 
 interface BiomoleculeToDisplay {
     id: string,
@@ -35,7 +36,7 @@ interface BiomoleculeToDisplay {
     molecularDetails: any | undefined,
     interpro: Array<string> | [],
     subcellularLocation: string,
-    function: string,
+    function?: any,
     ecmness?: any
 }
 
@@ -63,8 +64,7 @@ function OverviewComponent(props: any) {
             gene: undefined,
             molecularDetails: undefined,
             interpro: [],
-            subcellularLocation: "",
-            function: "",
+            subcellularLocation: ""
         };
         biomoleculeToDisplay.id = biomolecule.id;
         biomoleculeToDisplay.type = biomolecule.type;
@@ -82,12 +82,12 @@ function OverviewComponent(props: any) {
 
         biomoleculeToDisplay.molecularDetails= biomolecule.molecular_details;
 
-        biomoleculeToDisplay.function = biomolecule.annotations?.function?.text;
+        biomoleculeToDisplay.function = biomolecule.annotations?.function;
         biomoleculeToDisplay.subcellularLocation = biomolecule.annotations?.subcellular_location?.join(",");
         biomoleculeToDisplay.crossRefs = biomolecule.xrefs;
         biomoleculeToDisplay.description = biomolecule.description;
 
-        if(biomolecule.xrefs.interpro) {
+        if(biomolecule.xrefs && biomolecule.xrefs.interpro) {
             biomoleculeToDisplay.interpro = biomolecule.xrefs.interpro;
         }
         biomoleculeToDisplay.ecmness = biomolecule.ecmness;
@@ -106,7 +106,14 @@ function OverviewComponent(props: any) {
         if(biomoleculeToDisplay && biomoleculeToDisplay.function) {
             tabConfig.push({
                 label: 'Biological Function',
-                renderContent: () => biomoleculeToDisplay.function
+                renderContent: () => biomoleculeToDisplay.function?.text ? biomoleculeToDisplay.function?.text : biomoleculeToDisplay.function
+            })
+        }
+
+        if(biomoleculeToDisplay && biomoleculeToDisplay.interpro && biomoleculeToDisplay.interpro.length > 0 ) {
+            tabConfig.push({
+                label: 'Domain Annotations',
+                renderContent: () => <InterproComponent interproList={biomoleculeToDisplay.interpro}/>
             })
         }
 
@@ -116,7 +123,7 @@ function OverviewComponent(props: any) {
                 renderContent: () => (
                     <>
                         {renderCrossRefContent('CheBI', 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=', biomoleculeToDisplay.crossRefs.chebi)}
-                        {renderCrossRefContent('KEGG', 'https://www.genome.jp/dbget-bin/www_bget?', biomoleculeToDisplay.crossRefs.kegg)}
+                        {renderCrossRefContent('Reactome', 'https://reactome.org/PathwayBrowser/', biomoleculeToDisplay.crossRefs.reactome)}
                         {biomoleculeToDisplay.type === 'protein' && renderCrossRefContent('Uniprot', 'http://www.uniprot.org/uniprot/', biomoleculeToDisplay.id)}
                         {renderCrossRefContent('Complex Portal', 'https://www.ebi.ac.uk/complexportal/complex/', biomoleculeToDisplay.crossRefs.complex_portal)}
                         {renderCrossRefContent('EBI', 'https://www.ebi.ac.uk/intact/query/', biomoleculeToDisplay.crossRefs.EBI_xref)}
@@ -168,9 +175,9 @@ function OverviewComponent(props: any) {
 
     const [tabValue, setTabValue] = useState(0);
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-        setTabValue(newValue);
-    };
+        const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+            setTabValue(newValue);
+        };
 
     const paperStyle = {
         background: 'rgba(255, 255, 255, 0.9)',

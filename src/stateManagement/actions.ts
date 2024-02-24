@@ -17,9 +17,5 @@ export const setNetworkDataAction = createAction(SET_NETWORK_DATA)<{
     payload: Partial<State['network']>;
 }>();
 
-export const updateFilter = createAction(UPDATE_FILTER)<{
-    payload: Partial<State['filters']>
-}>();
-
-export const addFilterCriteria = createAction(ADD_FILTER_CRITERION)<Partial<State['filterConfiguration']>>();
+export const updateFilter = createAction(UPDATE_FILTER)<State['filters']>();
 
