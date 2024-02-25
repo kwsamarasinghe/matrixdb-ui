@@ -58,17 +58,24 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
             newFilters.interactions.push(newFilterCriterion);
         }
 
-        let isExisting = false
+        let existingCriterion: FilterCriterion | undefined = undefined;
         if(newFilterType === 'interactor') {
             newFilters.interactors.forEach((filterCriterion: FilterCriterion) => {
                 if(newFilterCriterion.id === filterCriterion.id) {
-                    filterCriterion.value = newFilterCriterion.value;
-                    isExisting = true;
+                    if(newFilterCriterion.value) {
+                        filterCriterion.value = newFilterCriterion.value;
+                    }
+                    existingCriterion = filterCriterion;
                 }
             });
 
             // Add the filter if not existing
-            if(!isExisting) {
+            if(existingCriterion) {
+                if(!newFilterCriterion.value) {
+                    // Remove criterion
+                    newFilters.interactors = newFilters.interactors.filter((filterCriterion: FilterCriterion) => filterCriterion !== existingCriterion);
+                }
+            } else {
                 newFilters.interactors.push(newFilterCriterion);
             }
         }
@@ -76,13 +83,20 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
         if(newFilterType === 'interaction') {
             newFilters.interactions.forEach((filterCriterion: FilterCriterion) => {
                 if(newFilterCriterion.id === filterCriterion.id) {
-                    filterCriterion.value = newFilterCriterion.value;
-                    isExisting = true;
+                    if(newFilterCriterion.value) {
+                        filterCriterion.value = newFilterCriterion.value;
+                    }
+                    existingCriterion = filterCriterion;
                 }
             });
 
             // Add the filter if not existing
-            if(!isExisting) {
+            if(existingCriterion) {
+                if(!newFilterCriterion.value) {
+                    // Remove criterion
+                    newFilters.interactions = newFilters.interactions.filter((filterCriterion: FilterCriterion) => filterCriterion !== existingCriterion);
+                }
+            } else {
                 newFilters.interactions.push(newFilterCriterion);
             }
         }

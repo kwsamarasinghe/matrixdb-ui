@@ -2,8 +2,8 @@ import {useState} from "react";
 import {Collapse, IconButton, Link, List, ListItem, ListItemText, Typography} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const InterproComponent: React.FC<any> = (props: any) => {
-    const {interproList} = props;
+const XefListComponent: React.FC<any> = (props: any) => {
+    const {xrefList, xrefLink} = props;
     const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
@@ -15,11 +15,11 @@ const InterproComponent: React.FC<any> = (props: any) => {
             <List style={{
                 padding: 0
             }}>
-                {interproList.map((item : any) => (
+                {xrefList.map((item : any) => (
                     <ListItem style={{
                         padding: 1
                     }}>
-                        <a href={`https://www.ebi.ac.uk/interpro/entry/InterPro/${item.id}`}
+                        <a href={`${xrefLink}${item.id}`}
                            style={{
                                textDecoration: 'none',
                                paddingRight: '8px'
@@ -39,4 +39,4 @@ const InterproComponent: React.FC<any> = (props: any) => {
     );
 };
 
-export default InterproComponent;
+export default XefListComponent;
