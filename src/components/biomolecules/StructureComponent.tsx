@@ -207,7 +207,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     }, []);
 
     useEffect(() => {
-        if(selectedPDB) {
+        if(selectedPDB && plugin) {
             plugin.clear()
             plugin.builders.data.download(
                 {

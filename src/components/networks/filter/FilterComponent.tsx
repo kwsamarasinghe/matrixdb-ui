@@ -100,8 +100,16 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                 newFilters.interactions.push(newFilterCriterion);
             }
         }
-        //setCurrentFilters(newFilters);
-        updateFilterAction(newFilters);
+        setCurrentFilters(newFilters);
+        //updateFilterAction(newFilters);
+    }
+
+    const onFilterCancel = () => {
+        updateFilterAction({interactors: [], interactions: []});
+    }
+
+    const onFilterApply = () => {
+        updateFilterAction(currentFilters);
     }
 
     return (
@@ -217,7 +225,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                             marginRight: '10px',
                                             marginLeft: '5px'
                                         }}
-                                        onClick={() => {setCurrentFilters({interactors: [], interactions: []})}}
+                                        onClick={onFilterCancel}
                                     >
                                         <IconButton>
                                             <FontAwesomeIcon
@@ -232,7 +240,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                         variant="outlined"
                                         size="small"
                                         color="success"
-                                        onClick={() => {}}
+                                        onClick={onFilterApply}
                                     >
                                         <IconButton>
                                             <FontAwesomeIcon

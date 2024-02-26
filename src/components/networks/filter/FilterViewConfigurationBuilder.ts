@@ -1,5 +1,5 @@
 import FilterManager, {Filter, FilterCriterion} from "./FilterManager";
-import {FilterConfiguration, FilterCriterionConfiguration} from "./FilterConfigurationManager";
+import {FilterConfiguration, FilterCriterionConfiguration, FilterOptionType} from "./FilterConfigurationManager";
 
 
 class FilterCriterionViewConfigurationBuilder {
@@ -10,6 +10,7 @@ class FilterCriterionViewConfigurationBuilder {
 
     private filterCriterionConfiguration: FilterCriterionConfiguration | undefined;
     private value: any | undefined;
+    private isOptionsFromUnfilteredNetwork: boolean =  true;
 
     constructor(filterType: string,
                 filterManager: FilterManager,
@@ -29,6 +30,11 @@ class FilterCriterionViewConfigurationBuilder {
         return this;
     }
 
+    public withOptionsFromUnfiltreredNetwork(isOptionsFromUnfilteredNetwork: boolean) {
+        this.isOptionsFromUnfilteredNetwork = isOptionsFromUnfilteredNetwork;
+        return this;
+    }
+
     public build() {
         if(!this.filterCriterionConfiguration) {
             return undefined;
@@ -37,7 +43,12 @@ class FilterCriterionViewConfigurationBuilder {
         // Updates the filter criterion options
         if(this.filterCriterionConfiguration && this.filterType) {
             // Get the filtered network for current filters
-            const filteredNetwork = this.filterManager.getFilteredNetwork(this.currentFilters);
+            let filteredNetwork;
+            if(this.isOptionsFromUnfilteredNetwork) {
+                filteredNetwork = this.filterManager.getFilteredNetwork(this.currentFilters);
+            } else {
+                filteredNetwork = this.filterManager.getNetwork();
+            }
 
             if(this.filterCriterionConfiguration.options) {
 
@@ -60,6 +71,18 @@ class FilterCriterionViewConfigurationBuilder {
 
             if(this.filterCriterionConfiguration.subCriteria) {
                 for(const subfilterCriterion of this.filterCriterionConfiguration.subCriteria){
+
+                    // Set the filter value if already selected and set it
+                    let existingFilter = this.currentFilters.interactors.find(
+                        (filterCriterion: FilterCriterion) => {
+                            return this.filterCriterionConfiguration?.id === filterCriterion.id &&
+                                filterCriterion.subCriteria?.id === subfilterCriterion.id
+                        });
+
+                    if(existingFilter) {
+                        subfilterCriterion.value = existingFilter.subCriteria?.value;
+                    }
+
                     if(subfilterCriterion.options) {
                         let optionSet = new Set();
 
@@ -134,10 +157,20 @@ export class FilterViewConfigurationBuilder {
                     existingCriterionValue = existingFilter.value;
                 }
 
-                let updatedFilterCriterionConfiguration = filterCriterionViewConfiBuilder
-                    .withConfig(filterCriterionConfiguration)
-                    .withValue(existingCriterionValue)
-                    .build();
+                let updatedFilterCriterionConfiguration;
+                if(filterCriterionConfiguration.id === 'geneExpression' ||  filterCriterionConfiguration.id === 'proteomicsExpression') {
+                    updatedFilterCriterionConfiguration = filterCriterionViewConfiBuilder
+                        .withConfig(filterCriterionConfiguration)
+                        .withValue(existingCriterionValue)
+                        .withOptionsFromUnfiltreredNetwork(false)
+                        .build();
+                } else {
+                    updatedFilterCriterionConfiguration = filterCriterionViewConfiBuilder
+                        .withConfig(filterCriterionConfiguration)
+                        .withValue(existingCriterionValue)
+                        .build();
+                }
+
                 if(updatedFilterCriterionConfiguration) {
                     updatedFilterCriterionConfiguration.enable = true;
                     filterCriterionConfiguration = updatedFilterCriterionConfiguration;
@@ -151,8 +184,9 @@ export class FilterViewConfigurationBuilder {
             this.filterManager,
             this.filters
         );
+
         this.filterConfiguration.interaction?.forEach((filterCriterionConfiguration: FilterCriterionConfiguration) => {
-            let existingFilter = this.filters.interactors.find(
+            let existingFilter = this.filters.interactions.find(
                 (filterCriterion: FilterCriterion) => filterCriterion.id === filterCriterionConfiguration.id);
 
             let existingCriterionValue;
@@ -160,10 +194,20 @@ export class FilterViewConfigurationBuilder {
                 existingCriterionValue = existingFilter.value;
             }
 
-            let updatedFilterCriterionConfiguration = filterCriterionViewConfiBuilder
-                .withConfig(filterCriterionConfiguration)
-                .withValue(existingCriterionValue)
-                .build();
+            let updatedFilterCriterionConfiguration;
+            if(filterCriterionConfiguration.options?.type === FilterOptionType.numeric) {
+                updatedFilterCriterionConfiguration = filterCriterionViewConfiBuilder
+                    .withConfig(filterCriterionConfiguration)
+                    .withValue(existingCriterionValue)
+                    .withOptionsFromUnfiltreredNetwork(false)
+                    .build();
+            } else {
+                updatedFilterCriterionConfiguration = filterCriterionViewConfiBuilder
+                    .withConfig(filterCriterionConfiguration)
+                    .withValue(existingCriterionValue)
+                    .build();
+            }
+
             if(updatedFilterCriterionConfiguration) {
                 updatedFilterCriterionConfiguration.enable = true;
                 filterCriterionConfiguration = updatedFilterCriterionConfiguration;

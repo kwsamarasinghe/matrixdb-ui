@@ -112,6 +112,7 @@ function PartnerOverview(props: any) {
 
     if (partner) {
         return (
+            <Card style={{ flex: 0.35, backgroundColor: 'white', margin: '10px' }}>
                 <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
                         <a href={"/biomolecule/" + partner.id} style={{ wordBreak: 'break-all' }}>
@@ -125,6 +126,7 @@ function PartnerOverview(props: any) {
                         {partner.ecm}
                     </Typography>
                 </CardContent>
+            </Card>
         );
     } else {
         return <></>
@@ -141,6 +143,7 @@ function AssociationOverview(props: any) {
 
     if (association) {
         return (
+            <Card style={{ flex: 0.35, backgroundColor: 'white', margin: '10px' }}>
                 <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
                         <a href={"/association/" + association.id} style={{ wordBreak: 'break-all' }}>
@@ -184,6 +187,7 @@ function AssociationOverview(props: any) {
                             ))
                     }
                 </CardContent>
+            </Card>
         );
     } else {
         return <></>
@@ -192,33 +196,35 @@ function AssociationOverview(props: any) {
 
 function Legend(){
     return(
-        <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
-            {/* Legend */}
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'blue', marginRight: '10px' }}></div>
-                <span>Protein</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'green', marginRight: '10px' }}></div>
-                <span>GAG</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'orange', marginRight: '10px' }}></div>
-                <span>Multimer</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'lightblue', marginRight: '10px' }}></div>
-                <span>PFRAG</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <hr style={{ width: '20px', border: '2px solid black', marginRight: '10px' }} />
-                <span>Experimentally Supported</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <hr style={{ width: '20px', border: '2px solid red', marginRight: '10px' }} />
-                <span>Predicted Interactions</span>
-            </div>
-        </CardContent>
+        <Card style={{ flex: 0.35, backgroundColor: 'white', margin: '10px' }}>
+            <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
+                {/* Legend */}
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'blue', marginRight: '10px' }}></div>
+                    <span>Protein</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'green', marginRight: '10px' }}></div>
+                    <span>GAG</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'orange', marginRight: '10px' }}></div>
+                    <span>Multimer</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'lightblue', marginRight: '10px' }}></div>
+                    <span>PFRAG</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <hr style={{ width: '20px', border: '2px solid black', marginRight: '10px' }} />
+                    <span>Experimentally Supported</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <hr style={{ width: '20px', border: '2px solid red', marginRight: '10px' }} />
+                    <span>Predicted Interactions</span>
+                </div>
+            </CardContent>
+        </Card>
     )
 }
 
@@ -545,7 +551,6 @@ function FilterComponent(props: any) {
         const onPropertyAttributeChange = ((event : any, newValue : any) => {
             let newPropertyAttributes = propertyAttributes;
             newPropertyAttributes[event.target.name] = newValue;
-            console.log(newPropertyAttributes)
             setPropertyAttributes(newPropertyAttributes);
         });
 
@@ -1005,8 +1010,6 @@ function CytoscapeComponent(props: any) {
 
 
     useEffect(() => {
-        console.log(participants)
-        console.log(associations)
         if (cyRef.current && associations.length > 0) {
             //let elements = [];
             /*elements.push({
@@ -1252,54 +1255,15 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
                                                                              filters,
                                                                              biomoleculeIds}) => {
 
-    const [currentNetwork, setCurrentNetwork] = useState<any>(network);
-
-    useEffect(() => {
-        const filterManager = new FilterManager(network);
-        const currentNetwork = filterManager.getFilteredNetwork(filters);
-        setCurrentNetwork(currentNetwork);
-        console.log("assoc component")
-    }, [filters]);
-
-    /*const onFilterAdd = ((filters: any, editing: boolean) => {
-        let associationsToFilter = [];
-
-        if(filters.length === 0) {
-            setFilteredAssociations(associations);
-            return;
-        }
-
-        if(editing && filters.length > 0) {
-            associationsToFilter = associations;
-        } else {
-            associationsToFilter = filteredAssociation;
-        }
-
-        if(filters.some((filter: Filter) => filter.type && filter.subCriteria.length > 0)) {
-            const filteredAssociations = filterAssociations(biomoleculeIds[0], associationsToFilter, participants, filters);
-            setFilteredAssociations(filteredAssociations);
-        }
-
-    });
-
-    const onFilterDelete = ((filters: any) => {
-        if(filters.length === 0) {
-            setFilteredAssociations(associations);
-        } else {
-            // Reverse the last filter
-            const filteredAssociations = filterAssociations(biomoleculeIds[0], associations, participants, filters);
-            setFilteredAssociations(filteredAssociations);
-        }
-    });*/
-
-    //if (participants && participants.length > 0) {
+    const filterManager = new FilterManager(network);
+    const currentNetwork = filterManager.getFilteredNetwork(filters);
         return (
             <div style={{display: 'flex'}}>
                 <div
                     style={{flex: 3.65, height: "800px"}}
                 >
                     {
-                        <CytoscapeComponent
+                        currentNetwork.interactors.length > 0 && currentNetwork.interactions.length > 0 && <CytoscapeComponent
                             biomoleculeId={biomoleculeIds[0]}
                             participants={currentNetwork.interactors}
                             associations={currentNetwork.interactions}
@@ -1318,9 +1282,6 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
                 </div>
             </div>
         );
-    /*} else {
-        return <></>
-    }*/
 
 }
 

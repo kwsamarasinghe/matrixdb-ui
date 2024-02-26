@@ -1,6 +1,7 @@
 import React from "react";
 import {Autocomplete, Button, Chip, Divider, Paper, Slider, TextField, Typography} from "@mui/material";
 import {FilterCriterionConfiguration, FilterOptionType} from "./FilterConfigurationManager";
+import {FilterCriterion} from "./FilterManager";
 
 export const ReadOnlyFilterCriterionComponent: React.FC<any> = ({
                                                              filterType,
@@ -89,7 +90,8 @@ export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
                                                     criterion,
                                                     onAdd
                                                 })  => {
-    const {id, label, options, subCriteria, value} = criterion;
+    const { label, subCriteria, value} = criterion;
+    const filterCriterionId = criterion.id;
 
     if(value) {
         return(
@@ -119,7 +121,8 @@ export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
                 }}>
                     {
                         subCriteria && subCriteria.map((filterCriterionConfiguration: FilterCriterionConfiguration) => {
-                            const {label, value, options} = filterCriterionConfiguration;
+                            const { id, label, options} = filterCriterionConfiguration;
+                            const subCriteriaValue = filterCriterionConfiguration.value;
                             return(
                                 <div style={{
                                     display: 'flex',
@@ -142,12 +145,13 @@ export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
                                                 size="small"
                                                 id={id}
                                                 options={options.range}
+                                                value={subCriteriaValue}
                                                 style={{ width: '200px', height: '30px' }}
                                                 renderInput={(params) => (
                                                     <TextField {...params} variant="outlined" />
                                                 )}
                                                 onChange={(event, newValue) =>
-                                                    onAdd(filterType, { id: id, value: newValue })
+                                                    onAdd(filterType, { id: filterCriterionId, subCriteria: { id: id,  value: newValue }})
                                                 }
                                             />
                                         )
@@ -156,11 +160,15 @@ export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
                                         options && options.range && options.range.length > 0 && options.type === FilterOptionType.numeric && (
                                             <div style={{ width: '40%' }}>
                                                 <Slider
-                                                    defaultValue={1}
-                                                    min={0}
-                                                    max={1}
-                                                    step={0.1}
+                                                    track={'inverted'}
+                                                    min={Math.min(...options.range)}
+                                                    max={Math.max(...options.range)}
+                                                    value={subCriteriaValue}
+                                                    step={100}
                                                     valueLabelDisplay='auto'
+                                                    onChange={(event, newValue) =>
+                                                        onAdd(filterType, { id: filterCriterionId, subCriteria: { id: id,  value: newValue }})
+                                                    }
                                                 />
                                             </div>
                                         )
@@ -175,47 +183,11 @@ export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
     }
 }
 
-export const EditingSubCriteriaComponent: React.FC<any> = ({
-                                                        filterType,
-                                                        criterion,
-                                                        onValueChanged
-                                                    })  => {
-    const {label, subCriteria} = criterion;
-    return(
-        <Paper
-            square
-            style={{
-                padding: '10px',
-                background: 'rgba(255, 255, 255, 0.9)',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-            }}>
-            <div>
-                <Typography variant="body2" style={{ fontWeight: 'bold' }}>
-                    {label}
-                </Typography>
-            </div>
-            <Divider style={{ width: '40%', backgroundColor: 'black', margin: '1px 0' }} />
-            {
-                subCriteria && subCriteria.map((subCriterion: FilterCriterionConfiguration) => (
-                    <div style={{
-                        paddingTop: '10px'
-                    }}>
-                        <FilterCriterionComponent
-                            filterType={filterType}
-                            criterion={subCriterion}
-                            onAdd={onValueChanged}
-                        />
-                    </div>
-                ))
-            }
-        </Paper>
-    )
-}
 
 interface FilterCriterionProps {
     filterType: string,
     criterion: FilterCriterionConfiguration,
-    onAdd: (filterType: string, data: { id: string; value: string | null }) => void;
+    onAdd: (filterType: string, filterCriterion: FilterCriterion) => void;
 }
 const FilterCriterionComponent: React.FC<FilterCriterionProps> = ({
                                                 filterType,
@@ -258,11 +230,15 @@ const FilterCriterionComponent: React.FC<FilterCriterionProps> = ({
                 options && options.range && options.range.length > 0 && options.type === FilterOptionType.numeric && (
                     <div style={{ width: '40%' }}>
                         <Slider
-                            defaultValue={0}
-                            min={0}
-                            max={1}
+                            track={'inverted'}
+                            min={Math.min(...options.range)}
+                            max={Math.max(...options.range)}
+                            value={value}
                             step={0.1}
                             valueLabelDisplay='auto'
+                            onChange={(event, newValue) =>
+                                onAdd(filterType, { id: id, value: newValue })
+                            }
                         />
                     </div>
                 )

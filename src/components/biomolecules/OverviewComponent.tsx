@@ -17,7 +17,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPerson } from '@fortawesome/free-solid-svg-icons';
-import InterproComponent from "./overview/InterproComponent";
+import InterproComponent from "./overview/XrefListComponent";
+import XrefListComponent from "./overview/XrefListComponent";
 
 interface BiomoleculeToDisplay {
     id: string,
@@ -113,7 +114,7 @@ function OverviewComponent(props: any) {
         if(biomoleculeToDisplay && biomoleculeToDisplay.interpro && biomoleculeToDisplay.interpro.length > 0 ) {
             tabConfig.push({
                 label: 'Domain Annotations',
-                renderContent: () => <InterproComponent interproList={biomoleculeToDisplay.interpro}/>
+                renderContent: () => <XrefListComponent interproList={biomoleculeToDisplay.interpro}/>
             })
         }
 
@@ -122,12 +123,13 @@ function OverviewComponent(props: any) {
                 label: 'Cross References',
                 renderContent: () => (
                     <>
-                        {renderCrossRefContent('CheBI', 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=', biomoleculeToDisplay.crossRefs.chebi)}
-                        {renderCrossRefContent('Reactome', 'https://reactome.org/PathwayBrowser/', biomoleculeToDisplay.crossRefs.reactome)}
                         {biomoleculeToDisplay.type === 'protein' && renderCrossRefContent('Uniprot', 'http://www.uniprot.org/uniprot/', biomoleculeToDisplay.id)}
-                        {renderCrossRefContent('Complex Portal', 'https://www.ebi.ac.uk/complexportal/complex/', biomoleculeToDisplay.crossRefs.complex_portal)}
-                        {renderCrossRefContent('EBI', 'https://www.ebi.ac.uk/intact/query/', biomoleculeToDisplay.crossRefs.EBI_xref)}
                         {biomoleculeToDisplay.type === 'pfrag' && renderCrossRefContent('Uniprot Fragment', 'https://www.uniprot.org/uniprotkb/', biomoleculeToDisplay.crossRefs.uniprot)}
+                        {renderCrossRefContent('Complex Portal', 'https://www.ebi.ac.uk/complexportal/complex/', biomoleculeToDisplay.crossRefs.complex_portal)}
+                        {renderCrossRefContent('CheBI', 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=', biomoleculeToDisplay.crossRefs.chebi)}
+                        {renderCrossRefListContent('Reactome', 'https://reactome.org/content/detail/', biomoleculeToDisplay.crossRefs.reactome)}
+                        {renderCrossRefContent('EBI', 'https://www.ebi.ac.uk/intact/query/', biomoleculeToDisplay.crossRefs.EBI_xref)}
+
                     </>
                 )
             })
@@ -138,9 +140,9 @@ function OverviewComponent(props: any) {
     const renderCrossRefContent = (label : string, link : string, value : string) => {
         return (
             value && (
-                <div key={label} style={{ display: 'flex', marginBottom: '8px', alignItems: 'left' }}>
+                <div key={label} style={{ display: 'flex', marginBottom: '8px', paddingTop: '5px', alignItems: 'left' }}>
                     <div style={{ flexBasis: '10%', paddingRight: '10px', alignItems: 'center' }}>
-                        <Typography variant={"body2"}>
+                        <Typography variant={"body2"} style={{color: 'darkblue', fontWeight: 'bold'}}>
                                 {label}
                         </Typography>
                     </div>
@@ -153,6 +155,16 @@ function OverviewComponent(props: any) {
                     </div>
                 </div>
             )
+        );
+    };
+
+    const renderCrossRefListContent = (label : string, link : string, value : any[]) => {
+        return (
+            <XrefListComponent
+                label={label}
+                xrefList={value}
+                xrefLink={link}
+            />
         );
     };
 

@@ -78,13 +78,6 @@ function AssociationComponent() {
         borderRadius: 0
     };
 
-    const mapScoreToColor = (score: number) => {
-        const green = 128;
-        const alpha = score;
-        const color = `rgba(0, ${green}, 0, ${alpha})`;
-        return color;
-    };
-
     const cellStyles = {
         padding: '0px',
         borderBottom: 'none',

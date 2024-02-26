@@ -2,7 +2,8 @@ import {FilterCriterionConfiguration} from "./FilterConfigurationManager";
 
 export interface FilterCriterion {
     id: string,
-    value?: any
+    value?: any,
+    subCriteria?: FilterCriterion
 }
 
 export interface Filter {
@@ -33,7 +34,7 @@ class FilterManager {
         networkData.interactions = filteredInteractions;
     }
 
-    getFilteredNetwork(filters: Filter) {
+    public getFilteredNetwork(filters: Filter) {
         if(filters.interactions.length === 0 && filters.interactors.length === 0) {
             return this.networkData;
         }
@@ -51,13 +52,44 @@ class FilterManager {
                     if(interactor.id === filteredNetwork.biomolecules[0]) {
                         return true;
                     }
-                    return interactor[filter.id] === filter.value;
-            })
+
+                    if(filter.subCriteria) {
+                        if(interactor[filter.id] && interactor[filter.id].length === 0) return false;
+                        let criteriaValue = interactor[filter.id].find((criterionValue: any) => {
+                            if(filter.subCriteria) {
+                                if(typeof filter.subCriteria.value === 'number') {
+                                    if(criterionValue[filter.subCriteria.id] >= filter.subCriteria.value) {
+                                        return true;
+                                    }
+                                } else {
+                                    return criterionValue[filter.subCriteria.id] === filter.subCriteria.value;
+                                }
+                            }
+                        });
+                        return !!criteriaValue;
+                    }
+
+                    if(typeof filter.value === 'number') {
+                        if(interactor[filter.id] >= filter.value) {
+                            return true;
+                        }
+                    } else {
+                        return (filter.value && interactor[filter.id] === filter.value);
+                    }
+            });
         });
 
         let filteredInteractions = filteredNetwork.interactions;
         filters.interactions.forEach((filter: FilterCriterion) => {
-            filteredInteractions = filteredInteractors.filter((interaction: any) => interaction[filter.id] === filter.value);
+            filteredInteractions = filteredInteractions.filter((interaction: any) => {
+                if(typeof filter.value === 'number') {
+                    if(interaction[filter.id] >= filter.value) {
+                        return true;
+                    }
+                } else {
+                    return interaction[filter.id] === filter.value;
+                }
+            });
         });
 
         // Remove interactions associated in filtered biomolecules
@@ -76,6 +108,10 @@ class FilterManager {
         filteredNetwork.interactions = filteredInteractions;
 
         return filteredNetwork;
+    }
+
+    public getNetwork(){
+        return this.networkData;
     }
 
 }
