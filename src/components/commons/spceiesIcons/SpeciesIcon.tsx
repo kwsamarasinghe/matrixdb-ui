@@ -6,6 +6,9 @@ import { ReactComponent as RatIcon } from '../../../assets/images/species/rat_bu
 import { ReactComponent as BovineIcon } from '../../../assets/images/species/bovine_bullet.svg';
 import { ReactComponent as FishIcon } from '../../../assets/images/species/fish_bullet.svg';
 import { ReactComponent as GuineaPigIcon } from '../../../assets/images/species/guineapig_bullet.svg';
+import { ReactComponent as ChickenIcon } from '../../../assets/images/species/chicken_bullet.svg';
+import { ReactComponent as PigIcon } from '../../../assets/images/species/pig_bullet.svg';
+import { ReactComponent as RabbitIcon } from '../../../assets/images/species/rabbit_bullet.svg';
 
 
 interface SpeciesIconProps {
@@ -33,6 +36,15 @@ const SpeciesIcon: React.FC<SpeciesIconProps> = ({ speciesId }) => {
             break;
         case '10141':
             iconComponent = <GuineaPigIcon />;
+            break;
+        case '9031':
+            iconComponent = <ChickenIcon />;
+            break;
+        case '9986':
+            iconComponent = <RabbitIcon />;
+            break;
+        case '9823':
+            iconComponent = <PigIcon />;
             break;
         default:
             iconComponent = null;
