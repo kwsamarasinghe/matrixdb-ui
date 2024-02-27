@@ -19,11 +19,15 @@ type AssociationListProps = PropsFromRedux & {biomoleculeIds: [string] | []};
 const AssociationListComponent : React.FC<AssociationListProps> = ({network, biomoleculeIds}) => {
 
     const rows = network.interactions.map((interaction: any) => {
+        let partner = interaction.participants
+            .filter((biomolecule: string) => biomolecule !== biomoleculeIds[0])[0];
+        if(!partner) partner = biomoleculeIds[0];
         return {
-            id: interaction.id,
+            id: partner,
             association: interaction.id,
             directlySupportedBy: [],
-            spokeExpandedFrom: []
+            spokeExpandedFrom: [],
+            score: interaction.score
         }
     });
     const columns: GridColDef[] = [
@@ -39,7 +43,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
         {
             field: 'association',
             headerName: 'Association',
-            width: 350,
+            width: 250,
             renderCell: (params: any) =>  (
                 <>
                     <a href={process.env.REACT_APP_PUBLIC_URL + "association/"+params.value}>{params.value}</a>
@@ -88,6 +92,17 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
                 </>
             ),
             sortComparator: (v1, v2) =>  v2.length - v1.length
+        },
+        {
+            field: 'score',
+            headerName: 'MI Score',
+            width: 80,
+            renderCell: (params: any) =>  (
+                <>
+                    {params.value}
+                </>
+            ),
+            sortComparator: (v1, v2) =>  parseInt(v2) - parseInt(v1)
         }
     ];
 
