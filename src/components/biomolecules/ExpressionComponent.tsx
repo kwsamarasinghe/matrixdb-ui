@@ -134,7 +134,7 @@ function ExpressionComponent(props: any) {
     const [gene, setGene] = useState<string>("");
     const [uberonTissues, setUberonTissues] = useState<Array<string> | []>([]);
     const [geneExpressionData, setGeneExpressionData] = useState<any>([]);
-    const [proteomicsExpressionData, setProteomicsExpressionData] = useState<BarChartData[]>([]);
+    const [proteomicsExpressionData, setProteomicsExpressionData] = useState<any>({});
     const [expressionTypes, setExpressionTypes] = useState<string[]>([]);
     const [selectedProtemicsSampleIndex, setSelectedProteomicsSampleIndex] = useState<number | null>(null);
 
@@ -221,32 +221,40 @@ function ExpressionComponent(props: any) {
                     setGeneExpressionData(geneExpressionData);
 
                     // Prepare bar chart data
-                    /*let barchartData : any[] = [];
-                    Object.keys(proteomicsExpression).forEach((tissueId: string) => {
-                        proteomicsExpression[tissueId].expressionValues.forEach((expression: any) => {
+                    let parsedProteomicsExpressionData : {
+                        [key:string] : any
+                    } = {};
+                    let barchartData : any[] = [];
+                    Object.keys(expressionDataResponse.data).forEach((protein: string) => {
+                        let proteomicsExpressionData = expressionDataResponse.data[protein].proteomicsExpression;
+                        proteomicsExpressionData.forEach((expression: any) => {
                             let data: BarChartData = {
-                                group: tissueId,
+                                group: expression.tissueId,
                                 subgroup: {
-                                    [expression.name]: expression.score,
+                                    [expression.name]: Math.log10(expression.score),
                                 },
                                 subgroupDetails: expression.sample,
                             };
                             barchartData.push(data);
                         });
+                        parsedProteomicsExpressionData[protein] = barchartData;
                     });
-                    setProteomicsExpressionData(barchartData);*/
+                    setProteomicsExpressionData(parsedProteomicsExpressionData);
 
                     setProtein(protein);
                     setGene(gene);
 
                     let expressionTypes : string[] = [];
-                    if(geneExpressionData && Object.keys(geneExpressionData).length > 0) {
+                    if(geneExpressionData && geneExpressionData.length > 0) {
                         expressionTypes.push('geneExpression');
                     }
 
-                    /*if(proteomicsExpression && Object.keys(proteomicsExpression).length > 0 ) {
+                    if(parsedProteomicsExpressionData &&
+                        Object.keys(parsedProteomicsExpressionData)
+                            .map((key: string) => parsedProteomicsExpressionData[key].length)
+                            .reduce((shouldDisplay: boolean, isEmpty: boolean) => shouldDisplay && isEmpty, true)) {
                         expressionTypes.push('proteomicsExpression');
-                    }*/
+                    }
                     setExpressionTypes(expressionTypes);
                 });
         }
@@ -454,88 +462,95 @@ function ExpressionComponent(props: any) {
     function ProteomicsExpressionComponent() {
         return(
             <>
-                <div style={{
-                    display: 'flex',
-                }}>
-                    <div style={{
-                        flex: 0.5,
-                        marginRight: '20px',
-                    }}>
+            {
+                Object.keys(proteomicsExpressionData).map((protein: string) => {
+                    let proteomicsExpressionDataByProtein = proteomicsExpressionData[protein];
+                    return(
                         <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}>
-                            <h4>Samples</h4>
-                        </div>
-                        <div  style={{
-                            overflowY: 'auto',
-                            maxHeight: '320px'
-                        }}>
-                            <TableContainer component={Paper}>
-                                <TableBody>
-                                    {
-                                        proteomicsExpressionData.map((proteomicsData: any) => {
-                                            return(
-                                                <>
-                                                    <TableRow>
-                                                        <TableCell style={{
-                                                            backgroundColor: proteomicsData.index === selectedProtemicsSampleIndex ? 'lightgray' : 'white'
-                                                        }}>
-                                                            <Button
-                                                                style={{
-                                                                    textTransform: 'none',
-                                                                }}
-                                                                onClick={() => onSampleSelect(proteomicsData.index)}
-                                                            >
-                                                                {Object.keys(proteomicsData.subgroup)[0]}
-                                                            </Button>
-                                                            <div style={{
-                                                                display: 'flex',
-                                                                flexWrap: 'wrap',
-                                                            }}>
-                                                                {
-                                                                    Object.keys(proteomicsData.subgroupDetails).map((sampleKey: string) => {
-                                                                        const width = `${proteomicsData.subgroupDetails[sampleKey] * 10}px`;
-                                                                        if(proteomicsData.subgroupDetails[sampleKey] !== "") {
-                                                                            return (
-                                                                                <InputLabel style={{
-                                                                                    border: '1px solid orange',
-                                                                                    padding: '5px',
-                                                                                    textAlign: 'center',
-                                                                                    color: 'orange',
-                                                                                    fontWeight: 'bold',
-                                                                                    borderRadius: '4px',
-                                                                                    fontSize: '12px',
-                                                                                    width: width,
-                                                                                    margin: '5px',
-                                                                                }}>
-                                                                                    {proteomicsData.subgroupDetails[sampleKey]}
-                                                                                </InputLabel>
-                                                                            )
+                        display: 'flex',
+                    }}>
+                            <div style={{
+                                flex: 0.5,
+                                marginRight: '20px',
+                            }}>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}>
+                                    <h4>Samples</h4>
+                                </div>
+                                <div  style={{
+                                    overflowY: 'auto',
+                                    maxHeight: '320px'
+                                }}>
+                                    <TableContainer component={Paper}>
+                                        <TableBody>
+                                            {
+                                                proteomicsExpressionDataByProtein.map((proteomicsData: any) => {
+                                                    return(
+                                                        <>
+                                                            <TableRow>
+                                                                <TableCell style={{
+                                                                    backgroundColor: proteomicsData.index === selectedProtemicsSampleIndex ? 'lightgray' : 'white'
+                                                                }}>
+                                                                    <Button
+                                                                        style={{
+                                                                            textTransform: 'none',
+                                                                        }}
+                                                                        onClick={() => onSampleSelect(proteomicsData.index)}
+                                                                    >
+                                                                        {Object.keys(proteomicsData.subgroup)[0]}
+                                                                    </Button>
+                                                                    <div style={{
+                                                                        display: 'flex',
+                                                                        flexWrap: 'wrap',
+                                                                    }}>
+                                                                        {
+                                                                            Object.keys(proteomicsData.subgroupDetails).map((sampleKey: string) => {
+                                                                                const width = `${proteomicsData.subgroupDetails[sampleKey] * 10}px`;
+                                                                                if(proteomicsData.subgroupDetails[sampleKey] !== "") {
+                                                                                    return (
+                                                                                        <InputLabel style={{
+                                                                                            border: '1px solid orange',
+                                                                                            padding: '5px',
+                                                                                            textAlign: 'center',
+                                                                                            color: 'orange',
+                                                                                            fontWeight: 'bold',
+                                                                                            borderRadius: '4px',
+                                                                                            fontSize: '12px',
+                                                                                            width: width,
+                                                                                            margin: '5px',
+                                                                                        }}>
+                                                                                            {proteomicsData.subgroupDetails[sampleKey]}
+                                                                                        </InputLabel>
+                                                                                    )
+                                                                                }
+                                                                            })
                                                                         }
-                                                                    })
-                                                                }
-                                                            </div>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                </>
-                                            )
-                                        })
-                                    }
-                                </TableBody>
-                            </TableContainer>
+                                                                    </div>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </>
+                                                    )
+                                                })
+                                            }
+                                        </TableBody>
+                                    </TableContainer>
+                                </div>
+                            </div>
+                            {
+                                proteomicsExpressionDataByProtein && <div style={{
+                                    flex: 1,
+                                    paddingLeft: '30px'
+                                }}>
+                                    <BarChart data={proteomicsExpressionDataByProtein} />
+                                </div>
+                            }
                         </div>
-                    </div>
-                    {
-                        proteomicsExpressionData && <div style={{
-                            flex: 1,
-                            paddingLeft: '30px'
-                        }}>
-                            <BarChart data={proteomicsExpressionData} />
-                        </div>
-                    }
-                </div>
+                    )
+                })
+            }
             </>
         )
     }
@@ -544,8 +559,7 @@ function ExpressionComponent(props: any) {
         <>
             <>
                     {
-                        (geneExpressionData && Array.from(geneExpressionData.keys()).length > 0 ||
-                            proteomicsExpressionData && proteomicsExpressionData.length > 0) &&
+                        (expressionTypes.includes('geneExpression') || expressionTypes.includes('proteomicsExpression')) &&
                         <div>
                             <Paper style={paperStyle}>
                                 <>
@@ -557,11 +571,11 @@ function ExpressionComponent(props: any) {
 
                                     <Tabs value={tabValue} onChange={handleTabChange} centered>
                                         {
-                                            geneExpressionData.length > 0 &&
+                                            expressionTypes.includes('geneExpression') &&
                                             <Tab label="Gene Expression"/>
                                         }
                                         {
-                                            proteomicsExpressionData && proteomicsExpressionData.length > 0 &&
+                                            expressionTypes.includes('proteomicsExpression') &&
                                             <Tab label="Proteomics Expression" />
                                         }
                                     </Tabs>
@@ -570,14 +584,13 @@ function ExpressionComponent(props: any) {
                                             return(
                                                 <>
                                                     {
-                                                        type === 'geneExpression' && geneExpressionData.length > 0 &&
+                                                        type === 'geneExpression' && expressionTypes.includes('geneExpression')  &&
                                                         <TabPanel value={tabValue} index={index}>
                                                             <GeneExpressionComponent/>
                                                         </TabPanel>
                                                     }
                                                     {
-                                                        type === 'proteomicsExpression' && proteomicsExpressionData &&
-                                                        proteomicsExpressionData.length > 0 &&
+                                                        type === 'proteomicsExpression' && expressionTypes.includes('proteomicsExpression') &&
                                                         <TabPanel value={tabValue} index={index}>
                                                             <ProteomicsExpressionComponent/>
                                                         </TabPanel>
@@ -588,6 +601,14 @@ function ExpressionComponent(props: any) {
                                     }
                                 </>
                             </Paper>
+                        </div>
+                    }
+                    {
+                        (!expressionTypes.includes('geneExpression') && !expressionTypes.includes('proteomicsExpression')) &&
+                        <div>
+                            <Typography variant={'body1'}>
+                                No Expression Data
+                            </Typography>
                         </div>
                     }
             </>
