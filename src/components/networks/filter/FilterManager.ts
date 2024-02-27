@@ -1,4 +1,3 @@
-import {FilterCriterionConfiguration} from "./FilterConfigurationManager";
 
 export interface FilterCriterion {
     id: string,

@@ -97,7 +97,7 @@ export class FilterConfigurationManager{
                         },
                     },
                     {
-                        id: 'sample',
+                        id: 'sampleName',
                         label: 'Sample',
                         options: {
                             type: FilterOptionType.list,
