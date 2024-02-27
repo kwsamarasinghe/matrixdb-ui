@@ -158,8 +158,9 @@ function BiomoleculeComponent() {
                                         </div>
                                     }
                                     {
-                                        (biomolecule && biomolecule.annotations.go && biomolecule.annotations.go.length >0
-                                            || biomolecule && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0) &&
+                                        (biomolecule && biomolecule.annotations) &&
+                                        ((biomolecule.annotations.go && biomolecule.annotations.go.length >0)
+                                            || (biomolecule && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0)) &&
                                         <div style={{marginBottom: '10px'}}>
                                             <KeywordComponent
                                                 goTerms={biomolecule.annotations.go}
