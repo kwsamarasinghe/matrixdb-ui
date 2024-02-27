@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPerson } from '@fortawesome/free-solid-svg-icons';
 import InterproComponent from "./overview/XrefListComponent";
 import XrefListComponent from "./overview/XrefListComponent";
+import SpeciesIcon from "../commons/spceiesIcons/SpeciesIcon";
 
 interface BiomoleculeToDisplay {
     id: string,
@@ -69,10 +70,10 @@ function OverviewComponent(props: any) {
         };
         biomoleculeToDisplay.id = biomolecule.id;
         biomoleculeToDisplay.type = biomolecule.type;
-        biomoleculeToDisplay.name = biomolecule.names.name;
-        biomoleculeToDisplay.otherNames = biomolecule.names.other_name;
+        biomoleculeToDisplay.name = biomolecule.names?.name;
+        biomoleculeToDisplay.otherNames = biomolecule.names?.other_name;
         biomoleculeToDisplay.recommendedName = biomolecule.names?.recommended_name;
-        biomoleculeToDisplay.species = biomolecule.species;
+        biomoleculeToDisplay.species = biomolecule?.species?.id;
         if(biomolecule.relations) {
             if(Array.isArray(biomolecule.relations.gene_name)) {
                 biomoleculeToDisplay.gene = biomolecule.relations.gene_name[0];
@@ -215,7 +216,7 @@ function OverviewComponent(props: any) {
                         {
                             biomoleculeToDisplay && biomoleculeToDisplay.species && 
                             <div style={{ paddingLeft: '20px' }}>
-                                <FontAwesomeIcon icon={faPerson} size={'2x'}/>
+                                <SpeciesIcon speciesId={biomoleculeToDisplay.species}/>
                             </div>
                         }
                     </div>
