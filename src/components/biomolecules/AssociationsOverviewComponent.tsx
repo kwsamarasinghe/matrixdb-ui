@@ -57,6 +57,7 @@ type AssociationOverviewComponentProps = PropsFromRedux & { biomoleculeId : stri
 const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps> = ({biomoleculeId, setNetworkDataAction}) => {
 
     const [interactors, setInteractors] = useState<any | null>();
+    const [interactorStats, setInteractorStats] = useState<any | null>();
     const [loaded, setLoaded] = useState(false);
     const [isExpanded, setIsExpanded] = useState(true);
     const [tabValue, setTabValue] = useState(0);
@@ -73,6 +74,23 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                 if(networkData) {
                     setInteractors(networkData.interactors);
                 }
+
+                let interactorStats = {
+                    partners: networkData.interactors.length,
+                    directlySupportedExperiments : 0,
+                }
+                networkData.interactions.forEach((interaction: any) => {
+                    let binary = 0, spokeExpandedFrom = 0;
+                    if(interaction?.experiments?.direct?.binary?.length) {
+                        binary = interaction?.experiments?.direct?.binary?.length;
+                    }
+
+                    if(interaction?.experiments?.direct?.spoke_expanded_from?.length) {
+                        spokeExpandedFrom = interaction?.experiments?.direct?.spoke_expanded_from?.length;
+                    }
+                    interactorStats.directlySupportedExperiments += (binary + spokeExpandedFrom);
+                });
+                setInteractorStats(interactorStats);
             });
     }, [biomoleculeId]);
 
@@ -118,12 +136,15 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                 </span>
                             </div>
                             <div>
-                                <div style={{clear: 'left', textAlign: 'left'}}>
-                                    <h4 >Interactors {interactors.count}</h4>
-                                    {interactors.direct > 0 && <h4>Experimentally Supported Experiments: <span style={{ color : 'darkblue'}}>{interactors.direct}</span> </h4>}
-                                    {interactors.predictions > 0 && <h4>Predicted : <span style={{ color : 'darkgreen'}}>{interactors.predictions}</span> </h4>}
-                                    {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
-                                </div>
+                                {
+                                    interactorStats &&
+                                    <div style={{clear: 'left', textAlign: 'left'}}>
+                                        <h4 >Interactors: {interactorStats.partners}</h4>
+                                        {interactorStats.directlySupportedExperiments > 0 && <h4>Experimentally Supported Experiments: <span style={{ color : 'darkblue'}}>{interactorStats.directlySupportedExperiments}</span> </h4>}
+                                        {interactors.predictions > 0 && <h4>Predicted : <span style={{ color : 'darkgreen'}}>{interactors.predictions}</span> </h4>}
+                                        {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
+                                    </div>
+                                }
                                 <div style={{float: 'right'}}>
                                     <IconButton onClick={toggleExpansion}>
                                         {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
