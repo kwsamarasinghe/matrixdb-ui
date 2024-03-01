@@ -6,7 +6,7 @@ import { PluginConfig } from 'molstar/lib/mol-plugin/config';
 import { PluginSpec } from 'molstar/lib/mol-plugin/spec';
 import { DefaultPluginUISpec, PluginUISpec } from 'molstar/lib/mol-plugin-ui/spec';
 import { PluginBehaviors } from 'molstar/lib/mol-plugin/behavior';
-import {List, ListItem, Paper, Typography} from "@mui/material";
+import {Paper} from "@mui/material";
 import {
     PresetStructureRepresentations,
     StructureRepresentationPresetProvider
@@ -18,9 +18,9 @@ import {
     QualityAssessmentQmeanPreset
 } from "molstar/lib/extensions/model-archive/quality-assessment/behavior";
 import {SbNcbrPartialChargesPreset, SbNcbrPartialChargesPropertyProvider} from "molstar/lib/extensions/sb-ncbr";
-import "molstar/build/viewer/molstar.css"
-
+import "molstar/build/viewer/molstar.css";
 import pdblogo from "../../assets/images/pdb.png";
+import SelectableList from "../commons/lists/SelectableList";
 
 
 const DefaultViewerOptions = {
@@ -42,43 +42,6 @@ const DefaultViewerOptions = {
     volumeStreamingServer: PluginConfig.VolumeStreaming.DefaultServer.defaultValue,
     pdbProvider: PluginConfig.Download.DefaultPdbProvider.defaultValue,
     emdbProvider: PluginConfig.Download.DefaultEmdbProvider.defaultValue,
-};
-
-function PDBList(props: any) {
-    const {selectedPDB, pdbIds, onPDBChange} = props;
-
-    const rowColor = (pdbId: string, index: number) => {
-        if(selectedPDB === pdbId) {
-            return {border: '1px solid #3498db'};
-        } else {
-            if(index % 2 === 0) {
-                return {background: 'white'}
-            } else {
-                return {background: 'rgb(223,236,243)'};
-            }
-        }
-    }
-
-    return (
-        <List style={{
-            height: '500px',
-            overflowY: 'auto'
-        }}>
-            {pdbIds.map((pdbId: string, index: number) => (
-                <ListItem key={index}
-                          style={rowColor(pdbId, index)}
-                          onClick={() => onPDBChange(pdbId)}
-                >
-                    <img src={pdblogo} style={{width: '20px', paddingRight: '10px'}}/>
-                    <Typography variant={'body2'}>
-                        <a href={`http://pdb.org/${pdbId}`} target='_blank'>
-                            {pdbId}
-                        </a>
-                    </Typography>
-                </ListItem>
-            ))}
-        </List>
-    );
 };
 
 const StructureViewerComponent: React.FC<any> = (props: any) => {
@@ -174,10 +137,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                                 description: 'Show standard automatic representation but colored by quality assessment (if available in the model).'
                             },
                             isApplicable(a) {
-                                return (
-                                    !!a.data.models.some(m => QualityAssessment.isApplicable(m, 'pLDDT')) ||
-                                    !!a.data.models.some(m => QualityAssessment.isApplicable(m, 'qmean'))
-                                );
+                                return (a.data.models.some(m => QualityAssessment.isApplicable(m, 'pLDDT')) || a.data.models.some(m => QualityAssessment.isApplicable(m, 'qmean')));
                             },
                             params: () => StructureRepresentationPresetProvider.CommonParams,
                             async apply(ref, params, plugin) {
@@ -209,24 +169,31 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     useEffect(() => {
         if(selectedPDB && plugin) {
             plugin.clear()
-            plugin.builders.data.download(
-                {
-                    url: "https://www.ebi.ac.uk/pdbe/entry-files/download/" + selectedPDB.toLowerCase() + ".bcif",
-                    isBinary: true
-                },
-                {
-                    state:
-                        {
-                            isGhost: true
+            try {
+                plugin.builders.data.download(
+                    {
+                        url: "https://www.ebi.ac.uk/pdbe/entry-files/download/" + selectedPDB.toLowerCase() + ".bcif",
+                        isBinary: true
+                    },
+                    {
+                        state:
+                            {
+                                isGhost: true
+                            }
+                    }
+                )
+                    .then((data: any) => {
+                        if(data) {
+                            plugin.builders.structure.parseTrajectory(data, "mmcif")
+                                .then((trajectory: any) => {
+                                    plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
+                                });
+                            
                         }
-                }
-            )
-                .then((data: any) => {
-                    plugin.builders.structure.parseTrajectory(data, "mmcif")
-                        .then((trajectory: any) => {
-                            plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
-                        });
-                });
+                    });
+            } catch(e: any) {
+                plugin.clear()
+            }
         }
     }, [selectedPDB]);
 
@@ -259,21 +226,12 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                     <div style={{ display: 'flex' }}>
                         <div style={{ flex: 0.5 }}>
                             <div style={{padding: '10px' }}>
-                                {/*<select
-                                    value={selectedPDB}
-                                    onChange={handleOptionChange}>
-                                    {
-                                        pdbIds.map((option, index) => (
-                                            <option key={index} value={option}>
-                                                {option}
-                                            </option>
-                                        ))
-                                    }
-                                </select>*/}
-                                <PDBList
-                                    selectedPDB={selectedPDB}
-                                    pdbIds={pdbIds}
-                                    onPDBChange={handleOptionChange}
+                                <SelectableList
+                                    selectedItem={selectedPDB}
+                                    itemIds={pdbIds}
+                                    onItemChange={handleOptionChange}
+                                    itemLogo={pdblogo}
+                                    itemURL={'https://www.ebi.ac.uk/pdbe/entry/pdb/'}
                                 />
                             </div>
                         </div>
