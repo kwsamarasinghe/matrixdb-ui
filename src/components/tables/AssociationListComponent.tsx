@@ -151,7 +151,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
                             initialState={{
                                 pagination: {
                                     paginationModel: {
-                                        pageSize: 10,
+                                        pageSize: 5,
                                     },
                                 },
                             }}
