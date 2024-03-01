@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import {List, ListItemText, Tooltip} from "@mui/material";
 import http from "../../commons/http-commons";
+import {faCircleNodes, faScrewdriverWrench} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function MainContentComponent() {
@@ -18,9 +20,11 @@ function MainContentComponent() {
     }, []);
 
     const cardStyle = {
-        height: '250px', // Ensures each card takes full height
+        width: '400px',
+        height: '200px',
         display: 'flex',
         flexDirection: 'column',
+        background: '#e7ebef'
     } as React.CSSProperties;
 
     interface TruncatedListItemTextProps {
@@ -58,7 +62,7 @@ function MainContentComponent() {
                 marginBottom: '10px'
             }}>
 
-                <Typography  variant={'h6'} style={{fontWeight: 'bold', marginBottom: '5px' }}>
+                <Typography  variant={'body1'} style={{fontWeight: 'bold', marginBottom: '5px' }}>
                     MatrixDB Content
                 </Typography>
                 <div style={{ display: 'flex', width: '90%' }}>
@@ -66,7 +70,7 @@ function MainContentComponent() {
                         <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                             <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
                             Biomolecules {statistics.biomolecules.all }
-                        </Typography>
+                            </Typography>
                             <CardContent>
                             <List>
                                 <ListItemText
@@ -210,37 +214,70 @@ function MainContentComponent() {
                 margin: '0 auto',
                 width: '70%',
                 marginBottom: '20px',
-                background: 'rgba(230, 230, 230, 1)'
+                //background: 'rgba(230, 230, 230, 1)'
             }}>
 
-                <Typography  variant={'h6'} style={{fontWeight: 'bold', marginBottom: '5px' }}>
+                <Typography  variant={'body1'} style={{fontWeight: 'bold', marginBottom: '5px' }}>
                     Tools & Resources
                 </Typography>
-                <div style={{ display: 'flex', width: '90%' }}>
-                    <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
-                        <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
+                <div style={{
+                    display: 'flex',
+                    width: '90%',
+                    justifyContent: 'center'
+                }}>
+                    <Card style={{ margin: '10px', ...cardStyle }}>
+                        <Typography
+                            component="div"
+                            style={{
+                                color: 'darkblue',
+                                textAlign: 'center',
+                                marginLeft: '10px',
+                                marginTop: '10px',
+                                marginBottom: '5px',
+                                fontWeight: 'bold'
+                            }}>
                             Tools
                         </Typography>
                         <CardContent>
                             <List>
-                                <ListItemText
+                                <ListItemText style={{
+                                    backgroundColor: 'white',
+                                    margin: '8px 0',
+                                    padding: '12px',
+                                }}
                                     primary={
                                         <React.Fragment>
+                                            <FontAwesomeIcon
+                                                icon={faCircleNodes}
+                                                color={'darkblue'}
+                                                style={{
+                                                    paddingRight: '5px'
+                                                }}
+                                            />
                                             <strong><a href={"/networks"} >Network Explorer </a></strong>
                                         </React.Fragment>
                                     }/>
-                                <ListItemText
+                                <ListItemText style={{
+                                    backgroundColor: 'white',
+                                    margin: '8px 0',
+                                    padding: '12px',
+                                }}
                                     primary={
                                         <React.Fragment>
+                                            <FontAwesomeIcon
+                                                icon={faScrewdriverWrench}
+                                                color={'darkblue'}
+                                                style={{
+                                                    paddingRight: '5px'
+                                                }}
+                                            />
                                             <strong>GAG Builder</strong>
                                         </React.Fragment>
                                     }/>
-
-
                             </List>
                         </CardContent>
                     </Card>
-                    <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
+                    {/*<Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue' , textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
                             How to Cite
                         </Typography>
@@ -273,9 +310,18 @@ function MainContentComponent() {
 
                             </List>
                         </CardContent>
-                    </Card>
-                    <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
-                        <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
+                    </Card>*/}
+                    <Card style={{ margin: '10px', ...cardStyle }}>
+                        <Typography
+                            component="div"
+                            style={{
+                                color: 'darkblue',
+                                textAlign: 'center',
+                                marginLeft: '10px',
+                                marginTop: '10px',
+                                marginBottom: '5px',
+                                fontWeight: 'bold'
+                            }}>
                             Interaction Networks
                         </Typography>
                         <CardContent>
