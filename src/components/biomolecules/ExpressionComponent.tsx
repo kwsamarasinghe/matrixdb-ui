@@ -1,20 +1,18 @@
 import React, {useEffect, useRef} from 'react';
 import {
-    Box, Button, CardContent, Grid,
-    InputLabel, List, ListItem, ListItemText, makeStyles,
-    Paper, Popover,
+    Box,
+    Paper,
+    Popover,
     Tab,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Tabs, Typography
+    Tabs,
+    Typography
 } from "@mui/material";
 import {useState} from "react";
 import Anatomogram from "@ebi-gene-expression-group/anatomogram";
 
 import * as d3 from 'd3';
 import http from "../../commons/http-commons";
+import SelectableList from "../commons/lists/SelectableList";
 
 interface BarChartData {
     group: string,
@@ -133,6 +131,7 @@ function ExpressionComponent(props: any) {
     const [protein, setProtein] = useState<string>("");
     const [gene, setGene] = useState<string>("");
     const [uberonTissues, setUberonTissues] = useState<Array<string> | []>([]);
+    const [uberonTissueIds, setUberonTissueIds] = useState<Array<string> | []>([]);
     const [geneExpressionData, setGeneExpressionData] = useState<any>([]);
     const [proteomicsExpressionData, setProteomicsExpressionData] = useState<any>({});
     const [expressionTypes, setExpressionTypes] = useState<string[]>([]);
@@ -183,7 +182,8 @@ function ExpressionComponent(props: any) {
 
                     // Extract all tissue data
                     let maxTPM = 0;
-                    let uberonTissuesSet = new Set<string>();
+                    let uberonTissuesNameSet = new Set<string>();
+                    let uberonTissueIdSet = new Set<string>();
                     Object.keys(expressionDataResponse.data).forEach((protein: string) => {
                         interface ExpressionData {
                             expressions: { [key: string]: number };
@@ -199,10 +199,12 @@ function ExpressionComponent(props: any) {
                             maxTPM: 0
                         };
                         expressionDataResponse.data[protein].geneExpression.forEach((e:any)=> {
-                            let tissueName : string = e.tissueUberonName;
+                            let tissueName : string = e.tissue;
+                            let tissueId: string = e.tissueId;
                             let tpm = parseFloat(e.tpm);
                             expressionData.expressions[tissueName] = tpm;
-                            uberonTissuesSet.add(e.tissueUberonName);
+                            uberonTissuesNameSet.add(tissueName);
+                            uberonTissueIdSet.add(tissueId.replace(':','_'));
                             if(maxTPM < tpm) {
                                 maxTPM = tpm;
                             }
@@ -215,9 +217,10 @@ function ExpressionComponent(props: any) {
 
                     // Sort tissue data
                     let uberonTissues = new Array<string>();
-                    uberonTissuesSet.forEach((tissue: string) => uberonTissues.push(tissue));
+                    uberonTissuesNameSet.forEach((tissue: string) => uberonTissues.push(tissue));
                     uberonTissues = uberonTissues.sort((a: string, b: string) => a.localeCompare(b));
                     setUberonTissues(uberonTissues);
+                    setUberonTissueIds(Array.from(uberonTissueIdSet));
                     setGeneExpressionData(geneExpressionData);
 
                     // Prepare bar chart data
@@ -227,17 +230,24 @@ function ExpressionComponent(props: any) {
                     let barchartData : any[] = [];
                     Object.keys(expressionDataResponse.data).forEach((protein: string) => {
                         let proteomicsExpressionData = expressionDataResponse.data[protein].proteomicsExpression;
+                        let proteomicsExpressionValues: any[] = [];
                         proteomicsExpressionData.forEach((expression: any) => {
-                            let data: BarChartData = {
+                            proteomicsExpressionValues.push({
+                                tissue: expression.tissue,
+                                score: parseFloat(expression.score),
+                                sampleName: expression.sampleName
+                            })
+                            /*let data: BarChartData = {
                                 group: expression.tissueId,
                                 subgroup: {
                                     [expression.name]: Math.log10(expression.score),
                                 },
                                 subgroupDetails: expression.sample,
                             };
-                            barchartData.push(data);
+                            barchartData.push(data);*/
+
                         });
-                        parsedProteomicsExpressionData[protein] = barchartData;
+                        parsedProteomicsExpressionData[protein] = proteomicsExpressionValues;
                     });
                     setProteomicsExpressionData(parsedProteomicsExpressionData);
 
@@ -289,16 +299,16 @@ function ExpressionComponent(props: any) {
         protein: string;
         gene: string;
         tissue: string;
-        tpm: number;
+        score: number;
     }
 
-    const ExpressionBox: React.FC<{ tissue: string; protein: string; gene: string; tpm: number, maxTPM: number }> =
-        ({ tissue, protein, gene, tpm, maxTPM }) => {
+    const ExpressionBox: React.FC<{ tissue: string; protein: string; gene: string; score: number, maxScore: number }> =
+        ({ tissue, protein, gene, score, maxScore }) => {
         const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-        const backgroundColor = tpm === 0
+        const backgroundColor = score === 0
             ? 'rgb(220, 220, 220)'
-            : `rgb(${Math.floor(175+(-175/maxTPM)*tpm)},${Math.floor(208+(-208/maxTPM)*tpm)},${Math.floor((145/maxTPM)*tpm + 95*maxTPM)})`
+            : `rgb(${Math.floor(175+(-175/maxScore)*score)},${Math.floor(208+(-208/maxScore)*score)},${Math.floor((145/maxScore)*score + 95*maxScore)})`
 
         const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
             setAnchorEl(event.currentTarget);
@@ -319,14 +329,14 @@ function ExpressionComponent(props: any) {
                     component="div"
                     sx={{
                         width: '20px',
-                        height: '40px',
+                        height: '20px',
                         backgroundColor: {backgroundColor},
                         cursor: 'pointer',
                     }}
                 />
                 <ExpressionPopOver
                     anchorEl={anchorEl}
-                    expressionData={{ protein, gene, tissue, tpm }}
+                    expressionData={{ protein, gene, tissue, score }}
                     handleMouseLeave={handleMouseLeave} />
             </Box>
         );
@@ -362,21 +372,153 @@ function ExpressionComponent(props: any) {
                         Tissue: {expressionData.tissue}
                     </Typography>
                     <Typography>
-                        TPM: {expressionData.tpm.toFixed(2)}
+                        TPM: {expressionData.score.toFixed(2)}
                     </Typography>
                 </Paper>
             </Popover>
         );
     };
 
-    function GeneExpressionComponent(){
+    const ExpressionTissueHeader: React.FC<any> = ({ tissueNames }) => {
+
+        return(
+            <div style={{
+                display: 'flex',
+            }}>
+                <div style={{
+                    width: '40%',
+                    marginRight: '30px'
+                }}/>
+                {tissueNames.map((tissueName: string) => {
+              return(
+                  <div
+                      key={tissueName}
+                      style={{
+                          position: 'relative',
+                          paddingRight: '25px',
+                          paddingBottom: '5px',
+                          flexDirection: 'row'
+                  }}
+                  >
+                      <span
+                          style={{
+                              fontSize: '12px',
+                              position: 'absolute',
+                              top: '-10px',
+                              left: '9px',
+                              transform: 'rotate(-45deg)',
+                              transformOrigin: 'left bottom',
+                              width: '200px'
+                          }}
+                      >
+                        {tissueName}
+                      </span>
+                  </div>
+              )
+            })}
+            </div>
+        )
+    };
+
+    interface ExpressionSamples {
+        [key: string] : {
+            [key:string] : number
+        }
+    }
+
+    const groupBy = (list: any[], property: string) => {
+        return list.reduce((acc, obj) => {
+            const key = obj[property];
+            if (!acc[key]) {
+                acc[key] = {};
+            }
+            acc[key][obj['tissue']] = obj['score'];
+            return acc;
+        }, {});
+    }
+
+    interface ExpressionTrackProps {
+        tissues: string[],
+        expressionSamples: ExpressionSamples
+    }
+    const ExpressionTrackComponent: React.FC<ExpressionTrackProps> = ( props ) => {
+
+        const {tissues, expressionSamples} = props;
+        const [sortedExpressionSamples, setSortedExpressionSamples] = useState<ExpressionSamples>();
+        const [maxScore, setMaxScore] = useState<number>(0);
+
+        useEffect(() => {
+            if(expressionSamples) {
+                let maxScore = 0;
+                Object.keys(expressionSamples).forEach((sample: string) => {
+                    for(let tissue of Object.keys(expressionSamples[sample])){
+                        let score = expressionSamples[sample][tissue];
+                        if(score > maxScore) maxScore = score;
+                    }
+                })
+                setMaxScore(maxScore);
+            }
+        }, [expressionSamples]);
+
+        return (
+            <div style={{ maxHeight: '300px', overflowY: 'auto'}}>
+                {expressionSamples && Object.keys(expressionSamples).map((sample:string, index: number) => (
+                    <div key={index}
+                        style={{
+                            maxHeight: '60px',
+                            display: 'flex',
+                            flexDirection: 'row'
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                width: '40%',
+                                marginRight: '20px',
+                                maxHeight: '300px',
+                                overflowY: "auto",
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                                position: 'relative',
+                            }}
+                            title={sample}
+                        >
+                            <Typography variant={'body2'}>{sample}</Typography>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexDirection: 'row',
+                            paddingBottom: '2px'
+                        }}>
+                            {tissues && tissues.map((tissue: string, innerIndex: number) => (
+                                    <>
+                                        <ExpressionBox
+                                            key={innerIndex}
+                                            tissue={tissue}
+                                            protein={protein}
+                                            gene={'gene'}
+                                            score={expressionSamples[sample][tissue] ? expressionSamples[sample][tissue] : 0 }
+                                            maxScore={maxScore}
+                                        />
+                                    </>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
+    const GeneExpressionComponent: React.FC<any> = () => {
         return(
             <div style={{ display: 'flex' }}>
                 <div style={{ width: '200px', paddingTop: '20px'}}>
                     <Anatomogram
                         species={'homo_sapiens'}
                         atlasUrl={'/'}
-                        showIds={uberonTissues} />
+                        showIds={uberonTissueIds} />
                 </div>
 
                 <div style={{
@@ -442,8 +584,8 @@ function ExpressionComponent(props: any) {
                                                         tissue={key}
                                                         protein={protein}
                                                         gene={gene}
-                                                        tpm={value}
-                                                        maxTPM={maxTPM}
+                                                        score={value}
+                                                        maxScore={maxTPM}
                                                     />
                                                 );
                                             })
@@ -457,99 +599,80 @@ function ExpressionComponent(props: any) {
                 </div>
             </div>
         )
-    }
+    };
 
-    function ProteomicsExpressionComponent() {
+    const ProteomicsExpressionComponent: React.FC<any> = ({ proteomicsExpressionData }) => {
+
+        const [expressionSamplesByProtein, setExpressionSamplesByProtein] = useState<any>({});
+        const [selectedProtein, setSelectedProtein] = useState<string>();
+        const [tissueNames, setTissueNames] = useState<string[]>([]);
+
+        useEffect(() => {
+            if(proteomicsExpressionData) {
+                let expressionSamplesByProtein: any = {};
+                let tissueSet = new Set<string>();
+
+                Object.keys(proteomicsExpressionData).forEach((protein: string) => {
+                    // Collects the tissue name set
+                    proteomicsExpressionData[protein].forEach((expressionValue: any) => {
+                        tissueSet.add(expressionValue.tissue);
+                    })
+                });
+                let tissues = Array.from(tissueSet).sort((t1: string, t2: string) => t1.localeCompare(t2));
+
+                Object.keys(proteomicsExpressionData).forEach((protein: string) => {
+                    // Builds expression samples
+                    let groupedExpression = groupBy(proteomicsExpressionData[protein], 'sampleName');
+
+                    expressionSamplesByProtein[protein] = groupedExpression;
+                });
+
+                setTissueNames(Array.from(tissueSet));
+                setSelectedProtein(Object.keys(proteomicsExpressionData)[0]);
+                setExpressionSamplesByProtein(expressionSamplesByProtein);
+            }
+        },[proteomicsExpressionData]);
+
+        const onProteinChange = (protein: string) => {
+            setSelectedProtein(protein);
+        }
+
         return(
             <>
             {
-                Object.keys(proteomicsExpressionData).map((protein: string) => {
-                    let proteomicsExpressionDataByProtein = proteomicsExpressionData[protein];
-                    return(
+                proteomicsExpressionData && selectedProtein &&
+                    (
                         <div style={{
-                        display: 'flex',
-                    }}>
+                            display: 'flex',
+                            flexDirection: 'row',
+                            paddingTop: '50px'
+                        }}>
                             <div style={{
-                                flex: 0.5,
-                                marginRight: '20px',
+                                display: 'flex',
+                                width: '10%',
+                                marginRight: '20px'
                             }}>
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}>
-                                    <h4>Samples</h4>
-                                </div>
-                                <div  style={{
-                                    overflowY: 'auto',
-                                    maxHeight: '320px'
-                                }}>
-                                    <TableContainer component={Paper}>
-                                        <TableBody>
-                                            {
-                                                proteomicsExpressionDataByProtein.map((proteomicsData: any) => {
-                                                    return(
-                                                        <>
-                                                            <TableRow>
-                                                                <TableCell style={{
-                                                                    backgroundColor: proteomicsData.index === selectedProtemicsSampleIndex ? 'lightgray' : 'white'
-                                                                }}>
-                                                                    <Button
-                                                                        style={{
-                                                                            textTransform: 'none',
-                                                                        }}
-                                                                        onClick={() => onSampleSelect(proteomicsData.index)}
-                                                                    >
-                                                                        {Object.keys(proteomicsData.subgroup)[0]}
-                                                                    </Button>
-                                                                    <div style={{
-                                                                        display: 'flex',
-                                                                        flexWrap: 'wrap',
-                                                                    }}>
-                                                                        {
-                                                                            Object.keys(proteomicsData.subgroupDetails).map((sampleKey: string) => {
-                                                                                const width = `${proteomicsData.subgroupDetails[sampleKey] * 10}px`;
-                                                                                if(proteomicsData.subgroupDetails[sampleKey] !== "") {
-                                                                                    return (
-                                                                                        <InputLabel style={{
-                                                                                            border: '1px solid orange',
-                                                                                            padding: '5px',
-                                                                                            textAlign: 'center',
-                                                                                            color: 'orange',
-                                                                                            fontWeight: 'bold',
-                                                                                            borderRadius: '4px',
-                                                                                            fontSize: '12px',
-                                                                                            width: width,
-                                                                                            margin: '5px',
-                                                                                        }}>
-                                                                                            {proteomicsData.subgroupDetails[sampleKey]}
-                                                                                        </InputLabel>
-                                                                                    )
-                                                                                }
-                                                                            })
-                                                                        }
-                                                                    </div>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        </>
-                                                    )
-                                                })
-                                            }
-                                        </TableBody>
-                                    </TableContainer>
-                                </div>
+                                <SelectableList
+                                    selectedItem={selectedProtein}
+                                    itemIds={Object.keys(proteomicsExpressionData)}
+                                    onItemChange={onProteinChange}
+                                    itemURL='/biomolecule/'
+                                />
                             </div>
-                            {
-                                proteomicsExpressionDataByProtein && <div style={{
-                                    flex: 1,
-                                    paddingLeft: '30px'
-                                }}>
-                                    <BarChart data={proteomicsExpressionDataByProtein} />
-                                </div>
-                            }
+                            <div style={{
+                                display: 'flex',
+                                width: '70%',  // Adjusted width to 70%
+                                marginRight: '20px',
+                                flexDirection: 'column'
+                            }}>
+                                <ExpressionTissueHeader tissueNames={tissueNames}/>
+                                <ExpressionTrackComponent
+                                    tissues={tissueNames}
+                                    expressionSamples={expressionSamplesByProtein[selectedProtein]}
+                                />
+                            </div>
                         </div>
                     )
-                })
             }
             </>
         )
@@ -592,7 +715,9 @@ function ExpressionComponent(props: any) {
                                                     {
                                                         type === 'proteomicsExpression' && expressionTypes.includes('proteomicsExpression') &&
                                                         <TabPanel value={tabValue} index={index}>
-                                                            <ProteomicsExpressionComponent/>
+                                                            <ProteomicsExpressionComponent
+                                                                proteomicsExpressionData={proteomicsExpressionData}
+                                                            />
                                                         </TabPanel>
                                                     }
                                                 </>
