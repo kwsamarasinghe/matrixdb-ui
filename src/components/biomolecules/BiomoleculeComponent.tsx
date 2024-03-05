@@ -23,7 +23,12 @@ import Footer from "../home/Footer";
 
 function BiomoleculeComponent() {
     const { biomoleculeId } = useParams();
-    const [sideBarItems, setSideBarItems] = useState<Array<string>>(["Overview", "Interactions"]);
+    const [showExpressions, setShowExpressions] = useState(false);
+    const [showInteractions, setShowInteractions] = useState(false);
+    const [showStrctures, setShowStructures] = useState(false);
+    const [showKeywords, setShowKeywords] = useState(false);
+
+
     const [biomolecule, setBiomolecule] = useState<any>(null);
 
     useEffect(() => {
@@ -34,20 +39,28 @@ function BiomoleculeComponent() {
                     if(biomoleculeData) {
                         setBiomolecule(biomoleculeData);
 
-                        // Updates the side bar items
-                        let newSideBarItems = sideBarItems;
-                        if(biomoleculeData.type === 'protein') {
-                            newSideBarItems = [...sideBarItems, "Expressions"];
+                        if(
+                            biomoleculeData.molecular_details && biomoleculeData.molecular_details.pdb ||
+                            biomoleculeData.xrefs && biomoleculeData.xrefs.pdb
+                        ) {
+                            setShowStructures(true);
                         }
-
-                        if(biomoleculeData.molecular_details && biomoleculeData.molecular_details.pdb) {
-                            newSideBarItems = [...sideBarItems, "3D Structures"];
+                        if((biomoleculeData.annotations.go && biomoleculeData.annotations.go.length >0)
+                            || ( biomoleculeData.annotations.keywords && biomoleculeData.annotations.keywords.length > 0)) {
+                            setShowKeywords(true);
                         }
-                        setSideBarItems(newSideBarItems);
                     }
                 });
         }
     }, []);
+
+    const onExpressionLoad = () => {
+        setShowExpressions(true);
+    }
+
+    const onInteractionLoad = () => {
+        setShowInteractions(true);
+    }
 
     const handleSearch = () => {
         // handle search logic
@@ -56,7 +69,8 @@ function BiomoleculeComponent() {
     const theme = useTheme();
 
     return(
-        <>{biomoleculeId &&
+        <>{
+            biomoleculeId &&
                 <div>
                     <Header pageDetails={{
                         type: "biomolecule",
@@ -76,40 +90,160 @@ function BiomoleculeComponent() {
                             }}
                         >
                             <List>
-                                {sideBarItems.map((text, index) => {
-                                    if (biomolecule) {
-                                        return (
-                                            <ListItem
-                                                key={text}
-                                                sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
-                                            >
-                                                <ListItemButton
-                                                    component="a"
-                                                    href={`#${text}`}
-                                                    sx={{
-                                                        marginY: -1,
-                                                        paddingY: 2,
-                                                        paddingX: 0,
-                                                        transition: "background 0.3s",
-                                                        '&:hover': {
-                                                            backgroundColor: "rgba(12, 30, 88, 0.1)",
-                                                        },
-                                                    }}
+                                    {
+                                        (
+                                            <>
+                                                <ListItem
+                                                    key={'overview'}
+                                                    sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
                                                 >
-                                                <span
-                                                    style={{
-                                                        color: "rgb(12, 30, 88)",
-                                                        fontWeight: "bold",
-                                                        fontSize: "14px",
-                                                    }}
-                                                >
-                                                  {text}
-                                                </span>
-                                                </ListItemButton>
-                                            </ListItem>
-                                        );
+                                                    <ListItemButton
+                                                        component="a"
+                                                        href={`#${'overview'}`}
+                                                        sx={{
+                                                            marginY: -1,
+                                                            paddingY: 2,
+                                                            paddingX: 0,
+                                                            transition: "background 0.3s",
+                                                            '&:hover': {
+                                                                backgroundColor: "rgba(12, 30, 88, 0.1)",
+                                                            },
+                                                        }}
+                                                    >
+                                                    <span
+                                                        style={{
+                                                            color: "rgb(12, 30, 88)",
+                                                            fontWeight: "bold",
+                                                            fontSize: "14px",
+                                                        }}
+                                                    >
+                                                      {'Overview'}
+                                                    </span>
+                                                    </ListItemButton>
+                                                </ListItem>
+                                                {
+                                                    showInteractions && <ListItem
+                                                        key={'interactions'}
+                                                        sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
+                                                    >
+                                                        <ListItemButton
+                                                            component="a"
+                                                            href={`#${'interactions'}`}
+                                                            sx={{
+                                                                marginY: -1,
+                                                                paddingY: 2,
+                                                                paddingX: 0,
+                                                                transition: "background 0.3s",
+                                                                '&:hover': {
+                                                                    backgroundColor: "rgba(12, 30, 88, 0.1)",
+                                                                },
+                                                            }}
+                                                        >
+                                                        <span
+                                                            style={{
+                                                                color: "rgb(12, 30, 88)",
+                                                                fontWeight: "bold",
+                                                                fontSize: "14px",
+                                                            }}
+                                                        >
+                                                          {'Interactions'}
+                                                        </span>
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                }
+                                                {
+                                                    showExpressions && <ListItem
+                                                        key={'expression'}
+                                                        sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
+                                                    >
+                                                        <ListItemButton
+                                                            component="a"
+                                                            href={`#${'expressions'}`}
+                                                            sx={{
+                                                                marginY: -1,
+                                                                paddingY: 2,
+                                                                paddingX: 0,
+                                                                transition: "background 0.3s",
+                                                                '&:hover': {
+                                                                    backgroundColor: "rgba(12, 30, 88, 0.1)",
+                                                                },
+                                                            }}
+                                                        >
+                                                        <span
+                                                            style={{
+                                                                color: "rgb(12, 30, 88)",
+                                                                fontWeight: "bold",
+                                                                fontSize: "14px",
+                                                            }}
+                                                        >
+                                                          {'Expressions'}
+                                                        </span>
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                }
+                                                {
+                                                    showStrctures && <ListItem
+                                                        key={'strcture'}
+                                                        sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
+                                                    >
+                                                        <ListItemButton
+                                                            component="a"
+                                                            href={`#${'structures'}`}
+                                                            sx={{
+                                                                marginY: -1,
+                                                                paddingY: 2,
+                                                                paddingX: 0,
+                                                                transition: "background 0.3s",
+                                                                '&:hover': {
+                                                                    backgroundColor: "rgba(12, 30, 88, 0.1)",
+                                                                },
+                                                            }}
+                                                        >
+                                                        <span
+                                                            style={{
+                                                                color: "rgb(12, 30, 88)",
+                                                                fontWeight: "bold",
+                                                                fontSize: "14px",
+                                                            }}
+                                                        >
+                                                          {'Structures'}
+                                                        </span>
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                }
+                                                {
+                                                    showKeywords && <ListItem
+                                                        key={'keywords'}
+                                                        sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
+                                                    >
+                                                        <ListItemButton
+                                                            component="a"
+                                                            href={`#${'keywords'}`}
+                                                            sx={{
+                                                                marginY: -1,
+                                                                paddingY: 2,
+                                                                paddingX: 0,
+                                                                transition: "background 0.3s",
+                                                                '&:hover': {
+                                                                    backgroundColor: "rgba(12, 30, 88, 0.1)",
+                                                                },
+                                                            }}
+                                                        >
+                                                        <span
+                                                            style={{
+                                                                color: "rgb(12, 30, 88)",
+                                                                fontWeight: "bold",
+                                                                fontSize: "14px",
+                                                            }}
+                                                        >
+                                                          {'Keywords'}
+                                                        </span>
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                }
+                                            </>
+                                        )
                                     }
-                                })}
                             </List>
                         </Box>
                         <Box style={{ width: "88%" }}>
@@ -124,44 +258,65 @@ function BiomoleculeComponent() {
                                     justifyContent: 'space-between'
                                 }}>
                                     {
-                                        biomolecule &&
                                         <div style={{marginBottom: '10px'}}>
-                                            <OverviewComponent biomolecule={biomolecule}/>
+                                            <OverviewComponent
+                                                biomoleculeId={biomoleculeId}
+                                                biomolecule={biomolecule}
+                                            />
                                         </div>
                                     }
                                     {
                                         biomoleculeId &&
-                                        <div style={{marginBottom: '10px'}}>
-                                            <AssociationsOverviewComponent biomoleculeId={biomoleculeId}/>
+                                        <div
+                                            id='interactions'
+                                            style={{marginBottom: '10px'
+                                        }}>
+                                            <AssociationsOverviewComponent
+                                                biomoleculeId={biomoleculeId}
+                                                onInteractionLoad={onInteractionLoad}
+                                            />
                                         </div>
                                     }
                                     {
                                         (biomolecule && biomolecule.type === 'protein' ||
                                         biomolecule && biomolecule.type === 'pfrag' ||
                                         biomolecule && biomolecule.type === 'multimer' ) && biomoleculeId &&
-                                        <div style={{marginBottom: '10px'}}>
+                                        <div
+                                            id='expressions'
+                                            style={{marginBottom: '10px'}}>
                                             <ExpressionComponent
                                                 biomolecule={biomolecule}
+                                                onExpressionLoad={onExpressionLoad}
                                             />
                                         </div>
                                     }
                                     {
                                         biomolecule && biomolecule.xrefs && biomolecule.xrefs.pdb && biomolecule.xrefs.pdb.length > 0 &&
-                                        <div style={{marginBottom: '10px'}}>
-                                            <StructureComponent pdb={biomolecule.xrefs.pdb}/>
+                                        <div
+                                            id='structures'
+                                            style={{marginBottom: '10px'}}>
+                                            <StructureComponent
+                                                pdb={biomolecule.xrefs.pdb}
+                                            />
                                         </div>
                                     }
                                     {
                                         biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb &&
-                                        <div style={{marginBottom: '10px'}}>
-                                            <StructureComponent pdb={biomolecule.molecular_details.pdb}/>
+                                        <div
+                                            id='structures'
+                                            style={{marginBottom: '10px'}}>
+                                            <StructureComponent
+                                                pdb={biomolecule.molecular_details.pdb}
+                                            />
                                         </div>
                                     }
                                     {
                                         (biomolecule && biomolecule.annotations) &&
                                         ((biomolecule.annotations.go && biomolecule.annotations.go.length >0)
                                             || (biomolecule && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0)) &&
-                                        <div style={{marginBottom: '10px'}}>
+                                        <div
+                                            id='keywords'
+                                            style={{marginBottom: '10px'}}>
                                             <KeywordComponent
                                                 goTerms={biomolecule.annotations.go}
                                                 keywords={biomolecule.annotations.keywords}

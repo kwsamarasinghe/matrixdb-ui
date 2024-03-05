@@ -45,12 +45,14 @@ interface BiomoleculeToDisplay {
 
 function OverviewComponent(props: any) {
 
-    const {biomolecule} = props;
+    const {biomolecule, biomoleculeId} = props;
     const [biomoleculeToDisplay, setBiomoleculeToDisplay] = useState<BiomoleculeToDisplay>();
     const [tabConfig, setTabConfig] = useState<any[]>([]);
     const [isExpanded, setIsExpanded] = useState(true);
 
     useEffect(() => {
+        if(!biomolecule) return;
+
         let biomoleculeToDisplay: BiomoleculeToDisplay = {
             id: "",
             type: "",
@@ -136,7 +138,7 @@ function OverviewComponent(props: any) {
             })
         }
         setTabConfig(tabConfig);
-    }, []);
+    }, [biomolecule]);
 
     const renderCrossRefContent = (label : string, link : string, value : string) => {
         return (
@@ -208,7 +210,23 @@ function OverviewComponent(props: any) {
 
     return (
         <>
-            <Paper style={paperStyle}>
+            {
+                !biomolecule &&
+                <Paper style={paperStyle}>
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                        <div style={{
+                            paddingLeft: '20px',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}>
+                            <h2 style={{paddingRight: '5px'}}>{biomoleculeId} :</h2>
+                            <CircularProgress size={25}/>
+                        </div>
+                    </div>
+                </Paper>
+            }
+            {
+                biomolecule && <Paper style={paperStyle}>
                     <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
                         <div style={{ paddingLeft: '20px'}}>
                             <h2>{biomoleculeToDisplay && biomoleculeToDisplay.id} : {biomoleculeToDisplay && biomoleculeToDisplay.name}</h2>
@@ -307,6 +325,7 @@ function OverviewComponent(props: any) {
                         </>
                     }
             </Paper>
+            }
         </>
     );
 }

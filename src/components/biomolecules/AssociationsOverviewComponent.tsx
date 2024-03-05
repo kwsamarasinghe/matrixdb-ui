@@ -51,10 +51,17 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-type AssociationOverviewComponentProps = PropsFromRedux & { biomoleculeId : string};
+type AssociationOverviewComponentProps = PropsFromRedux & {
+    biomoleculeId : string,
+    onInteractionLoad: () => void
+};
 
 
-const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps> = ({biomoleculeId, setNetworkDataAction}) => {
+const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps> = ({
+                                                                                        biomoleculeId,
+                                                                                        onInteractionLoad,
+                                                                                        setNetworkDataAction
+                                                                                    }) => {
 
     const [interactors, setInteractors] = useState<any | null>();
     const [interactorStats, setInteractorStats] = useState<any | null>();
@@ -90,6 +97,9 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                     }
                     interactorStats.directlySupportedExperiments += (binary + spokeExpandedFrom);
                 });
+                if(networkData.interactors.length > 0) {
+                    onInteractionLoad();
+                }
                 setInteractorStats(interactorStats);
             });
     }, [biomoleculeId]);
@@ -121,9 +131,25 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
     return (
         <>
             {
-             /*   !loaded && <div style={{paddingTop: '20px'}}>
-                    <CircularProgress />
-                    </div>*/
+                !interactors &&
+                <Paper style={paperStyle}>
+                    <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                        <div style={{
+                            paddingLeft: '20px',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}>
+                            <h3 style={{
+                                paddingRight: '5px'
+                            }}>
+                                Interactions
+                            </h3>
+                            <CircularProgress
+                                size={25}
+                            />
+                        </div>
+                    </div>
+                </Paper>
             }
             {
                 interactors && interactors.length > 0 &&

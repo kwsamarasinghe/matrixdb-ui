@@ -14,7 +14,6 @@ import React, {CSSProperties, useEffect, useState} from "react";
 import http from "../../commons/http-commons";
 import {DataGrid, GridColDef} from "@mui/x-data-grid";
 
-
 interface Keyword{
     id: string,
     category: string,

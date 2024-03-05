@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {
-    Box,
+    Box, CircularProgress,
     Paper,
     Popover,
     Tab,
@@ -127,7 +127,7 @@ const BarChart: React.FC<BarChartProps> = ({ data }) => {
 
 function ExpressionComponent(props: any) {
 
-    const {biomolecule} = props;
+    const {biomolecule, onExpressionLoad} = props;
     const [protein, setProtein] = useState<string>("");
     const [gene, setGene] = useState<string>("");
     const [uberonTissues, setUberonTissues] = useState<Array<string> | []>([]);
@@ -135,6 +135,7 @@ function ExpressionComponent(props: any) {
     const [geneExpressionData, setGeneExpressionData] = useState<any>([]);
     const [proteomicsExpressionData, setProteomicsExpressionData] = useState<any>({});
     const [expressionTypes, setExpressionTypes] = useState<string[]>([]);
+    const [loaded, setLoaded] = useState(false);
     const [selectedProtemicsSampleIndex, setSelectedProteomicsSampleIndex] = useState<number | null>(null);
 
     const paperStyle = {
@@ -266,6 +267,10 @@ function ExpressionComponent(props: any) {
                         expressionTypes.push('proteomicsExpression');
                     }
                     setExpressionTypes(expressionTypes);
+                    setLoaded(true);
+                    if(expressionTypes.length !== 0) {
+                        onExpressionLoad();
+                    }
                 });
         }
 
@@ -661,7 +666,7 @@ function ExpressionComponent(props: any) {
                             </div>
                             <div style={{
                                 display: 'flex',
-                                width: '70%',  // Adjusted width to 70%
+                                width: '70%',
                                 marginRight: '20px',
                                 flexDirection: 'column'
                             }}>
@@ -681,61 +686,81 @@ function ExpressionComponent(props: any) {
     return (
         <>
             <>
-                    {
-                        (expressionTypes.includes('geneExpression') || expressionTypes.includes('proteomicsExpression')) &&
-                        <div>
-                            <Paper style={paperStyle}>
-                                <>
-                                    <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
-                                        <span style={{paddingLeft: '10px'}}>
-                                            <h3>Transcriptomic & Proteomic Data</h3>
-                                        </span>
-                                    </div>
 
-                                    <Tabs value={tabValue} onChange={handleTabChange} centered>
-                                        {
-                                            expressionTypes.includes('geneExpression') &&
-                                            <Tab label="Gene Expression"/>
-                                        }
-                                        {
-                                            expressionTypes.includes('proteomicsExpression') &&
-                                            <Tab label="Proteomics Expression" />
-                                        }
-                                    </Tabs>
+                {
+                    (expressionTypes.includes('geneExpression') || expressionTypes.includes('proteomicsExpression')) &&
+                    <div>
+                        <Paper style={paperStyle}>
+                            <>
+                                <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                                    <span style={{paddingLeft: '10px'}}>
+                                        <h3>Transcriptomic & Proteomic Data</h3>
+                                    </span>
+                                </div>
+
+                                <Tabs value={tabValue} onChange={handleTabChange} centered>
                                     {
-                                        expressionTypes.map((type: string, index: number) => {
-                                            return(
-                                                <>
-                                                    {
-                                                        type === 'geneExpression' && expressionTypes.includes('geneExpression')  &&
-                                                        <TabPanel value={tabValue} index={index}>
-                                                            <GeneExpressionComponent/>
-                                                        </TabPanel>
-                                                    }
-                                                    {
-                                                        type === 'proteomicsExpression' && expressionTypes.includes('proteomicsExpression') &&
-                                                        <TabPanel value={tabValue} index={index}>
-                                                            <ProteomicsExpressionComponent
-                                                                proteomicsExpressionData={proteomicsExpressionData}
-                                                            />
-                                                        </TabPanel>
-                                                    }
-                                                </>
-                                            )
-                                        })
+                                        expressionTypes.includes('geneExpression') &&
+                                        <Tab label="Gene Expression"/>
                                     }
-                                </>
-                            </Paper>
+                                    {
+                                        expressionTypes.includes('proteomicsExpression') &&
+                                        <Tab label="Proteomics Expression" />
+                                    }
+                                </Tabs>
+                                {
+                                    expressionTypes.map((type: string, index: number) => {
+                                        return(
+                                            <>
+                                                {
+                                                    type === 'geneExpression' && expressionTypes.includes('geneExpression')  &&
+                                                    <TabPanel value={tabValue} index={index}>
+                                                        <GeneExpressionComponent/>
+                                                    </TabPanel>
+                                                }
+                                                {
+                                                    type === 'proteomicsExpression' && expressionTypes.includes('proteomicsExpression') &&
+                                                    <TabPanel value={tabValue} index={index}>
+                                                        <ProteomicsExpressionComponent
+                                                            proteomicsExpressionData={proteomicsExpressionData}
+                                                        />
+                                                    </TabPanel>
+                                                }
+                                            </>
+                                        )
+                                    })
+                                }
+                            </>
+                        </Paper>
+                    </div>
+                }
+                {
+                    (!expressionTypes.includes('geneExpression') && !expressionTypes.includes('proteomicsExpression')) &&
+                    <>
+                    </>
+                }
+                {
+                    !loaded &&
+                    <Paper style={paperStyle}>
+                        <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                            <div style={{
+                                paddingLeft: '20px',
+                                display: 'flex',
+                                alignItems: 'center'
+                            }}>
+                                <span style={{paddingLeft: '10px'}}>
+                                    <h3>Transcriptomic & Proteomic Data</h3>
+                                </span>
+                                <CircularProgress
+                                    style={{
+                                        paddingLeft: '5px'
+                                    }}
+                                    size={25}
+                                />
+                            </div>
                         </div>
-                    }
-                    {
-                        (!expressionTypes.includes('geneExpression') && !expressionTypes.includes('proteomicsExpression')) &&
-                        <div>
-                            <Typography variant={'body1'}>
-                                No Expression Data
-                            </Typography>
-                        </div>
-                    }
+                    </Paper>
+                }
             </>
         </>
     );

@@ -6,7 +6,7 @@ import { PluginConfig } from 'molstar/lib/mol-plugin/config';
 import { PluginSpec } from 'molstar/lib/mol-plugin/spec';
 import { DefaultPluginUISpec, PluginUISpec } from 'molstar/lib/mol-plugin-ui/spec';
 import { PluginBehaviors } from 'molstar/lib/mol-plugin/behavior';
-import {Paper} from "@mui/material";
+import {CircularProgress, Paper} from "@mui/material";
 import {
     PresetStructureRepresentations,
     StructureRepresentationPresetProvider
@@ -49,6 +49,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     const [pdbIds, setPDBIds] = useState<Array<string>>([]);
     const [plugin, setPlugin] = useState<any>(null);
     const [selectedPDB, setSelectedPDB] = useState<string>();
+    const [loaded, setLoaded] = useState(false);
 
     const handleOptionChange = (pdb : any) => {
         setSelectedPDB(pdb);
@@ -184,6 +185,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                 )
                     .then((data: any) => {
                         if(data) {
+                            setLoaded(true);
                             plugin.builders.structure.parseTrajectory(data, "mmcif")
                                 .then((trajectory: any) => {
                                     plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
@@ -207,49 +209,53 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     };
 
     return (
-        <div style={{
-            display: 'relative'
-        }}>
-            <Paper style={paperStyle}>
-                <div>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        background: '#e1ebfc'
-                    }}>
-                        <span style={{
-                            paddingLeft: '10px'
-                        }}>
-                            <h3>3D Structures</h3>
-                        </span>
-                    </div>
-                    <div style={{ display: 'flex' }}>
-                        <div style={{ flex: 0.5 }}>
-                            <div style={{padding: '10px' }}>
-                                <SelectableList
-                                    selectedItem={selectedPDB}
-                                    itemIds={pdbIds}
-                                    onItemChange={handleOptionChange}
-                                    itemLogo={pdblogo}
-                                    itemURL={'https://www.ebi.ac.uk/pdbe/entry/pdb/'}
-                                />
+       <>
+           {
+                <div style={{
+                    display: 'relative'
+                }}>
+                    <Paper style={paperStyle}>
+                        <div>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                background: '#e1ebfc'
+                            }}>
+                                    <span style={{
+                                        paddingLeft: '10px'
+                                    }}>
+                                        <h3>3D Structures</h3>
+                                        {!loaded && <CircularProgress size={25}/>}
+                                    </span>
+                            </div>
+                            <div style={{ display: 'flex' }}>
+                                <div style={{ flex: 0.5 }}>
+                                    <div style={{padding: '10px' }}>
+                                        <SelectableList
+                                            selectedItem={selectedPDB}
+                                            itemIds={pdbIds}
+                                            onItemChange={handleOptionChange}
+                                            itemLogo={pdblogo}
+                                            itemURL={'https://www.ebi.ac.uk/pdbe/entry/pdb/'}
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    ref={viewerContainer}
+                                    style={{
+                                        position: "relative",
+                                        zIndex: 0,
+                                        flex: 2,
+                                        height: '500px'
+                                    }}
+                                >
+                                </div>
                             </div>
                         </div>
-                        <div
-                            ref={viewerContainer}
-                            style={{
-                                position: "relative",
-                                zIndex: 0,
-                                flex: 2,
-                                height: '500px'
-                            }}
-                        >
-                            {/* Your existing inner div */}
-                        </div>
-                    </div>
+                    </Paper>
                 </div>
-            </Paper>
-        </div>
+            }
+       </>
     );
 };
 
