@@ -198,7 +198,6 @@ function Legend(){
     return(
         <Card style={{ flex: 0.35, backgroundColor: 'white', margin: '10px' }}>
             <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
-                {/* Legend */}
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'blue', marginRight: '10px' }}></div>
                     <span>Protein</span>

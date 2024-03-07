@@ -69,3 +69,7 @@ ref-section {
   display: block;
   z-index: 1;
 }
+
+.tooltip {
+  position: absolute;
+}

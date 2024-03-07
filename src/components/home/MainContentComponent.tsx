@@ -7,21 +7,70 @@ import {List, ListItemText, Tooltip} from "@mui/material";
 import http from "../../commons/http-commons";
 import {faCircleNodes, faScrewdriverWrench} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import BiomoleculeCircularDisplayComponent from "../statistics/BiomoleculeCircularDisplayCompotnent";
+import ExperimentPieChartComponent from "../statistics/ExperimentPieChartComponent";
+import InteractionHeatMapComponent from "../statistics/InteractionHeatMapComponent";
 
 
 function MainContentComponent() {
     const [statistics, setStatistics] = useState<any>({});
+    const [biomoleculeStatistics, setBiomoleculeStatistics] = useState<any>([]);
+    const [interactionStatistics, setInteractionStatistics] = useState<any[]>([]);
 
     useEffect(() => {
         http.get("/statistics/")
             .then((statisticsResponse) => {
                 setStatistics(statisticsResponse.data);
+                let biomoleculeData = statisticsResponse.data.biomolecules;
+                let biomoleculeStatistics = [
+                    {
+                        type: 'Protein',
+                        value: biomoleculeData.protein.all
+                    },
+                    {
+                        type: 'GAG',
+                        value: biomoleculeData.gag
+                    },
+                    {
+                        type: 'Multimer',
+                        value: biomoleculeData.multimer
+                    },
+                    {
+                        type: 'PFRAG',
+                        value: biomoleculeData.pfrag
+                    },
+                    {
+                        type: 'SmallMolecules',
+                        value: biomoleculeData.smallmol
+                    }
+                ];
+                setBiomoleculeStatistics(biomoleculeStatistics);
+
+                let interactionData = statisticsResponse.data.interactions;
+                let interactionStatistics = [
+                    { row: 'Protein', column: 'Protein', value: interactionData.protein_protein.all},
+                    { row: 'Protein', column: 'GAG', value: interactionData.protein_gag || 0},
+                    { row: 'Protein', column: 'PFRAG', value: interactionData.protein_pfrag || 0},
+                    { row: 'Protein', column: 'Multimer', value: interactionData?.protein_multimer || 0},
+                    { row: 'GAG', column: 'Protein', value: interactionData.protein_gag || 0},
+                    { row: 'GAG', column: 'GAG', value: interactionData?.gag_gag || 0},
+                    { row: 'GAG', column: 'PFRAG', value: interactionData.gag_pfrag || 0 },
+                    { row: 'GAG', column: 'Multimer', value: interactionData.gag_multimer || 0},
+                    { row: 'PFRAG', column: 'Protein', value: interactionData.protein_pfrag || 0 },
+                    { row: 'PFRAG', column: 'GAG', value: interactionData.gag_pfrag || 0 },
+                    { row: 'PFRAG', column: 'PFRAG', value: interactionData.pfrag_pfrag || 0},
+                    { row: 'PFRAG', column: 'Multimer', value: interactionData.multimer_pfrag || 0 },
+                    { row: 'Multimer', column: 'Protein', value: interactionData.protein_multimer ||  0},
+                    { row: 'Multimer', column: 'GAG', value: interactionData.gag_multimer || 0},
+                    { row: 'Multimer', column: 'PFRAG', value: interactionData.multimer_pfrag || 0 },
+                    { row: 'Multimer', column: 'Multimer', value: interactionData.multimer_multimer || 0 },
+                ];
+                setInteractionStatistics(interactionStatistics);
             });
     }, []);
 
     const cardStyle = {
         width: '400px',
-        height: '200px',
         display: 'flex',
         flexDirection: 'column',
         background: '#e7ebef'
@@ -71,137 +120,48 @@ function MainContentComponent() {
                             <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
                             Biomolecules {statistics.biomolecules.all }
                             </Typography>
-                            <CardContent>
-                            <List>
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Proteins:</strong> {statistics.biomolecules.protein.all}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>PFRAG:</strong> {statistics.biomolecules.pfrag}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>GAG:</strong> {statistics.biomolecules.gag}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>MULT:</strong> {statistics.biomolecules.multimer}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Small Molecules:</strong> {statistics.biomolecules.smallmol}
-                                        </Typography>
-                                    }
-                                />
-
-                            </List>
-                        </CardContent>
+                            <BiomoleculeCircularDisplayComponent biomoleculeStatistics={biomoleculeStatistics}/>
                         </Card>
                     }
-                    {statistics.interactions && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
+                    {interactionStatistics && interactionStatistics.length > 0 && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue' , textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
                             Interactions ({statistics.interactions.all})
                         </Typography>
-                        <CardContent>
-                            <List>
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Protein - Protein:</strong> {statistics.interactions.protein_protein.all}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Protein - PFRAG:</strong> {statistics.interactions.protein_pfrag}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Protein - GAG:</strong> {statistics.interactions.protein_gag}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Protein - MULT:</strong> {statistics.interactions.protein_multimer}
-                                        </Typography>
-                                    }
-                                />
-
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Experimentally supported:</strong> {statistics.interactions.protein_protein.directly_supported}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Predicted:</strong> {statistics.interactions.protein_protein.predicted}
-                                        </Typography>
-                                    }
-                                />
-
-                            </List>
-                        </CardContent>
+                        <div style={{
+                            paddingLeft: '30px'
+                        }}>
+                            <InteractionHeatMapComponent
+                                data={interactionStatistics}
+                                width={240}
+                                height={240}
+                            />
+                        </div>
                     </Card>}
                     {statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
                             Experiments ({statistics.experiments.all})
                         </Typography>
-                        <CardContent>
-                            <List>
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Binary:</strong> {statistics.experiments.binary}
-                                        </Typography>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <ExperimentPieChartComponent data={
+                                [
+                                    {
+                                        title: '2-participants',
+                                        value: statistics.experiments.binary
+                                    },
+                                    {
+                                        title: 'n-participants',
+                                        value: statistics.experiments.n_ary
+                                    },
+                                    {
+                                        title: '1-participant',
+                                        value: statistics.experiments.unary
                                     }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>n-ary:</strong> {statistics.experiments.n_ary}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Single Participant:</strong> {statistics.experiments.unary}
-                                        </Typography>
-                                    }
-                                />
-                                <ListItemText
-                                    primary={
-                                        <Typography variant="body2">
-                                            <strong>Publications:</strong> {statistics.experiments.publications}
-                                        </Typography>
-                                    }
-                                />
-                            </List>
-                        </CardContent>
+                                ]} width={200} height={200}/>
+                        </div>
                     </Card>}
                 </div>
             </div>

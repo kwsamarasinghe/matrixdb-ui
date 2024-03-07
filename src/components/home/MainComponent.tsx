@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import {
     useTheme
  } from "@mui/material";
-import SearchComponents from '../search/SearchComponent';
+import SearchComponent from '../search/SearchComponent';
 import MainContentComponent from './MainContentComponent';
 import Header from "./HeaderComponent";
 import Footer from "./Footer";
@@ -26,7 +26,7 @@ function MainComponent() {
             }}/>
             <main style={{ flex: 1}}>
                 <div style={{marginBottom: '10px'}}>
-                    <SearchComponents/>
+                    <SearchComponent/>
                 </div>
                 {currentPath !== '/search' && <MainContentComponent/>}
             </main>
