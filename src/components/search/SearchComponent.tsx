@@ -11,7 +11,7 @@ import SearchBoxComponent from "./SearchBoxComponent";
 import { useNavigate } from 'react-router-dom';
 import ResultComponent from "./ResultComponent";
 
-function SearchComponents() {
+function SearchComponent() {
 
     const [searchText, setSearchText] = useState<string|null>(null);
     const [searchStart, setSearchStart] = useState(false);
@@ -20,6 +20,7 @@ function SearchComponents() {
     const navigate = useNavigate();
 
     const location = useLocation();
+    const currentPath = location.pathname;
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -71,7 +72,7 @@ function SearchComponents() {
 
     return (
         <>
-            { !searchDone &&
+            { currentPath === '/' &&
                 <div className={"App-search"}>
                         <div>
                             <img src={logo} className={"App-logo"}/>
@@ -101,7 +102,7 @@ function SearchComponents() {
                 !searchStart && searchDone && searchResults.length === 0  && <h5>Sorry we couldn't find what you looking for</h5>
             }
             {
-                searchDone &&
+                searchDone && currentPath !== '/' &&
                 <><div style={{
                     alignItems: 'center',
                     position: 'sticky',
@@ -136,4 +137,4 @@ function SearchComponents() {
     );
 }
 
-export default SearchComponents;
+export default SearchComponent;
