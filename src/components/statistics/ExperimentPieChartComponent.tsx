@@ -69,7 +69,9 @@ const ExperimentPieChartComponent: React.FC<PieChartProps> = ({ data, width, hei
     }, [data, width, height]);
 
     return (
-        <div>
+        <div style={{
+            paddingTop: '20px'
+        }}>
             <svg ref={svgRef} width={width} height={height}></svg>
         </div>
     );

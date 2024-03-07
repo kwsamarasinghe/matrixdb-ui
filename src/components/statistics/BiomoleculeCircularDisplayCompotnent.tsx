@@ -96,7 +96,7 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
             simulation.on("tick", () => {
                 circles
                     .attr("cx", (d) => d.x || 0)
-                    .attr("cy", (d) => d.y || 0);
+                    .attr("cy", (d) => d.y ? d.y + 5 : d.y || 0);
             });
 
             return () => {

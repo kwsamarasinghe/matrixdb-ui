@@ -73,7 +73,8 @@ function MainContentComponent() {
         width: '400px',
         display: 'flex',
         flexDirection: 'column',
-        background: '#e7ebef'
+        background: '#e7ebef',
+        borderRadius: 0
     } as React.CSSProperties;
 
     interface TruncatedListItemTextProps {
@@ -105,13 +106,17 @@ function MainContentComponent() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 paddingTop: '20px',
-                margin: '0 auto', // Center horizontally
-                background: 'rgba(230, 230, 230, 1)',
-                width: '70%',
-                marginBottom: '10px'
+                margin: '0 auto',
+                background: 'rgb(237, 239, 245)',
+                width: '70%'
             }}>
 
-                <Typography  variant={'body1'} style={{fontWeight: 'bold', marginBottom: '5px' }}>
+                <Typography
+                    variant={'body1'}
+                    style={{
+                        fontWeight: 'bold',
+                        marginBottom: '5px'
+                    }}>
                     MatrixDB Content
                 </Typography>
                 <div style={{ display: 'flex', width: '90%' }}>
@@ -170,14 +175,19 @@ function MainContentComponent() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                paddingTop: '20px',
                 margin: '0 auto',
                 width: '70%',
                 marginBottom: '20px',
-                //background: 'rgba(230, 230, 230, 1)'
+                background: 'rgb(237, 239, 245)'
             }}>
 
-                <Typography  variant={'body1'} style={{fontWeight: 'bold', marginBottom: '5px' }}>
+                <Typography
+                    variant={'body1'}
+                    style={{
+                        fontWeight: 'bold',
+                        marginBottom: '5px',
+                        marginTop: '5px'
+                    }}>
                     Tools & Resources
                 </Typography>
                 <div style={{
