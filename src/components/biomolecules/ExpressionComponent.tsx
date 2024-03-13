@@ -748,13 +748,12 @@ function ExpressionComponent(props: any) {
                                 display: 'flex',
                                 alignItems: 'center'
                             }}>
-                                <span style={{paddingLeft: '10px'}}>
-                                    <h3>Transcriptomic & Proteomic Data</h3>
-                                </span>
+                                <h3 style={{
+                                    paddingRight: '5px'
+                                }}>
+                                    Transcriptomic & Proteomic Data
+                                </h3>
                                 <CircularProgress
-                                    style={{
-                                        paddingLeft: '5px'
-                                    }}
                                     size={25}
                                 />
                             </div>
