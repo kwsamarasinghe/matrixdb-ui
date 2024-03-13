@@ -134,8 +134,7 @@ function ExperimentComponent() {
 
     const cellStyles = {
         padding: '0px',
-        borderBottom: 'none',
-        width: '250px'
+        borderBottom: 'none'
     };
 
     const getParticipantTypeId = (id: string) => {
@@ -280,7 +279,7 @@ function ExperimentComponent() {
                                                 </Typography>
                                             </TableCell>
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        {(experiment.intactId || experiment.imexId) && <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>External References</h4></TableCell>
                                             <TableCell style={cellStyles}>
                                                 {
@@ -296,7 +295,7 @@ function ExperimentComponent() {
                                                     </Typography>
                                                 }
                                             </TableCell>
-                                        </Grid>
+                                        </Grid>}
                                         <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (pubmed)</h4></TableCell>
                                             <TableCell style={cellStyles}>
@@ -310,7 +309,7 @@ function ExperimentComponent() {
                                         <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Source</h4></TableCell>
                                             <TableCell style={cellStyles}>
-                                                MatrixDB
+                                                {experiment.source}
                                             </TableCell>
                                         </Grid>
                                     </Grid>
