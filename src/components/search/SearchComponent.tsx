@@ -45,6 +45,9 @@ function SearchComponent() {
                 searchResponse.data.biomolecules.sort((a: any, b: any) => {
                    return b.interaction_count - a.interaction_count;
                 });
+                searchResponse.data.publications.sort((a: any, b: any) => {
+                    return b.interaction_count - a.interaction_count;
+                });
                 setSearchDone(true);
                 setSearchStart(false);
             });

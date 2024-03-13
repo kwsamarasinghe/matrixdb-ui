@@ -62,22 +62,6 @@ function ResultDetailsComponent(props: any) {
                     </Tabs>
                 </div>
         }
-        {
-            /*selectedTab === 'biomolecules' &&
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
-                <TabPanel value={1} index={1}>
-                    <List>
-                        {
-                            searchResults && <ResultComponent searchResults={searchResults}/>
-                        }
-                    </List>
-                </TabPanel>
-            </div>*/
-        }
             <div>
                 <List>
                     {
@@ -140,9 +124,10 @@ function ResultDetailsComponent(props: any) {
 interface TruncatedListItemTextProps {
     text: string;
     url: string;
+    length: number
 }
-const TruncatedListItemText: React.FC<TruncatedListItemTextProps> = ({ text, url }) => {
-    const truncatedText = text.length > 80 ? `${text.substring(0, 80)}...` : text;
+const TruncatedListItemText: React.FC<TruncatedListItemTextProps> = ({ text, url,length }) => {
+    const truncatedText = text.length > length ? `${text.substring(0, length)}...` : text;
 
     return (
         <Tooltip title={text.length > 80 ? text : ''} arrow>
@@ -171,7 +156,7 @@ function ResultComponent(props : any) {
         <>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '30px'}}>
                 <div style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px', paddingLeft: '100px', paddingRight: '100px' }}>
-                    {props.searchResults.biomolecules &&
+                    {props.searchResults.biomolecules && props.searchResults.biomolecules.length > 0 &&
                         <>
                             <div style={{ textAlign: 'left', marginBottom: '20px'}}>
                                 <div style={{
@@ -259,21 +244,73 @@ function ResultComponent(props : any) {
                                         Publications
                                     </Typography>
                                 </div>
-                                <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                                     <List>
                                         {props.searchResults.publications &&
                                             props.searchResults.publications.slice(0,5).map((result: any, index: number) => (
                                                 <ListItem key={index}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-
-                                                        <div style={{ marginLeft: '10px' }}>
-                                                            <TruncatedListItemText text={result.title[0]} url={`/details/${result.publication_id}`}/>
-
+                                                    <Typography>
+                                                        <div key={index} style={{
+                                                            display: 'flex',
+                                                            width: '400px',
+                                                            marginBottom: '10px',
+                                                            justifyContent: 'space-between'
+                                                        }}>
+                                                            <div style={{ flex: 1 }}>
+                                                                <TruncatedListItemText
+                                                                    text={result.title[0]}
+                                                                    url={`/details/${result.publication_id}`}
+                                                                    length={40}
+                                                                />
+                                                            </div>
+                                                            <div style={{
+                                                                flex: 0,
+                                                                paddingRight: '10px'
+                                                            }}>
+                                                                <Typography variant="caption">
+                                                                    <strong>{result.interaction_count}</strong>
+                                                                </Typography>
+                                                            </div>
+                                                        </div>
+                                                        <div>
                                                             <Typography variant="body2">
-                                                                {result.abstract && truncateText(result.abstract[0], 200)}
+                                                                {result.abstract && truncateText(result.abstract[0], 100)}
                                                             </Typography>
                                                         </div>
-                                                    </div>
+                                                    </Typography>
+                                                </ListItem>
+                                            ))}
+                                    </List>
+                                    <List>
+                                        {props.searchResults.publications &&
+                                            props.searchResults.publications.slice(5,10).map((result: any, index: number) => (
+                                                <ListItem key={index}>
+                                                    <Typography>
+                                                        <div key={index} style={{
+                                                            display: 'flex',
+                                                            width: '400px',
+                                                            marginBottom: '10px',
+                                                            justifyContent: 'space-between'
+                                                        }}>
+                                                            <div style={{ flex: 1 }}>
+                                                                <TruncatedListItemText
+                                                                    text={result.title[0]}
+                                                                    url={`/details/${result.publication_id}`}
+                                                                    length={40}
+                                                                />
+                                                            </div>
+                                                            <div style={{ flex: 0 }}>
+                                                                <Typography variant="caption">
+                                                                    <strong>{result.interaction_count}</strong>
+                                                                </Typography>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <Typography variant="body2">
+                                                                {result.abstract && truncateText(result.abstract[0], 80)}
+                                                            </Typography>
+                                                        </div>
+                                                    </Typography>
 
                                                 </ListItem>
                                             ))}
