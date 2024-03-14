@@ -40,7 +40,8 @@ interface ExperimentToDisplay {
     detectionMethod: string,
     type: string,
     comment: string,
-    participants?: Array<ParticipantToDisplay>
+    participants?: Array<ParticipantToDisplay>,
+    parameters?: any
 }
 
 
@@ -72,7 +73,8 @@ function ExperimentComponent() {
                                 biologicalRole: experimentData.participants[pk].biological_role,
                                 experimentalRole: experimentData.participants[pk].experimental_role
                             }
-                        })
+                        }),
+                        parameters: experimentData?.parameters
                     }
                     experiment.participants.sort((a: any, b: any) => {
                         const aBait = a.experimentalRole.includes('bait');
@@ -144,6 +146,14 @@ function ExperimentComponent() {
             if(id.includes('MULT')) return 'orange';
             return 'blue';
         } else return 'white';
+    }
+
+    const getExperimentFeature = (feature: string) => {
+        if(feature.includes('kd')){
+            return 'Affinity : ' + feature.split(':')[1] ;
+        } else {
+            return feature
+        }
     }
 
     return (<>
@@ -285,13 +295,13 @@ function ExperimentComponent() {
                                                 {
                                                     experiment.intactId &&
                                                     <Typography variant={"body2"} align="left">
-                                                        Intact <a href={'https://www.ebi.ac.uk/intact/details/interaction/'+experiment.intactId}>{experiment.intactId}</a>
+                                                        Intact <a href={'https://www.ebi.ac.uk/intact/details/interaction/'+experiment.intactId} target='_blank'>{experiment.intactId}</a>
                                                     </Typography>
                                                 }
                                                 {
                                                     experiment.imexId &&
                                                     <Typography variant={"body2"} align="left">
-                                                        IMEX <a href={''}>{experiment.imexId}</a>
+                                                        IMEX <a href={'https://www.ebi.ac.uk/intact/imex/main.xhtml?query=' +experiment.imexId} target='_blank'>{experiment.imexId}</a>
                                                     </Typography>
                                                 }
                                             </TableCell>
@@ -312,6 +322,12 @@ function ExperimentComponent() {
                                                 {experiment.source}
                                             </TableCell>
                                         </Grid>
+                                        {experiment.parameters && <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Features</h4></TableCell>
+                                            <TableCell style={cellStyles}>
+                                                {getExperimentFeature(experiment.parameters)}
+                                            </TableCell>
+                                        </Grid>}
                                     </Grid>
                             </div>
                         </Paper>
