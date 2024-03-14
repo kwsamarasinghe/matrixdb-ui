@@ -199,21 +199,23 @@ function ExpressionComponent(props: any) {
                             gene: "",
                             maxTPM: 0
                         };
-                        expressionDataResponse.data[protein].geneExpression.forEach((e:any)=> {
-                            let tissueName : string = e.tissue;
-                            let tissueId: string = e.tissueId;
-                            let tpm = parseFloat(e.tpm);
-                            expressionData.expressions[tissueName] = tpm;
-                            uberonTissuesNameSet.add(tissueName);
-                            uberonTissueIdSet.add(tissueId.replace(':','_'));
-                            if(maxTPM < tpm) {
-                                maxTPM = tpm;
-                            }
-                        });
-                        expressionData.protein = protein;
-                        expressionData.gene = expressionDataResponse.data[protein].gene;
-                        expressionData.maxTPM = maxTPM;
-                        geneExpressionData.push(expressionData);
+                        if(expressionDataResponse.data[protein].geneExpression && expressionDataResponse.data[protein].geneExpression.length > 0) {
+                            expressionDataResponse.data[protein].geneExpression.forEach((e:any)=> {
+                                let tissueName : string = e.tissue;
+                                let tissueId: string = e.tissueId;
+                                let tpm = parseFloat(e.tpm);
+                                expressionData.expressions[tissueName] = tpm;
+                                uberonTissuesNameSet.add(tissueName);
+                                uberonTissueIdSet.add(tissueId.replace(':','_'));
+                                if(maxTPM < tpm) {
+                                    maxTPM = tpm;
+                                }
+                            });
+                            expressionData.protein = protein;
+                            expressionData.gene = expressionDataResponse.data[protein].gene;
+                            expressionData.maxTPM = maxTPM;
+                            geneExpressionData.push(expressionData);
+                        }
                     })
 
                     // Sort tissue data
@@ -228,7 +230,6 @@ function ExpressionComponent(props: any) {
                     let parsedProteomicsExpressionData : {
                         [key:string] : any
                     } = {};
-                    let barchartData : any[] = [];
                     Object.keys(expressionDataResponse.data).forEach((protein: string) => {
                         let proteomicsExpressionData = expressionDataResponse.data[protein].proteomicsExpression;
                         let proteomicsExpressionValues: any[] = [];
@@ -237,21 +238,11 @@ function ExpressionComponent(props: any) {
                                 tissue: expression.tissue,
                                 score: parseFloat(expression.score),
                                 sampleName: expression.sampleName
-                            })
-                            /*let data: BarChartData = {
-                                group: expression.tissueId,
-                                subgroup: {
-                                    [expression.name]: Math.log10(expression.score),
-                                },
-                                subgroupDetails: expression.sample,
-                            };
-                            barchartData.push(data);*/
-
+                            });
                         });
                         parsedProteomicsExpressionData[protein] = proteomicsExpressionValues;
                     });
                     setProteomicsExpressionData(parsedProteomicsExpressionData);
-
                     setProtein(protein);
                     setGene(gene);
 

@@ -199,19 +199,19 @@ function Legend(){
         <Card style={{ flex: 0.35, backgroundColor: 'white', margin: '10px' }}>
             <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'blue', marginRight: '10px' }}></div>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#f89406', marginRight: '10px' }}></div>
                     <span>Protein</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'green', marginRight: '10px' }}></div>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#018FD5', marginRight: '10px' }}></div>
                     <span>GAG</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'orange', marginRight: '10px' }}></div>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#c55d09', marginRight: '10px' }}></div>
                     <span>Multimer</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'lightblue', marginRight: '10px' }}></div>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#e7ab58', marginRight: '10px' }}></div>
                     <span>PFRAG</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
@@ -1131,25 +1131,25 @@ function CytoscapeComponent(props: any) {
                         {
                             selector: 'node[type="protein"]',
                             style: {
-                                'background-color': "blue",
+                                'background-color': "#f89406",
                             },
                         },
                         {
                             selector: 'node[type="gag"]',
                             style: {
-                                'background-color': "green",
+                                'background-color': "#018FD5",
                             },
                         },
                         {
                             selector: 'node[type="multimer"]',
                             style: {
-                                'background-color': "orange",
+                                'background-color': "#c55d09",
                             },
                         },
                         {
                             selector: 'node[type="pfrag"]',
                             style: {
-                                'background-color': "lightBlue",
+                                'background-color': "#e7ab58",
                             },
                         },
                         {

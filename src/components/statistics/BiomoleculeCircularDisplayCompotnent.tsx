@@ -10,7 +10,7 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
         if(biomoleculeStatistics.length === 0) return;
         if (svgRef.current) {
             const width = 200;
-            const height = 200;
+            const height = 210;
 
             const svg = d3.select(svgRef.current)
                 .append("svg")
@@ -26,17 +26,19 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
             let valueDomain = biomoleculeStatistics.map((stat: any) => stat.value);
 
             const typeColors: { [key: string]: string } = {
-                'Protein': 'blue',
-                'PFRAG': 'lightBlue',
-                'Multimer': 'orange',
-                'GAG': 'green'
+                'Protein': '#f89406',
+                'PFRAG': '#e7ab58',
+                'Multimer': '#c55d09',
+                'GAG': '#018FD5',
+                'SmallMolecules': 'lightBlue',
+                'CAT': ' #e35294',
+                'LIPID': '#a571ba'
             };
 
             const color = d3.scaleOrdinal()
                 .domain(Object.keys(typeColors))
                 .range(Object.values(typeColors));
 
-            // Size scale for countries
             var size = d3.scaleLog()
                 .domain([1,75000])
                 .range([1,50]);
@@ -57,7 +59,7 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
             }
             var mousemove = function(event: MouseEvent, d: Data) {
                 Tooltip
-                    .html('<u>' + d.type + '</u>' + "<br>" + `Value: ${d.value}`)
+                    .html( d.type  + ` : ${d.value}`)
                     .style("left", (event.pageX + 20) + "px")
                     .style("top", (event.pageY) + "px");
             }

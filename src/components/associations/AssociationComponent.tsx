@@ -273,9 +273,18 @@ function AssociationComponent() {
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (pubmed)</h4></TableCell>
                                             <TableCell style={cellStyles}>
                                                 <div>
-                                                        <span style={{ marginRight: '10px' }}>
+                                                    {
+                                                        Array.isArray(association.pmid) && association.pmid.map((pmid: string) => (
+                                                            <span style={{ marginRight: '10px' }}>
+                                                                {pmid}
+                                                            </span>
+                                                        ))
+                                                    }
+                                                    {
+                                                        Array.isArray(association.pmid) && <span style={{ marginRight: '10px' }}>
                                                             {association.pmid}
                                                         </span>
+                                                    }
                                                 </div>
                                             </TableCell>
                                         </Grid>

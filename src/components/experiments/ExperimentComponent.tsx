@@ -337,7 +337,9 @@ function ExperimentComponent() {
                                                     <Grid item xs={6}>
                                                         <Paper style={participantPaperStyle}>
                                                             <div style={{padding: '10px', textAlign: 'center' }}>
-                                                                <Typography variant="body1"><b>{participant && participant.id}</b></Typography>
+                                                                <a href={`/biomolecule/${participant.id}`}>
+                                                                    <Typography variant="body1"><b>{participant && participant.id}</b></Typography>
+                                                                </a>
                                                             </div>
                                                             <Grid item xs={12}>
                                                                 <Typography variant={"body2"} align="left"><b>Participant Detection Method:</b> {participant.detectionMethod}</Typography>

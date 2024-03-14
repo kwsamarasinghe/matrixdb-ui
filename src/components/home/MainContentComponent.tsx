@@ -42,6 +42,14 @@ function MainContentComponent() {
                     {
                         type: 'SmallMolecules',
                         value: biomoleculeData.smallmol
+                    },
+                    {
+                        type: 'CAT',
+                        value: biomoleculeData.cat
+                    },
+                    {
+                        type: 'LIPID',
+                        value: biomoleculeData.lipid
                     }
                 ];
                 setBiomoleculeStatistics(biomoleculeStatistics);
