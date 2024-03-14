@@ -259,7 +259,7 @@ function ResultComponent(props : any) {
                                                             <div style={{ flex: 1 }}>
                                                                 <TruncatedListItemText
                                                                     text={result.title[0]}
-                                                                    url={`/details/${result.publication_id}`}
+                                                                    url={`https://pubmed.ncbi.nlm.nih.gov/${result.publication_id}`}
                                                                     length={40}
                                                                 />
                                                             </div>
@@ -295,7 +295,7 @@ function ResultComponent(props : any) {
                                                             <div style={{ flex: 1 }}>
                                                                 <TruncatedListItemText
                                                                     text={result.title[0]}
-                                                                    url={`/details/${result.publication_id}`}
+                                                                    url={`https://pubmed.ncbi.nlm.nih.gov/${result.publication_id}`}
                                                                     length={40}
                                                                 />
                                                             </div>
