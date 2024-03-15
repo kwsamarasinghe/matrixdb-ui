@@ -219,7 +219,6 @@ function MainContentComponent() {
                         <CardContent>
                             <List>
                                 <ListItemText style={{
-                                    backgroundColor: 'white',
                                     margin: '8px 0',
                                     padding: '12px',
                                 }}
@@ -236,7 +235,6 @@ function MainContentComponent() {
                                         </React.Fragment>
                                     }/>
                                 <ListItemText style={{
-                                    backgroundColor: 'white',
                                     margin: '8px 0',
                                     padding: '12px',
                                 }}
@@ -304,13 +302,19 @@ function MainContentComponent() {
                         </Typography>
                         <CardContent>
                             <List>
-                                <ListItemText
+                                <ListItemText style={{
+                                    margin: '8px 0',
+                                    padding: '12px',
+                                }}
                                     primary={
                                         <React.Fragment>
                                             <strong>Network of ...</strong>
                                         </React.Fragment>
                                     }/>
-                                <ListItemText
+                                <ListItemText style={{
+                                    margin: '8px 0',
+                                    padding: '12px',
+                                }}
                                     primary={
                                         <React.Fragment>
                                             <strong>Network of ...</strong>

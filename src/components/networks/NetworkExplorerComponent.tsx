@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {
     AppBar,
-    Autocomplete,
+    Autocomplete, Box,
     IconButton,
-    InputLabel, List, ListItem,
+    InputLabel, LinearProgress, List, ListItem,
     Paper,
     TextField,
     Toolbar,
@@ -181,7 +181,7 @@ const NetworkExplorer: React.FC<any> = ({
                                                             borderRadius: '4px',
                                                             fontSize: '12px',
                                                             textTransform: 'capitalize',
-                                                            width: '50px'
+                                                            width: '250px'
                                                         }}>{biomolecule}</InputLabel>
                                                     </ListItem>
                                                 )
@@ -214,6 +214,29 @@ const NetworkExplorer: React.FC<any> = ({
                                 biomoleculeIds={biomolecules}
                             />
                         </>
+                    }
+                    {
+                        loadingNetwork &&
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '60vh',
+                        }}>
+                            <div style={{
+                                width: '80%',
+                            }}>
+                                <Box sx={{
+                                    width: '100%',
+                                    textAlign: 'center',
+                                }}>
+                                    <Typography variant={'body1'}>
+                                        Building interaction network for {biomolecules.map((b: string) => b).join(', ')}
+                                    </Typography>
+                                    <LinearProgress />
+                                </Box>
+                            </div>
+                        </div>
                     }
                 </div>
             </div>
