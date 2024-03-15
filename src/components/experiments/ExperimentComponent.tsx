@@ -152,7 +152,7 @@ function ExperimentComponent() {
         if(feature.includes('kd')){
             return 'Affinity : ' + feature.split(':')[1] ;
         } else {
-            return feature
+            return feature;
         }
     }
 

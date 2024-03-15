@@ -117,7 +117,7 @@ function KeywordComponent(props: any) {
 
     return(
         <>
-            {(goTerms && goTerms.length > 0 && keywords && keywords.length > 0) &&
+            {(goTerms && goTerms.length > 0 || keywords && keywords.length > 0) &&
                 <Paper style={paperStyle}>
                     <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
                             <span style={{paddingLeft: '10px'}}>
@@ -125,10 +125,16 @@ function KeywordComponent(props: any) {
                             </span>
                     </div>
                     <Tabs value={tabValue} onChange={handleTabChange}>
-                        <Tab key={0} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>GO Terms</Typography>} />
-                        <Tab key={1} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>Uniprot Keywords</Typography>} />
+                        {   goTerms && goTerms.length > 0 &&
+                            <Tab key={0} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>GO Terms</Typography>} />
+                        }
+                        {
+                            keywords && keywords.length > 0 &&
+                            <Tab key={1} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>Uniprot Keywords</Typography>} />
+                        }
                     </Tabs>
-                    <TabPanel key={0} value={tabValue} index={0}>
+                    { goTerms && goTerms.length > 0 &&
+                        <TabPanel key={0} value={tabValue} index={0}>
                         <Grid item xs={12}>
                             <DataGrid
                                 rows={goTerms}
@@ -145,7 +151,10 @@ function KeywordComponent(props: any) {
                             />
                         </Grid>
                     </TabPanel>
-                    <TabPanel key={1} value={tabValue} index={1}>
+                    }
+                    {
+                        keywords && keywords.length > 0 &&
+                        <TabPanel key={1} value={tabValue} index={1}>
                         <Grid item xs={12}>
                             <DataGrid
                                 rows={keywords}
@@ -162,6 +171,7 @@ function KeywordComponent(props: any) {
                             />
                         </Grid>
                     </TabPanel>
+                    }
             </Paper>
             }
         </>
