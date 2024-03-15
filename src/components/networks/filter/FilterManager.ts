@@ -53,6 +53,7 @@ class FilterManager {
                     }
 
                     if(filter.subCriteria) {
+                        if(!interactor[filter.id]) return false;
                         if(interactor[filter.id] && interactor[filter.id].length === 0) return false;
                         let criteriaValue = interactor[filter.id].find((criterionValue: any) => {
                             if(filter.subCriteria) {
