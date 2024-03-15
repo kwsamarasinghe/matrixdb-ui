@@ -18,9 +18,27 @@ import ClearIcon from "@mui/icons-material/Clear";
 import HeaderComponent from "../home/HeaderComponent";
 import Header from "../home/HeaderComponent";
 import Footer from "../home/Footer";
+import {connect, ConnectedProps} from "react-redux";
+import {AppDispatch, RootState} from "../../stateManagement/store";
+import * as actions from "../../stateManagement/actions";
+
+const mapStateToProps = (state: RootState) => ({
+    currentState: state.currentState,
+    filterConfiguration: state.filterConfiguration,
+    filters: state.filters,
+    network: state.network
+});
+
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+    setNetworkDataAction: (networkData: any) => dispatch(actions.setNetworkDataAction(networkData))
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 
-function NetworkExplorer(props: any){
+const NetworkExplorer: React.FC<any> = ({
+                                          setNetworkDataAction
+                                        }) => {
 
     const [searchQuery,setSearchQuery] = useState<string | null>(null);
     const [suggestions, setSuggestions] = useState<Array<string>>([]);
@@ -42,7 +60,9 @@ function NetworkExplorer(props: any){
     }, [searchQuery]);
 
     useEffect(() => {
-        setBiomolecules(getFromLocalStorage("selectedBiomolecules"));
+        let biomoelcules = getFromLocalStorage("selectedBiomolecules");
+        if(!biomoelcules) biomoelcules = [];
+        setBiomolecules(biomolecules);
     }, []);
 
     const getFromLocalStorage = (key: string) => {
@@ -66,10 +86,11 @@ function NetworkExplorer(props: any){
     const generateNetwork = () => {
         if(biomolecules.length > 0 ) {
             setLoadingNetwork(true);
-            http.post("/networks", {
+            http.post("/network", {
                 biomolecules: biomolecules
             })
                 .then((networkResponse) => {
+                    setNetworkDataAction({...networkResponse.data, biomolecules: JSON.parse(JSON.stringify(biomolecules))});
                     setNetwork({
                         participantIds: networkResponse.data.participants,
                         associations: networkResponse.data.associations
@@ -111,7 +132,6 @@ function NetworkExplorer(props: any){
                                 style={{ width: '100%' }}
                                 size={"medium"}
                                 id="property"
-                                disabled={loadingSuggestions || loadingNetwork}
                                 options={suggestions}
                                 value={searchQuery}
                                 onInputChange={(event, newInputValue) => {
@@ -124,9 +144,13 @@ function NetworkExplorer(props: any){
                                     />
                                 )}
                                 onChange={(event: React.ChangeEvent<{}>, newValue: string | null) => {
+                                    let newBiomoelcules : [string] | []= [];
+                                    if(biomolecules.length > 0) {
+                                        newBiomoelcules = biomolecules;
+                                    }
                                     if (newValue) {
-                                        //setBiomolecules([...biomolecules, newValue]);
-                                        setBiomolecules(biomolecules);
+                                        newBiomoelcules.push(newValue as never);
+                                        setBiomolecules(newBiomoelcules);
                                     }
                                 }}
                             />
@@ -264,4 +288,4 @@ function NetworkExplorer(props: any){
     );
 }
 
-export default NetworkExplorer;
+export default connector(NetworkExplorer);

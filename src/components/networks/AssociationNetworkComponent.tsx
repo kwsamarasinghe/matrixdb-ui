@@ -1256,31 +1256,31 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
 
     const filterManager = new FilterManager(network);
     const currentNetwork = filterManager.getFilteredNetwork(filters);
-        return (
-            <div style={{display: 'flex'}}>
-                <div
-                    style={{flex: 3.65, height: "800px"}}
-                >
-                    {
-                        currentNetwork.interactors.length > 0 && currentNetwork.interactions.length > 0 && <CytoscapeComponent
-                            biomoleculeId={biomoleculeIds[0]}
-                            participants={currentNetwork.interactors}
-                            associations={currentNetwork.interactions}
-                        />
-                    }
-                </div>
-
-                <div style={{flex: 1.35, backgroundColor: 'lightgray'}}>
-                    {/*<FilterComponent
-                        associations={associations}
-                        participants={participants}
-                        onFilterAdd={onFilterAdd}
-                        onFilterDelete={onFilterDelete}
-                    />*/}
-                    <NewFilterComponent/>
-                </div>
+    return (
+        <div style={{display: 'flex'}}>
+            <div
+                style={{flex: 3.65, height: "800px"}}
+            >
+                {
+                    currentNetwork.interactors && currentNetwork.interactors.length > 0 && currentNetwork.interactions.length > 0 && <CytoscapeComponent
+                        biomoleculeId={biomoleculeIds[0]}
+                        participants={currentNetwork.interactors}
+                        associations={currentNetwork.interactions}
+                    />
+                }
             </div>
-        );
+
+            <div style={{flex: 1.35, backgroundColor: 'lightgray'}}>
+                {/*<FilterComponent
+                    associations={associations}
+                    participants={participants}
+                    onFilterAdd={onFilterAdd}
+                    onFilterDelete={onFilterDelete}
+                />*/}
+                <NewFilterComponent/>
+            </div>
+        </div>
+    );
 
 }
 
