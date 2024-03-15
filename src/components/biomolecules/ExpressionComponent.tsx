@@ -251,7 +251,7 @@ function ExpressionComponent(props: any) {
                         expressionTypes.push('geneExpression');
                     }
 
-                    if(parsedProteomicsExpressionData &&
+                    if(parsedProteomicsExpressionData && Object.keys(parsedProteomicsExpressionData).length > 0 &&
                         Object.keys(parsedProteomicsExpressionData)
                             .map((key: string) => parsedProteomicsExpressionData[key].length)
                             .reduce((shouldDisplay: boolean, isEmpty: boolean) => shouldDisplay && isEmpty, true)) {
