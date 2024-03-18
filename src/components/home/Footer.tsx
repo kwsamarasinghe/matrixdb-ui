@@ -8,7 +8,7 @@ import React from "react";
 
 function Footer() {
     return(
-        <div style={{height: '15vh'}}>
+        <div style={{height: '15qqvh'}}>
         <footer style={{ background: 'rgb(136, 132, 132)', color: 'white', padding: '10px', textAlign: 'center' }}>
             <div style={{
                 display: 'flex',

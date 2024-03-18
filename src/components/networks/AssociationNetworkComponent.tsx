@@ -207,11 +207,11 @@ function Legend(){
                     <span>GAG</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#c55d09', marginRight: '10px' }}></div>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#6a09c5', marginRight: '10px' }}></div>
                     <span>Multimer</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#e7ab58', marginRight: '10px' }}></div>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#f5e214', marginRight: '10px' }}></div>
                     <span>PFRAG</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
