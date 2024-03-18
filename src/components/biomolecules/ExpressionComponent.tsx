@@ -692,11 +692,11 @@ function ExpressionComponent(props: any) {
                                 <Tabs value={tabValue} onChange={handleTabChange} centered>
                                     {
                                         expressionTypes.includes('geneExpression') &&
-                                        <Tab label="Gene Expression"/>
+                                        <Tab label="Transcriptomics Data"/>
                                     }
                                     {
                                         expressionTypes.includes('proteomicsExpression') &&
-                                        <Tab label="Proteomics Expression" />
+                                        <Tab label="Proteomics Data" />
                                     }
                                 </Tabs>
                                 {
