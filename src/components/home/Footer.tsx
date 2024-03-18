@@ -47,8 +47,8 @@ function Footer() {
                 </div>
                 <div style={{ flex: '25%' }}>
                     <ul style={{ listStyleType: 'none', padding: 0,  textAlign: 'right', fontSize: '14px' }}>
-                        <li style={{ margin: '5px 0' }} ><a style={{ color: 'white', textDecoration: 'none' }} href="/about">About</a></li>
-                        <li style={{ margin: '5px 0' }}><a style={{ color: 'white', textDecoration: 'none' }} href="/statistics">Statistics</a></li>
+                        {/* <li style={{ margin: '5px 0' }} ><a style={{ color: 'white', textDecoration: 'none' }} href="/about">About</a></li>
+                        <li style={{ margin: '5px 0' }}><a style={{ color: 'white', textDecoration: 'none' }} href="/statistics">Statistics</a></li>*/}
                         <li style={{ margin: '5px 0' }}><a style={{ color: 'white', textDecoration: 'none' }} href="/network">Network Explorer</a></li>
                     </ul>
                 </div>

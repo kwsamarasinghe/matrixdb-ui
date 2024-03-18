@@ -25,7 +25,7 @@ function MainComponent() {
                 id: ""
             }}/>
             <main style={{ flex: 1}}>
-                <div style={{marginBottom: '10px'}}>
+                <div style={{marginBottom: '20px'}}>
                     <SearchComponent/>
                 </div>
                 {currentPath !== '/search' && <MainContentComponent/>}

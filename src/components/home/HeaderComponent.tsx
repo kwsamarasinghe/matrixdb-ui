@@ -115,14 +115,15 @@ function Header(props: HeaderProps) {
                         </button>
                     }
 
-
+                    {/*
                     <button style={{ color: 'white', background: 'transparent', border: 'none', cursor: 'pointer'}} title="Downloads">
                         <FontAwesomeIcon icon={faDownload} style={{ marginRight: '10px', fontSize: '1.5em' }} />
                     </button>
 
                     <button style={{ color: 'white', background: 'transparent', border: 'none', cursor: 'pointer' }} title="Help">
                         <FontAwesomeIcon icon={faInfo} style={{ marginRight: '10px', fontSize: '1.5em' }} />
-                    </button>
+                    </button>*/
+                    }
                 </div>
             </Toolbar>
         </AppBar>
