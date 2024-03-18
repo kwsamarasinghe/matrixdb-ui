@@ -27,12 +27,12 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
 
             const typeColors: { [key: string]: string } = {
                 'Protein': '#f89406',
-                'PFRAG': '#e7ab58',
-                'Multimer': '#c55d09',
+                'PFRAG': '#f5e214',
+                'Multimer': '#6a09c5',
                 'GAG': '#018FD5',
                 'SmallMolecules': 'lightBlue',
-                'CAT': ' #e35294',
-                'LIPID': '#a571ba'
+                'CAT': 'black',
+                'LIPID': 'lightpink'
             };
 
             const color = d3.scaleOrdinal()

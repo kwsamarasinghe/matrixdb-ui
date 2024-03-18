@@ -59,7 +59,7 @@ export class FilterConfigurationManager{
             },
             {
                 id: 'geneExpression',
-                label: 'Transcriptomic Expression',
+                label: 'Transcriptomic Data',
                 subCriteria: [
                     {
                         id: 'tissue',
@@ -86,7 +86,7 @@ export class FilterConfigurationManager{
             },
             {
                 id: 'proteomicsExpression',
-                label: 'Proteomics Expression',
+                label: 'Proteomics Data',
                 subCriteria: [
                     {
                         id: 'tissue',
