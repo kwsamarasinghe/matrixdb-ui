@@ -86,17 +86,17 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                     partners: networkData.interactors.length,
                     directlySupportedExperiments : 0,
                 }
+                let binary = new Set(), spokeExpandedFrom = new Set();
                 networkData.interactions.forEach((interaction: any) => {
-                    let binary = 0, spokeExpandedFrom = 0;
-                    if(interaction?.experiments?.direct?.binary?.length) {
-                        binary = interaction?.experiments?.direct?.binary?.length;
+                    if(interaction?.experiments?.direct?.binary) {
+                        interaction.experiments.direct.binary.forEach((exp: string) => binary.add(exp));
                     }
 
                     if(interaction?.experiments?.direct?.spoke_expanded_from?.length) {
-                        spokeExpandedFrom = interaction?.experiments?.direct?.spoke_expanded_from?.length;
+                        interaction.experiments.direct.spoke_expanded_from.forEach((exp: string) => spokeExpandedFrom.add(exp));
                     }
-                    interactorStats.directlySupportedExperiments += (binary + spokeExpandedFrom);
                 });
+                interactorStats.directlySupportedExperiments += (binary.size + spokeExpandedFrom.size);
                 if(networkData.interactors.length > 0) {
                     onInteractionLoad();
                 }
@@ -165,8 +165,8 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                 {
                                     interactorStats &&
                                     <div style={{clear: 'left', textAlign: 'left'}}>
-                                        <h4 >Interactors: {interactorStats.partners}</h4>
-                                        {interactorStats.directlySupportedExperiments > 0 && <h4>Experimentally Supported Experiments: <span style={{ color : 'darkblue'}}>{interactorStats.directlySupportedExperiments}</span> </h4>}
+                                        <h4 >Participants: {interactorStats.partners - 1}</h4>
+                                        {interactorStats.directlySupportedExperiments > 0 && <h4>Experimentally Supported: <span style={{ color : 'darkblue'}}>{interactorStats.directlySupportedExperiments} experiments</span> </h4>}
                                         {interactors.predictions > 0 && <h4>Predicted : <span style={{ color : 'darkgreen'}}>{interactors.predictions}</span> </h4>}
                                         {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
                                     </div>

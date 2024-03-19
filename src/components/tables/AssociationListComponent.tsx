@@ -22,18 +22,29 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
         let partner = interaction.participants
             .filter((biomolecule: string) => biomolecule !== biomoleculeIds[0])[0];
         if(!partner) partner = biomoleculeIds[0];
+
+        let directlySupported = [];
+        if(interaction.experiments.direct && interaction.experiments.direct.binary) {
+            directlySupported = interaction.experiments.direct.binary;
+        }
+
+        let spokeExpandedFrom = [];
+        if(interaction.experiments.direct && interaction.experiments.direct.spoke_expanded_from) {
+            spokeExpandedFrom = interaction.experiments.direct.spoke_expanded_from;
+        }
+
         return {
             id: partner,
             association: interaction.id,
-            directlySupportedBy: [],
-            spokeExpandedFrom: [],
+            directlySupportedBy: directlySupported,
+            spokeExpandedFrom: spokeExpandedFrom,
             score: interaction.score
         }
     });
     const columns: GridColDef[] = [
         {
             field: 'id',
-            headerName: 'Partner',
+            headerName: 'Participant',
             width: 200,
             renderCell: (params: any) =>  (
                 <>
@@ -42,7 +53,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
         },
         {
             field: 'association',
-            headerName: 'Association',
+            headerName: 'Interactions',
             width: 250,
             renderCell: (params: any) =>  (
                 <>

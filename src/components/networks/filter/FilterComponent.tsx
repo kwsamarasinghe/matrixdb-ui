@@ -146,7 +146,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                             paddingBottom: '10px'
                         }}>
                             <Typography variant='body1' fontWeight='bold'>
-                                Filter Partner Interactions
+                                Filter Participant Interactions
                             </Typography>
                         </div>
                         <div>
@@ -159,7 +159,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                                 <span style={{
                                                     paddingLeft: '5px'
                                                 }}>
-                                                    Interactor
+                                                    Participant
                                                 </span>
                                             </Typography>
                                         </AccordionSummary>
