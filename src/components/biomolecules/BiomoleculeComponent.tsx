@@ -40,8 +40,8 @@ function BiomoleculeComponent() {
                         setBiomolecule(biomoleculeData);
 
                         if(
-                            biomoleculeData.molecular_details && biomoleculeData.molecular_details.pdb ||
-                            biomoleculeData.xrefs && biomoleculeData.xrefs.pdb
+                            (biomoleculeData.molecular_details && biomoleculeData.molecular_details.pdb && biomoleculeData.molecular_details.pdb.length > 0) ||
+                            (biomoleculeData.xrefs && biomoleculeData.xrefs.pdb && biomoleculeData.xrefs.pdb.lenght > 0)
                         ) {
                             setShowStructures(true);
                         }
