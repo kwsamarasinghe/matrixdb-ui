@@ -59,7 +59,7 @@ const InteractionHeatMapComponent: React.FC<HeatmapProps> = ({ data, width, heig
         }
         var mousemove = function(event: MouseEvent, d: any) {
             Tooltip
-                .html(`Value: ${d.original}`)
+                .html(`${d.original}`)
                 .style("left", (event.pageX + 20) + "px")
                 .style("top", (event.pageY) + "px");
         }

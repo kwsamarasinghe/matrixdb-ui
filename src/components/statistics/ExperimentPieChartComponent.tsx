@@ -35,7 +35,7 @@ const ExperimentPieChartComponent: React.FC<PieChartProps> = ({ data, width, hei
 
         var mousemove = function (event: MouseEvent, d: any) {
             Tooltip
-                .html('<u>' + d.data.title + '</u>' + "<br>" + `Value: ${d.data.value}`)
+                .html('<u>' + d.data.title + '</u>' + "<br>" + `${d.data.value}`)
                 .style("left", (event.pageX + 20) + "px")
                 .style("top", (event.pageY) + "px");
         };
