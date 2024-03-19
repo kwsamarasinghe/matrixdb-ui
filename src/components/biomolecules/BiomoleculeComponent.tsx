@@ -301,7 +301,7 @@ function BiomoleculeComponent() {
                                         </div>
                                     }
                                     {
-                                        biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb &&
+                                        biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb && biomolecule.molecular_details.pdb.length > 0 &&
                                         <div
                                             id='structures'
                                             style={{marginBottom: '10px'}}>
