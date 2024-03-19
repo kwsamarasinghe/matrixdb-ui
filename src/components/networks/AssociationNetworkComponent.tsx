@@ -1143,13 +1143,13 @@ function CytoscapeComponent(props: any) {
                         {
                             selector: 'node[type="multimer"]',
                             style: {
-                                'background-color': "#c55d09",
+                                'background-color': "#6a09c5",
                             },
                         },
                         {
                             selector: 'node[type="pfrag"]',
                             style: {
-                                'background-color': "#e7ab58",
+                                'background-color': "#f5e214",
                             },
                         },
                         {
