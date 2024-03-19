@@ -45,8 +45,8 @@ function BiomoleculeComponent() {
                         ) {
                             setShowStructures(true);
                         }
-                        if((biomoleculeData.annotations && biomoleculeData.annotations.go && biomoleculeData.annotations.go.length >0)
-                            || ( biomoleculeData.annotations.keywords && biomoleculeData.annotations.keywords.length > 0)) {
+                        if(biomoleculeData.type !== 'gag' && ((biomoleculeData.annotations && biomoleculeData.annotations.go && biomoleculeData.annotations.go.length >0)
+                            || ( biomoleculeData.annotations.keywords && biomoleculeData.annotations.keywords.length > 0))) {
                             setShowKeywords(true);
                         }
                     }
@@ -311,7 +311,7 @@ function BiomoleculeComponent() {
                                         </div>
                                     }
                                     {
-                                        (biomolecule && biomolecule.annotations) &&
+                                        (biomolecule && biomolecule.type !== 'gag' && biomolecule.annotations) &&
                                         ((biomolecule.annotations.go && biomolecule.annotations.go.length >0)
                                             || (biomolecule.annotations && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0)) &&
                                         <div
