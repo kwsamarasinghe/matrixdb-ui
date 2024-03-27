@@ -234,7 +234,11 @@ function OverviewComponent(props: any) {
                         {
                             biomoleculeToDisplay && biomoleculeToDisplay.species && 
                             <div style={{ paddingLeft: '20px' }}>
-                                <SpeciesIcon speciesId={biomoleculeToDisplay.species}/>
+                                <SpeciesIcon
+                                    speciesId={biomoleculeToDisplay.species}
+                                    width={'40px'}
+                                    height={'40px'}
+                                />
                             </div>
                         }
                     </div>

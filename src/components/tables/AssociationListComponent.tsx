@@ -24,12 +24,12 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
         if(!partner) partner = biomoleculeIds[0];
 
         let directlySupported = [];
-        if(interaction.experiments.direct && interaction.experiments.direct.binary) {
+        if(interaction.experiments && interaction.experiments.direct && interaction.experiments.direct.binary) {
             directlySupported = interaction.experiments.direct.binary;
         }
 
         let spokeExpandedFrom = [];
-        if(interaction.experiments.direct && interaction.experiments.direct.spoke_expanded_from) {
+        if(interaction.experiments && interaction.experiments.direct && interaction.experiments.direct.spoke_expanded_from) {
             spokeExpandedFrom = interaction.experiments.direct.spoke_expanded_from;
         }
 

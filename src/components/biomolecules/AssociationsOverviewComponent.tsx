@@ -84,19 +84,32 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
 
                 let interactorStats = {
                     partners: networkData.interactors.length,
-                    directlySupportedExperiments : 0,
+                    supportingEvidence : 0,
+                    predictedInteractions: 0,
+                    experimentalInteractions: 0
                 }
                 let binary = new Set(), spokeExpandedFrom = new Set();
+                let predictedInteractions = 0, experimentalInteractions = 0;
                 networkData.interactions.forEach((interaction: any) => {
-                    if(interaction?.experiments?.direct?.binary) {
+                    if(interaction?.experiments?.direct?.binary.length > 0) {
                         interaction.experiments.direct.binary.forEach((exp: string) => binary.add(exp));
                     }
 
-                    if(interaction?.experiments?.direct?.spoke_expanded_from?.length) {
+                    if(interaction?.experiments?.direct?.spoke_expanded_from?.length > 0) {
                         interaction.experiments.direct.spoke_expanded_from.forEach((exp: string) => spokeExpandedFrom.add(exp));
                     }
+
+                    if(interaction?.experiments?.direct?.binary.length > 0 || interaction?.experiments?.direct?.spoke_expanded_from?.length > 0) {
+                        experimentalInteractions += 1;
+                    }
+
+                    if(interaction?.prediction) {
+                        predictedInteractions +=1;
+                    }
                 });
-                interactorStats.directlySupportedExperiments += (binary.size + spokeExpandedFrom.size);
+                interactorStats.supportingEvidence += (binary.size + spokeExpandedFrom.size);
+                interactorStats.predictedInteractions = predictedInteractions;
+                interactorStats.experimentalInteractions = experimentalInteractions;
                 if(networkData.interactors.length > 0) {
                     onInteractionLoad();
                 }
@@ -166,9 +179,13 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                     interactorStats &&
                                     <div style={{clear: 'left', textAlign: 'left'}}>
                                         <h4 >Participants: {interactorStats.partners - 1}</h4>
-                                        {interactorStats.directlySupportedExperiments > 0 && <h4>Experimentally Supported: <span style={{ color : 'darkblue'}}>{interactorStats.directlySupportedExperiments} experiments</span> </h4>}
-                                        {interactors.predictions > 0 && <h4>Predicted : <span style={{ color : 'darkgreen'}}>{interactors.predictions}</span> </h4>}
-                                        {interactors.inferred > 0 && <h4>Inferred from experimentally-supported interactions involving orthologs : <span style={{ color : 'red'}}>{interactors.inferred}</span> </h4>}
+                                        {interactorStats.supportingEvidence > 0 &&
+                                            <div style={{ display: 'flex' }}>
+                                                <h4 style={{ display: 'inline-block', margin: '0' }}>Experimentally Supporting Interactions: {interactorStats.experimentalInteractions}</h4>
+                                                <h4 style={{ display: 'inline-block', margin: '0', paddingLeft: '20px' }}>Supporting Evidence: {interactorStats.supportingEvidence}</h4>
+                                            </div>
+                                        }
+                                        {interactorStats.predictedInteractions > 0 && <h4>Predicted Interactions: <span style={{ color : 'darkred'}}>{interactorStats.predictedInteractions}</span> </h4>}
                                     </div>
                                 }
                                 <div style={{float: 'right'}}>
