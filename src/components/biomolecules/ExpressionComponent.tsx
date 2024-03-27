@@ -298,6 +298,32 @@ function ExpressionComponent(props: any) {
         score: number;
     }
 
+    interface ColorLegendProps {
+        maxScore: number;
+    }
+
+    const ColorLegend: React.FC<ColorLegendProps> = ({ maxScore }) => {
+        const gradientColors: string[] = [];
+
+        // Generate gradient colors based on score calculation
+        for (let score = 0; score <= maxScore; score++) {
+            const color = `rgb(${Math.floor(175 + (-175 / maxScore) * score)}, ${Math.floor(208 + (-208 / maxScore) * score)}, ${Math.floor((145 / maxScore) * score + 95 * maxScore)})`;
+            gradientColors.push(color);
+        }
+
+        const gradient = `linear-gradient(to right, rgb(220, 220, 220), ${gradientColors.join(', ')})`;
+
+        return (
+            <div style={{ position: 'relative', width: '300px' }}>
+                <div style={{ fontSize: '14px', position: 'absolute', top: 0, left: 0 }}>0</div>
+                <div style={{ fontSize: '14px', position: 'absolute', top: 0, right: 0 }}>{Math.round(maxScore)}</div>
+                <div className="color-legend" style={{ height: '15px', background: gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '10px', color: 'black' }}>TPM</span>
+                </div>
+            </div>
+        );
+    };
+
     const ExpressionBox: React.FC<{ tissue: string; protein: string; gene: string; score: number, maxScore: number }> =
         ({ tissue, protein, gene, score, maxScore }) => {
         const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -589,6 +615,15 @@ function ExpressionComponent(props: any) {
                                         </div>
                                     )
                                 })
+                            }
+                            {geneExpressionData && geneExpressionData[0].maxTPM &&
+                                <div style={{
+                                    justifyContent: 'end',
+                                    paddingBottom: '5px',
+                                    paddingTop: '60px'
+                                }}>
+                                    <ColorLegend maxScore={geneExpressionData[0].maxTPM}/>
+                                </div>
                             }
                         </>
                     </div>
