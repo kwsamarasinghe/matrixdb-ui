@@ -273,7 +273,7 @@ function AssociationComponent() {
                                         }
                                         {association.prediction_studies && association.prediction_studies.length > 0  &&
                                             <Grid item xs={6}>
-                                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Prediction Methodnpm </h4></TableCell>
+                                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Prediction Methods </h4></TableCell>
                                                 <TableCell style={cellStyles}>
                                                     <Typography variant={"body2"} align="left">
                                                         <div style={{display: 'flex', flexDirection: 'column'}}>
