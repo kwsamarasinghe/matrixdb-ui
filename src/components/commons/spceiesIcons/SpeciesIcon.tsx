@@ -13,38 +13,43 @@ import { ReactComponent as RabbitIcon } from '../../../assets/images/species/rab
 
 interface SpeciesIconProps {
     speciesId: string;
+    width: string;
+    height: string;
 }
 
-const SpeciesIcon: React.FC<SpeciesIconProps> = ({ speciesId }) => {
+const SpeciesIcon: React.FC<SpeciesIconProps> = ({ speciesId, width, height }) => {
     let iconComponent;
 
     switch (speciesId) {
         case '9606':
-            iconComponent = <HumanIcon />;
+            iconComponent = <HumanIcon width={width} height={height}/>;
             break;
         case '10090':
-            iconComponent = <MouseIcon />;
+            iconComponent = <MouseIcon width={width} height={height}/>;
             break;
         case '10114':
-            iconComponent = <RatIcon />;
+            iconComponent = <RatIcon width={width} height={height}/>;
             break;
         case '9913':
-            iconComponent = <BovineIcon />;
+            iconComponent = <BovineIcon width={width} height={height}/>;
             break;
         case 'fish':
-            iconComponent = <FishIcon />;
+            iconComponent = <FishIcon width={width} height={height}/>;
             break;
         case '10141':
-            iconComponent = <GuineaPigIcon />;
+            iconComponent = <GuineaPigIcon width={width} height={height}/>;
             break;
         case '9031':
-            iconComponent = <ChickenIcon />;
+            iconComponent = <ChickenIcon width={width} height={height}/>;
             break;
         case '9986':
-            iconComponent = <RabbitIcon />;
+            iconComponent = <RabbitIcon width={width} height={height}/>;
             break;
         case '9823':
-            iconComponent = <PigIcon />;
+            iconComponent = <PigIcon width={width} height={height}/>;
+            break;
+        case '10116':
+            iconComponent = <RatIcon width={width} height={height}/>;
             break;
         default:
             iconComponent = null;
