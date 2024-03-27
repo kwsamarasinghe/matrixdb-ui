@@ -22,7 +22,8 @@ interface AssociationToDisplay {
     score: string,
     spokeexpandedfrom?: [string],
     directlysupportedby?: [string],
-    inferredfrom?: [string]
+    inferredfrom?: [string],
+    prediction_studies?: [string]
 }
 
 
@@ -41,7 +42,8 @@ function AssociationComponent() {
                         pmid: associationData.pmids,
                         participants: associationData.participants,
                         source: associationData.source,
-                        score: associationData.score
+                        score: associationData.score,
+                        prediction_studies: associationData.prediction_studies
                     }
                     if(associationData.experiments && associationData.experiments.direct && associationData.experiments.direct.binary &&
                         associationData.experiments.direct.binary.length > 0) {
@@ -225,50 +227,69 @@ function AssociationComponent() {
                                                 }
                                             </TableCell>
                                         </Grid>}
-                                        <Grid item xs={6}>
-                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Experiment(s)</h4></TableCell>
-                                            <TableCell style={cellStyles}>
-                                                <Typography variant={"body2"} align="left">
-                                                    {
-                                                        association.directlysupportedby &&
-                                                        <div style={{paddingBottom: '5px'}}>
-                                                            <Typography align="left">Directly Supported By
-                                                                {
-                                                                    association.directlysupportedby.map(b => {
-                                                                        let link = "/experiment/" + b;
-                                                                        return (
-                                                                            <Grid item xs={6}>
-                                                                                <a href={link}>{b}</a>
-                                                                            </Grid>
-                                                                        )
-                                                                    })
-                                                                }
-                                                            </Typography>
-                                                        </div>
-                                                    }
-                                                    {
-                                                        association.spokeexpandedfrom &&
-                                                        <div>
-                                                            <Typography align="left">Spoke Expanded From
-                                                                {
-                                                                    association.spokeexpandedfrom.map(b => {
-                                                                        let link = "/experiment/" + b;
-                                                                        return (
-                                                                            <Grid item xs={6}>
-                                                                                <a href={link}>{b}</a>
-                                                                            </Grid>
-                                                                        )
-                                                                    })
-                                                                }
-                                                            </Typography>
-                                                        </div>
-                                                    }
-                                                </Typography>
+                                        {(association.directlysupportedby && association.directlysupportedby.length > 0)
+                                            || (association.spokeexpandedfrom &&  association.spokeexpandedfrom.length > 0) &&
+                                            <Grid item xs={6}>
+                                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Experiment(s)</h4></TableCell>
+                                                <TableCell style={cellStyles}>
+                                                    <Typography variant={"body2"} align="left">
+                                                        {
+                                                            association.directlysupportedby &&
+                                                            <div style={{paddingBottom: '5px'}}>
+                                                                <Typography align="left">Directly Supported By
+                                                                    {
+                                                                        association.directlysupportedby.map(b => {
+                                                                            let link = "/experiment/" + b;
+                                                                            return (
+                                                                                <Grid item xs={6}>
+                                                                                    <a href={link}>{b}</a>
+                                                                                </Grid>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </Typography>
+                                                            </div>
+                                                        }
+                                                        {
+                                                            association.spokeexpandedfrom &&
+                                                            <div>
+                                                                <Typography align="left">Spoke Expanded From
+                                                                    {
+                                                                        association.spokeexpandedfrom.map(b => {
+                                                                            let link = "/experiment/" + b;
+                                                                            return (
+                                                                                <Grid item xs={6}>
+                                                                                    <a href={link}>{b}</a>
+                                                                                </Grid>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </Typography>
+                                                            </div>
+                                                        }
+                                                    </Typography>
                                             </TableCell>
-                                        </Grid>
-                                        <Grid item xs={6}>
-
-                                        </Grid>
+                                            </Grid>
+                                        }
+                                        {association.prediction_studies && association.prediction_studies.length > 0  &&
+                                            <Grid item xs={6}>
+                                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Prediction Methodnpm </h4></TableCell>
+                                                <TableCell style={cellStyles}>
+                                                    <Typography variant={"body2"} align="left">
+                                                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                                                            {
+                                                                association.prediction_studies.map((publication: string) => (
+                                                                    <div style={{ display: 'flex', marginRight: '10px' }}>
+                                                                        {publication.includes('doi') && publication}
+                                                                        {!publication.includes('doi') && <a href={`https://pubmed.ncbi.nlm.nih.gov/${publication}`}>{publication}</a>}
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                    </Typography>
+                                                </TableCell>
+                                            </Grid>
+                                        }
                                         {association.pmid && <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (pubmed)</h4></TableCell>
                                             <TableCell style={cellStyles}>
