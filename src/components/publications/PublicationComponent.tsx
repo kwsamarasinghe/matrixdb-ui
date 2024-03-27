@@ -232,7 +232,7 @@ function PublicationComponent() {
                                         <TableCell style={{...labelCellStyle, textAlign: 'right', paddingRight: '10px'}}><h4>Author (s)</h4></TableCell>
                                         <TableCell style={cellStyles}>
                                             <Typography variant={"body2"} align="left">
-                                                {publication.authors.map((authorDetails: any) => authorDetails.name).join(', ')}
+                                                {publication.authors.map((authorDetails: any) => authorDetails).join(', ')}
                                             </Typography>
                                         </TableCell>
                                     </Grid>
@@ -261,7 +261,7 @@ function PublicationComponent() {
                             }}>
                                 <div style={{clear: 'left', textAlign: 'left'}}>
                                     <h4><span>Interactions : {interactions}</span></h4>
-                                    <h4><span>Supporting Evidences : {evidences} </span></h4>
+                                    <h4><span>Supporting Evidence : {evidences} </span></h4>
                                 </div>
                             </div>
                             {
@@ -301,18 +301,6 @@ function PublicationComponent() {
                         </Paper>
                     }
                 </Box>
-                {
-                    !publication &&
-                    <Box sx={{ display: 'flex', bgcolor: 'black' , justifyContent: 'center'}}>
-                        <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
-                            <Paper elevation={2}>
-                              <Typography variant="subtitle1" component="span">
-                                <h6>No publication found for id {publicationId}</h6>
-                              </Typography>
-                            </Paper>
-                        </Box>
-                    </Box>
-                }
             </div>
             <Footer/>
         </div>
