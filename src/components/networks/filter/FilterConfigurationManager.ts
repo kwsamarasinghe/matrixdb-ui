@@ -122,6 +122,14 @@ export class FilterConfigurationManager{
         ],
         interaction: [
             {
+                id: 'type',
+                label: 'Type',
+                options: {
+                    type: FilterOptionType.list,
+                    range: []
+                }
+            },
+            {
                 id: 'score',
                 label: 'Confidence Score',
                 options: {
