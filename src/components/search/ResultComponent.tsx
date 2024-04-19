@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAtom, faBook} from "@fortawesome/free-solid-svg-icons";
-import SpeciesIcon from "../commons/spceiesIcons/SpeciesIcon";
+import SpeciesIcon from "../commons/icons/SpeciesIcon";
+import LogoIcon from "../commons/icons/LogoIcon";
 
 function ResultDetailsComponent(props: any) {
 
@@ -89,13 +90,22 @@ function ResultDetailsComponent(props: any) {
                                                 display: 'flex',
                                                 flexDirection: 'row'
                                             }}>
-                                                <div style={{
-                                                    width: '10%',
-                                                    height: '10px',
-                                                    paddingRight: '5px'
-                                                }}>
-                                                    <SpeciesIcon speciesId={'9606'} width={'20px'} height={'20px'}/>
-                                                </div>
+                                                {result.species && <div style={{ flex: '10%',paddingRight: '10px' }}>
+                                                    <SpeciesIcon
+                                                        speciesId={result.species.toString()}
+                                                        width={'20px'}
+                                                        height={'20px'}
+                                                    />
+                                                </div>}
+                                                {!result.species && (
+                                                    <div style={{ flex: '10%', paddingRight: '10px' }}>
+                                                        <SpeciesIcon
+                                                            speciesId={'-1'}
+                                                            width={'15px'}
+                                                            height={'15px'}
+                                                        />
+                                                    </div>
+                                                )}
                                                 <div style={{
                                                     width: '70%'
                                                 }}>
@@ -202,12 +212,24 @@ function ResultComponent(props : any) {
 
     const showExpanded = () => expandBiomolecules || expandPublications;
 
+    const displayName = (biomolecule: any) => {
+        if(biomolecule.recommended_name) {
+            return biomolecule.recommended_name;
+        }
+
+        if(biomolecule.name) {
+            return biomolecule.name;
+        }
+
+    }
+
     return (
         <>
             {
                 !showExpanded() && <>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '30px'}}>
-                        <div style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px', paddingLeft: '100px', paddingRight: '100px' }}>
+                        {props.searchResults.biomolecules && props.searchResults.biomolecules.length > 0 &&
+                            <Paper style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px' }}>
                             {props.searchResults.biomolecules && props.searchResults.biomolecules.length > 0 &&
                                 <>
                                     <div style={{ textAlign: 'left', marginBottom: '20px'}}>
@@ -226,24 +248,75 @@ function ResultComponent(props : any) {
                                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                                             <List>
                                                 {props.searchResults.biomolecules.slice(0,5).map((result: any, index: number) => (
-                                                    <ListItem key={index}>
+                                                    <ListItem key={index} style={{paddingBottom: '20px'}}>
                                                         <Typography>
                                                             <div key={index} style={{ display: 'flex', width: '400px', marginBottom: '10px' }}>
-                                                                <div style={{ flex: 1 }}>
+                                                                {result.species && (
+                                                                    <div style={{ flex: '10%', paddingRight: '10px' }}>
+                                                                        <SpeciesIcon
+                                                                            speciesId={result.species}
+                                                                            width={'20px'}
+                                                                            height={'20px'}
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                                {!result.species && (
+                                                                    <div style={{ flex: '10%', paddingRight: '10px' }}>
+                                                                        <SpeciesIcon
+                                                                            speciesId={'-1'}
+                                                                            width={'15px'}
+                                                                            height={'15px'}
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                                <div style={{ flex: '70%' }}>
                                                                     <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
-                                                                        {result.name}
+                                                                        {displayName(result)}
                                                                     </a>
                                                                 </div>
-                                                                <div style={{ flex: 1 }}>
+                                                                <div style={{ flex: '20%' }}>
                                                                     <Typography variant="caption">
                                                                         <strong>{result.interaction_count}</strong>
                                                                     </Typography>
                                                                 </div>
                                                             </div>
-                                                            <div>
-                                                                <Typography variant="body2">
-                                                                    {result.biomolecule_id}
-                                                                </Typography>
+                                                            <div style={{ display: 'flex', flexDirection: 'row'}}>
+                                                                {
+                                                                    result.biomolecule_type !== 'protein' &&
+                                                                    <>
+                                                                        <LogoIcon logoName={'matrixdb'} width={'15'} height={'15'}/>
+                                                                        <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}} variant="body2">
+                                                                            {result.biomolecule_id}
+                                                                        </Typography>
+                                                                    </>
+                                                                }
+                                                                {
+                                                                    result.biomolecule_type === 'protein' &&
+                                                                    <>
+                                                                        <LogoIcon logoName={'uniprot'} width={'15'} height={'15'}/>
+                                                                        <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                            {result.biomolecule_id}
+                                                                        </Typography>
+                                                                    </>
+                                                                }
+                                                                {
+                                                                    result.chebi &&
+                                                                    <>
+                                                                        <LogoIcon logoName={'chebi'} width={'15'} height={'15'}/>
+                                                                        <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                            {result.chebi}
+                                                                        </Typography>
+                                                                    </>
+                                                                }
+                                                                {
+                                                                    result.complex_portal &&
+                                                                    <>
+                                                                        <LogoIcon logoName={'complex-portal'} width={'15'} height={'15'}/>
+                                                                        <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                            {result.complex_portal}
+                                                                        </Typography>
+                                                                    </>
+                                                                }
                                                             </div>
                                                         </Typography>
                                                     </ListItem>
@@ -252,24 +325,75 @@ function ResultComponent(props : any) {
                                             <List>
                                                 {props.searchResults.biomolecules &&
                                                     props.searchResults.biomolecules.slice(5,10).map((result: any, index: number) => (
-                                                        <ListItem key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <ListItem key={index} style={{ paddingBottom: '20px' }}>
                                                             <Typography>
                                                                 <div key={index} style={{ display: 'flex', width: '400px', marginBottom: '10px' }}>
-                                                                    <div style={{ flex: 1 }}>
+                                                                    {result.species && (
+                                                                        <div style={{ flex: '10%', paddingRight: '10px' }}>
+                                                                            <SpeciesIcon
+                                                                                speciesId={result.species}
+                                                                                width={'20px'}
+                                                                                height={'20px'}
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                    {!result.species && (
+                                                                        <div style={{ flex: '10%', paddingRight: '10px' }}>
+                                                                            <SpeciesIcon
+                                                                                speciesId={'-1'}
+                                                                                width={'15px'}
+                                                                                height={'15px'}
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                    <div style={{ flex: '70%' }}>
                                                                         <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
-                                                                            {result.name}
+                                                                            {displayName(result)}
                                                                         </a>
                                                                     </div>
-                                                                    <div style={{ flex: 1 }}>
+                                                                    <div style={{ flex: '20%' }}>
                                                                         <Typography variant="caption">
                                                                             <strong>{result.interaction_count}</strong>
                                                                         </Typography>
                                                                     </div>
                                                                 </div>
-                                                                <div>
-                                                                    <Typography variant="body2">
-                                                                        {result.biomolecule_id}
-                                                                    </Typography>
+                                                                <div style={{ display: 'flex', flexDirection: 'row'}}>
+                                                                    {
+                                                                        result.biomolecule_type !== 'protein' &&
+                                                                        <>
+                                                                            <LogoIcon logoName={'matrixdb'} width={'15'} height={'15'}/>
+                                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}} variant="body2">
+                                                                                {result.biomolecule_id}
+                                                                            </Typography>
+                                                                        </>
+                                                                    }
+                                                                    {
+                                                                        result.biomolecule_type === 'protein' &&
+                                                                        <>
+                                                                            <LogoIcon logoName={'uniprot'} width={'15'} height={'15'}/>
+                                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                                {result.biomolecule_id}
+                                                                            </Typography>
+                                                                        </>
+                                                                    }
+                                                                    {
+                                                                        result.chebi &&
+                                                                        <>
+                                                                            <LogoIcon logoName={'chebi'} width={'15'} height={'15'}/>
+                                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                                {result.chebi}
+                                                                            </Typography>
+                                                                        </>
+                                                                    }
+                                                                    {
+                                                                        result.complex_portal &&
+                                                                        <>
+                                                                            <LogoIcon logoName={'complex-portal'} width={'15'} height={'15'}/>
+                                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                                {result.complex_portal}
+                                                                            </Typography>
+                                                                        </>
+                                                                    }
                                                                 </div>
                                                             </Typography>
                                                         </ListItem>
@@ -280,15 +404,19 @@ function ResultComponent(props : any) {
                                             alignItems: 'right',
                                             textAlign: 'right'
                                         }}>
-                                    <span style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setExpandBiomolecules(true)}>
-                                        See more ...
-                                    </span>
+                                            {
+                                                props.searchResults.biomolecules && props.searchResults.biomolecules.length > 10 && <span style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setExpandBiomolecules(true)}>
+                                                    See more ...
+                                                </span>
+                                            }
                                         </div>
                                     </div>
                                 </>
                             }
-                        </div>
-                        <div style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px' }}>
+                            </Paper>
+                        }
+                        {props.searchResults.publications && props.searchResults.publications.length > 0 &&
+                        <Paper style={{ padding: '10px', textAlign: 'center', width: '50%', marginBottom: '20px' }}>
                             {props.searchResults.publications && props.searchResults.publications.length > 0 &&
                                 <>
                                     <div style={{ textAlign: 'left', marginBottom: '20px'}}>
@@ -318,7 +446,7 @@ function ResultComponent(props : any) {
                                                                 }}>
                                                                     <div style={{ flex: 1 }}>
                                                                         <TruncatedListItemText
-                                                                            text={result.title[0]}
+                                                                            text={result.title}
                                                                             url={`/publication/${result.publication_id}`}
                                                                             length={40}
                                                                         />
@@ -334,7 +462,7 @@ function ResultComponent(props : any) {
                                                                 </div>
                                                                 <div>
                                                                     <Typography variant="body2">
-                                                                        {result.abstract && truncateText(result.abstract[0], 100)}
+                                                                        {result.abstract && truncateText(result.abstract, 100)}
                                                                     </Typography>
                                                                 </div>
                                                             </Typography>
@@ -354,7 +482,7 @@ function ResultComponent(props : any) {
                                                                 }}>
                                                                     <div style={{ flex: 1 }}>
                                                                         <TruncatedListItemText
-                                                                            text={result.title[0]}
+                                                                            text={result.title}
                                                                             url={`/publication/${result.publication_id}`}
                                                                             length={40}
                                                                         />
@@ -367,7 +495,7 @@ function ResultComponent(props : any) {
                                                                 </div>
                                                                 <div>
                                                                     <Typography variant="body2">
-                                                                        {result.abstract && truncateText(result.abstract[0], 80)}
+                                                                        {result.abstract && truncateText(result.abstract, 80)}
                                                                     </Typography>
                                                                 </div>
                                                             </Typography>
@@ -378,31 +506,8 @@ function ResultComponent(props : any) {
                                     </div>
                                 </>
                             }
-                        </div>
-
-                        {/*<div style={{ padding: '10px', textAlign: 'center', width: '60%', paddingLeft: '20px', paddingRight: '20px' }}>
-                    <Typography variant="h6">Publications</Typography>
-                    <div style={{paddingLeft: '100px', paddingRight: '100px' }}>
-                        <List>
-                            {props.searchResults.publications &&
-                                props.searchResults.publications.slice(0,5).map((result: any, index: number) => (
-                                    <ListItem key={index}>
-                                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-
-                                            <div style={{ marginLeft: '10px' }}>
-                                                <TruncatedListItemText text={result.title[0]} url={`/details/${result.publication_id}`}/>
-
-                                                <Typography variant="body2">
-                                                    {result.abstract && truncateText(result.abstract[0], 200)}
-                                                </Typography>
-                                            </div>
-                                        </div>
-
-                                    </ListItem>
-                                ))}
-                        </List>
-                    </div>
-                </div>*/}
+                        </Paper>
+                        }
                     </div>
                 </>
             }
