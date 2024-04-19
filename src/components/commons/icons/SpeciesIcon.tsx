@@ -9,6 +9,10 @@ import { ReactComponent as GuineaPigIcon } from '../../../assets/images/species/
 import { ReactComponent as ChickenIcon } from '../../../assets/images/species/chicken_bullet.svg';
 import { ReactComponent as PigIcon } from '../../../assets/images/species/pig_bullet.svg';
 import { ReactComponent as RabbitIcon } from '../../../assets/images/species/rabbit_bullet.svg';
+import { ReactComponent as FlavoBacterium } from '../../../assets/images/species/flavobacterium_bullet.svg';
+import {faStarOfLife} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 
 
 interface SpeciesIconProps {
@@ -51,8 +55,14 @@ const SpeciesIcon: React.FC<SpeciesIconProps> = ({ speciesId, width, height }) =
         case '10116':
             iconComponent = <RatIcon width={width} height={height}/>;
             break;
+        case '984':
+            iconComponent = <FlavoBacterium width={width} height={height}/>;
+            break;
         default:
-            iconComponent = null;
+            iconComponent = <FontAwesomeIcon
+                icon={faStarOfLife}
+                width={width} height={height}
+            />;
     }
 
     return <>{iconComponent}</>;
