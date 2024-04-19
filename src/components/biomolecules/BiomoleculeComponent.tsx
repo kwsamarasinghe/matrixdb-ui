@@ -46,7 +46,7 @@ function BiomoleculeComponent() {
                             setShowStructures(true);
                         }
                         if(biomoleculeData.type !== 'gag' && ((biomoleculeData.annotations && biomoleculeData.annotations.go && biomoleculeData.annotations.go.length >0)
-                            || ( biomoleculeData.annotations.keywords && biomoleculeData.annotations.keywords.length > 0))) {
+                            || ( biomoleculeData.annotations && biomoleculeData.annotations.keywords && biomoleculeData.annotations.keywords.length > 0))) {
                             setShowKeywords(true);
                         }
                     }

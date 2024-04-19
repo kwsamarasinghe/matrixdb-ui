@@ -19,7 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPerson } from '@fortawesome/free-solid-svg-icons';
 import InterproComponent from "./overview/XrefListComponent";
 import XrefListComponent from "./overview/XrefListComponent";
-import SpeciesIcon from "../commons/spceiesIcons/SpeciesIcon";
+import SpeciesIcon from "../commons/icons/SpeciesIcon";
 
 interface BiomoleculeToDisplay {
     id: string,
@@ -117,7 +117,7 @@ function OverviewComponent(props: any) {
         if(biomoleculeToDisplay && biomoleculeToDisplay.interpro && biomoleculeToDisplay.interpro.length > 0 ) {
             tabConfig.push({
                 label: 'Domain Annotations',
-                renderContent: () => <XrefListComponent interproList={biomoleculeToDisplay.interpro}/>
+                renderContent: () => <XrefListComponent xrefList={biomoleculeToDisplay.interpro}/>
             })
         }
 

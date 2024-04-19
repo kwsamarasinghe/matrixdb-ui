@@ -227,8 +227,8 @@ function AssociationComponent() {
                                                 }
                                             </TableCell>
                                         </Grid>}
-                                        {(association.directlysupportedby && association.directlysupportedby.length > 0)
-                                            || (association.spokeexpandedfrom &&  association.spokeexpandedfrom.length > 0) &&
+                                        {((association.directlysupportedby && association.directlysupportedby.length > 0)
+                                            || (association.spokeexpandedfrom &&  association.spokeexpandedfrom.length > 0)) &&
                                             <Grid item xs={6}>
                                                 <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Experiment(s)</h4></TableCell>
                                                 <TableCell style={cellStyles}>

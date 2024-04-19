@@ -62,7 +62,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
         },
         {
             field: 'directlySupportedBy',
-            headerName: 'Experimentally Supported',
+            headerName: 'Non-expanded',
             width: 180,
             renderCell: (params: any) =>  (
                 <>

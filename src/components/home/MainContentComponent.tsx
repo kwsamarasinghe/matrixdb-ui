@@ -152,7 +152,7 @@ function MainContentComponent() {
                     </Card>}
                     {statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Experiments ({statistics.experiments.all})
+                            Evidences ({statistics.experiments.all})
                         </Typography>
                         <div style={{
                             display: 'flex',
