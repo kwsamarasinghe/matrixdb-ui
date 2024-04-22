@@ -106,7 +106,7 @@ function PublicationComponent() {
             width: 200,
             renderCell: (params: any) =>  (
                 <>
-                    <a href={params.value}>{params.value}</a>
+                    <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/"+params.value}>{params.value}</a>
                 </>)
         },
         {
@@ -115,7 +115,7 @@ function PublicationComponent() {
             width: 200,
             renderCell: (params: any) =>  (
                 <>
-                    <a href={params.value}>{params.value}</a>
+                    <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/"+params.value}>{params.value}</a>
                 </>)
         },
         {
