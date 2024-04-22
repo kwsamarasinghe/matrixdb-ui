@@ -21,6 +21,7 @@ function PublicationComponent() {
     const { publicationId } = useParams();
     const [publication, setPublication] = useState<any>();
     const [interactions, setInteractions] = useState<number>(0);
+    const [participants, setParticipants] = useState<number>(0);
     const [evidences, setEvidences] = useState<number>(0);
 
     useEffect(() => {
@@ -32,6 +33,7 @@ function PublicationComponent() {
 
                     // Calculate interactions and supporting evidences
                     setInteractions(publicationData.interactions.length);
+                    setParticipants(publicationData.participants.length);
                     let evidences = new Set<string>();
                     publicationData.interactions.forEach((interaction: any) => {
                         if(interaction.experiments) {
@@ -159,17 +161,6 @@ function PublicationComponent() {
                 </>
             ),
             sortComparator: (v1, v2) =>  v2.length - v1.length
-        },
-        {
-            field: 'score',
-            headerName: 'MI Score',
-            width: 80,
-            renderCell: (params: any) =>  (
-                <>
-                    {params.value}
-                </>
-            ),
-            sortComparator: (v1, v2) =>  parseInt(v2) - parseInt(v1)
         }
     ];
 
@@ -260,8 +251,9 @@ function PublicationComponent() {
                                 paddingLeft: '20px',
                             }}>
                                 <div style={{clear: 'left', textAlign: 'left'}}>
+                                    <h4><span>Participants : {participants}</span></h4>
                                     <h4><span>Interactions : {interactions}</span></h4>
-                                    <h4><span>Supporting Evidence : {evidences} </span></h4>
+                                    <h4><span>Supported Evidence : {evidences} </span></h4>
                                 </div>
                             </div>
                             {
