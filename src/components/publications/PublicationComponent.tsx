@@ -164,6 +164,9 @@ function PublicationComponent() {
         }
     ];
 
+    const getSource = () => {
+        return `${publication.source}. ${publication.pubdate};${publication.volume}(${publication.issue}):${publication.pages}`;
+    }
 
     return (
         <>
@@ -212,10 +215,10 @@ function PublicationComponent() {
                                         </TableCell>
                                     </Grid>
                                     <Grid item lg={12}>
-                                        <TableCell style={{...labelCellStyle, textAlign: 'right', paddingRight: '10px'}}><h4>Journal</h4></TableCell>
+                                        <TableCell style={{...labelCellStyle, textAlign: 'right', paddingRight: '10px'}}><h4>Source</h4></TableCell>
                                         <TableCell style={cellStyles}>
                                             <Typography variant={"body2"} align="left">
-                                                {publication.journal}
+                                                {getSource()}
                                             </Typography>
                                         </TableCell>
                                     </Grid>
