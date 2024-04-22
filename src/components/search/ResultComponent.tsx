@@ -31,6 +31,16 @@ function ResultDetailsComponent(props: any) {
         );
     };
 
+    const displayName = (biomolecule: any) => {
+        if(biomolecule.recommended_name) {
+            return biomolecule.recommended_name;
+        }
+
+        if(biomolecule.name) {
+            return biomolecule.name;
+        }
+    }
+
     return(
         <>
         {
@@ -110,7 +120,9 @@ function ResultDetailsComponent(props: any) {
                                                     width: '70%'
                                                 }}>
                                                     <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                                                        <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/" + result.biomolecule_id}>{result.name}</a>
+                                                        <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/" + result.biomolecule_id}>
+                                                            {displayName(result)}
+                                                        </a>
                                                     </Typography>
                                                 </div>
                                                 <div style={{
@@ -130,25 +142,44 @@ function ResultDetailsComponent(props: any) {
                                                     paddingRight: '5px'
                                                 }}>
                                                 </div>
-                                                {
-                                                    result.name && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                        {result.biomolecule_id}
-                                                    </Typography>
-                                                }
-                                                {
-                                                    result.names && result.names.other_name
-                                                    && !Array.isArray(result.names.other_name)
-                                                    && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                        {result.names.other_name}
-                                                    </Typography>
-                                                }
-                                                {
-                                                    result.names && result.names.other_name
-                                                    && Array.isArray(result.names.other_name)
-                                                    && <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                        {result.names.other_name[0]}
-                                                    </Typography>
-                                                }
+                                                <div style={{ display: 'flex', flexDirection: 'row'}}>
+                                                    {
+                                                        result.biomolecule_type !== 'protein' &&
+                                                        <>
+                                                            <LogoIcon logoName={'matrixdb'} width={'15'} height={'15'}/>
+                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}} variant="body2">
+                                                                {result.biomolecule_id}
+                                                            </Typography>
+                                                        </>
+                                                    }
+                                                    {
+                                                        result.biomolecule_type === 'protein' &&
+                                                        <>
+                                                            <LogoIcon logoName={'uniprot'} width={'15'} height={'15'}/>
+                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                {result.biomolecule_id}
+                                                            </Typography>
+                                                        </>
+                                                    }
+                                                    {
+                                                        result.chebi &&
+                                                        <>
+                                                            <LogoIcon logoName={'chebi'} width={'15'} height={'15'}/>
+                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                {result.chebi}
+                                                            </Typography>
+                                                        </>
+                                                    }
+                                                    {
+                                                        result.complex_portal &&
+                                                        <>
+                                                            <LogoIcon logoName={'complex-portal'} width={'15'} height={'15'}/>
+                                                            <Typography style={{paddingLeft: '5px', paddingRight: '5px', fontSize: '12px'}}  variant="body2">
+                                                                {result.complex_portal}
+                                                            </Typography>
+                                                        </>
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
                                 );
@@ -220,7 +251,6 @@ function ResultComponent(props : any) {
         if(biomolecule.name) {
             return biomolecule.name;
         }
-
     }
 
     return (
