@@ -23,7 +23,8 @@ interface AssociationToDisplay {
     spokeexpandedfrom?: [string],
     directlysupportedby?: [string],
     inferredfrom?: [string],
-    prediction_studies?: [string]
+    prediction_studies?: [string],
+    publications: [string]
 }
 
 
@@ -42,8 +43,9 @@ function AssociationComponent() {
                         pmid: associationData.pmids,
                         participants: associationData.participants,
                         source: associationData.source,
-                        score: associationData.score,
-                        prediction_studies: associationData.prediction_studies
+                        score: String(associationData.score),
+                        prediction_studies: associationData.prediction_studies,
+                        publications: associationData.publications
                     }
                     if(associationData.experiments && associationData.experiments.direct && associationData.experiments.direct.binary &&
                         associationData.experiments.direct.binary.length > 0) {
@@ -53,6 +55,7 @@ function AssociationComponent() {
                     if(associationData.experiments && associationData.experiments.direct && associationData.experiments.direct.spoke_expanded_from &&
                         associationData.experiments.direct.spoke_expanded_from.length > 0) {
                         association.spokeexpandedfrom = associationData.experiments.direct.spoke_expanded_from;
+                        association.spokeexpandedfrom?.sort();
                     }
 
                     if(associationData.inferredfrom) {
@@ -217,12 +220,12 @@ function AssociationComponent() {
                                                 })}
                                             </TableCell>
                                         </Grid>
-                                        {association.score && <Grid item xs={6}>
+                                        {<Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Intact MI Score</h4></TableCell>
                                             <TableCell style={cellStyles}>
                                                 {
                                                     <Typography variant={"body2"} align="left">
-                                                        {association.score}
+                                                        {association.score === '0' ? '-' : association.score}
                                                     </Typography>
                                                 }
                                             </TableCell>
@@ -236,7 +239,7 @@ function AssociationComponent() {
                                                         {
                                                             association.directlysupportedby &&
                                                             <div style={{paddingBottom: '5px'}}>
-                                                                <Typography align="left">Directly Supported By
+                                                                <Typography align="left">Non-Expanded
                                                                     {
                                                                         association.directlysupportedby.map(b => {
                                                                             let link = "/experiment/" + b;
@@ -253,7 +256,7 @@ function AssociationComponent() {
                                                         {
                                                             association.spokeexpandedfrom &&
                                                             <div>
-                                                                <Typography align="left">Spoke Expanded From
+                                                                <Typography style={{fontSize: '12px'}} align="left">Spoke Expanded
                                                                     {
                                                                         association.spokeexpandedfrom.map(b => {
                                                                             let link = "/experiment/" + b;
@@ -290,21 +293,16 @@ function AssociationComponent() {
                                                 </TableCell>
                                             </Grid>
                                         }
-                                        {association.pmid && <Grid item xs={6}>
-                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (pubmed)</h4></TableCell>
+                                        {association.publications && <Grid item xs={6}>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publications</h4></TableCell>
                                             <TableCell style={cellStyles}>
                                                 <div>
                                                     {
-                                                        Array.isArray(association.pmid) && association.pmid.map((pmid: string) => (
-                                                            <span style={{ marginRight: '10px' }}>
-                                                                {pmid}
-                                                            </span>
+                                                        Array.isArray(association.publications) && association.publications.map((pmid: string) => (
+                                                            <Grid item xs={6}>
+                                                                <a href={`/publication/${pmid}`}>{pmid}</a>
+                                                            </Grid>
                                                         ))
-                                                    }
-                                                    {
-                                                        Array.isArray(association.pmid) && <span style={{ marginRight: '10px' }}>
-                                                            {association.pmid}
-                                                        </span>
                                                     }
                                                 </div>
                                             </TableCell>
@@ -315,19 +313,6 @@ function AssociationComponent() {
                         </Paper>
                     }
                 </Box>
-                {
-                    !association &&
-                    <Box sx={{ display: 'flex', bgcolor: 'black' , justifyContent: 'center'}}>
-                        <Box component="main" justifyContent="center" style={{paddingTop: "70px", width: "50%"}}>
-                            <Paper elevation={2}>
-                              <Typography variant="subtitle1" component="span">
-                                <h5>No data currently availble on association {associationId}</h5>
-                                <h6>Will be integrated soon</h6>
-                              </Typography>
-                            </Paper>
-                        </Box>
-                    </Box>
-                }
             </div>
             <Footer/>
         </div>
