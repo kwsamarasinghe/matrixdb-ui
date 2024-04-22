@@ -307,11 +307,13 @@ function ExperimentComponent() {
                                             </TableCell>
                                         </Grid>}
                                         <Grid item xs={6}>
-                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (pubmed)</h4></TableCell>
+                                            <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Publication (PubMed)</h4></TableCell>
                                             <TableCell style={cellStyles}>
                                                 <div>
                                                     <span style={{ marginRight: '10px' }}>
-                                                        {experiment.pmid}
+                                                        <a href={`/publication/${experiment.pmid}`}>
+                                                            {experiment.pmid}
+                                                        </a>
                                                     </span>
                                                 </div>
                                             </TableCell>
