@@ -37,7 +37,7 @@ const SpeciesIcon: React.FC<SpeciesIconProps> = ({ speciesId, width, height }) =
         case '9913':
             iconComponent = <BovineIcon width={width} height={height}/>;
             break;
-        case 'fish':
+        case '7955':
             iconComponent = <FishIcon width={width} height={height}/>;
             break;
         case '10141':
