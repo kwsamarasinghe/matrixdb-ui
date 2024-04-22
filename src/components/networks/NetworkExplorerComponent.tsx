@@ -141,8 +141,8 @@ const NetworkExplorer: React.FC<any> = ({
                                 id="property"
                                 options={suggestions}
                                 value={searchQuery}
+                                noOptionsText={'Type and search for biomolecules'}
                                 onInputChange={(event, newInputValue) => {
-                                    console.log("input change")
                                     setSearchQuery(newInputValue);
                                 }}
                                 renderInput={(params) => (
