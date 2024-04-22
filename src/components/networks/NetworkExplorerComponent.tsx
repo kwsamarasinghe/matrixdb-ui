@@ -42,6 +42,7 @@ const NetworkExplorer: React.FC<any> = ({
 
     const [searchQuery,setSearchQuery] = useState<string | null>(null);
     const [suggestions, setSuggestions] = useState<Array<string>>([]);
+    const [suggestionNameMapping, setSuggestionNameMapping] = useState<Map<string,string> | null>(null);
     const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false);
     const [loadingNetwork, setLoadingNetwork] = useState<boolean>(false);
     const [biomolecules, setBiomolecules] = useState<[string] | []>([]);
@@ -53,7 +54,13 @@ const NetworkExplorer: React.FC<any> = ({
             setLoadingSuggestions(true);
             http.get("/biomolecules/suggestions/" + searchQuery)
                 .then((suggestionResponse) => {
-                    setSuggestions(suggestionResponse.data.suggestions);
+                    setSuggestions([]);
+                    setSuggestions(suggestionResponse.data.suggestions.map((suggestion:any) => suggestion.name));
+
+                    let nameMapping : Map<string, string> = new Map<string, string>();
+                    suggestionResponse.data.suggestions.forEach((suggestion:any) => nameMapping.set(suggestion.name as string, suggestion.biomolecule_id));
+                    setSuggestionNameMapping(nameMapping);
+
                     setLoadingSuggestions(false);
                 });
         }
@@ -135,6 +142,7 @@ const NetworkExplorer: React.FC<any> = ({
                                 options={suggestions}
                                 value={searchQuery}
                                 onInputChange={(event, newInputValue) => {
+                                    console.log("input change")
                                     setSearchQuery(newInputValue);
                                 }}
                                 renderInput={(params) => (
@@ -149,7 +157,14 @@ const NetworkExplorer: React.FC<any> = ({
                                         newBiomoelcules = biomolecules;
                                     }
                                     if (newValue) {
-                                        newBiomoelcules.push(newValue as never);
+                                        // Get the id from name
+                                        let biomoleculeId = null;
+                                        if(suggestionNameMapping) {
+                                            biomoleculeId = suggestionNameMapping.get(newValue as string);
+                                        }
+                                        if(biomoleculeId) {
+                                            newBiomoelcules.push(biomoleculeId as never);
+                                        }
                                         setBiomolecules(newBiomoelcules);
                                     }
                                 }}
