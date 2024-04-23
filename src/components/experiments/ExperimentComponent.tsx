@@ -38,7 +38,9 @@ interface ExperimentToDisplay {
     directlysupports?: Array<string>,
     inferredto?: Array<string>,
     detectionMethod: string,
+    detectionMethodPSIMI: string,
     type: string,
+    typePSIMI: string,
     comment: string,
     participants?: Array<ParticipantToDisplay>,
     parameters?: any
@@ -61,17 +63,23 @@ function ExperimentComponent() {
                         spokeexpandedfrom: experimentData?.spokeexpandedfrom,
                         directlysupports: experimentData?.directlysupports,
                         inferredfrom: experimentData?.inferredfrom,
-                        detectionMethod: experimentData.interaction_detection_method,
-                        type: experimentData.interaction_type,
+                        detectionMethod: experimentData.interaction_detection_method.name,
+                        detectionMethodPSIMI: experimentData.interaction_detection_method.id,
+                        type: experimentData.interaction_type.name,
+                        typePSIMI: experimentData.interaction_type.id,
                         comment: experimentData.comment,
                         intactId: experimentData.xrefs.intact,
                         imexId: experimentData?.xrefs.imex,
                         participants: experimentData.participants && Object.keys(experimentData.participants).map(pk  => {
                             return {
                                 id: experimentData.participants[pk].id || experimentData.participants[pk].biomolecule ,
-                                detectionMethod: experimentData.participants[pk].identification_method,
-                                biologicalRole: experimentData.participants[pk].biological_role,
-                                experimentalRole: experimentData.participants[pk].experimental_role
+                                detectionMethod: experimentData.participants[pk].identification_method.name,
+                                detectionMethodPSIMI : experimentData.participants[pk].identification_method.id,
+                                biologicalRole: experimentData.participants[pk].biological_role.name,
+                                biologicalRolePSIMI: experimentData.participants[pk].biological_role.id,
+                                experimentalRole: experimentData.participants[pk].experimental_role.name,
+                                experimentalRolePSIMI: experimentData.participants[pk].experimental_role.id
+
                             }
                         }),
                         parameters: experimentData?.parameters
@@ -277,13 +285,19 @@ function ExperimentComponent() {
                                 <Grid container spacing={0}>
                                         <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Interaction Type</h4></TableCell>
-                                            <TableCell style={cellStyles}> Direct</TableCell>
+                                            <TableCell style={cellStyles}>
+                                                <Typography variant={"body2"} align="left">
+                                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.typePSIMI }>
+                                                        {experiment.type}
+                                                    </a>
+                                                </Typography>
+                                            </TableCell>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Detection Method</h4></TableCell>
                                             <TableCell style={cellStyles}>
                                                 <Typography variant={"body2"} align="left">
-                                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethod }>
+                                                    <a target="_blank"  href={"http://purl.obolibrary.org/obo/" +experiment.detectionMethodPSIMI }>
                                                         {experiment.detectionMethod}
                                                     </a>
                                                 </Typography>
