@@ -125,13 +125,43 @@ function PublicationComponent() {
             renderCell: (params: any) =>  (
                 <>
                     {
-                        params.value.length > 0 && <Tooltip title={
-                            params.value.map((ex :any) => {
-                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL + "experiment/"+ ex}>{ex}</a></li>)
-                            })
-                        }>
-                            <span className="table-cell-trucate">{params.value.length}</span>
-                        </Tooltip>
+                        params.value.length > 0 && (
+                            <Tooltip
+                                title={
+                                    <ul style={{ backgroundColor: '#ffffff', margin: 0, padding: 0, listStyleType: 'none' }}>
+                                        {params.value.map((ex: any) => (
+                                            <li key={ex}>
+                                                <a href={process.env.REACT_APP_PUBLIC_URL + "experiment/" + ex}>
+                                                    {ex}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                }
+                                placement="top"
+                                componentsProps={{
+                                    tooltip: {
+                                        sx: {
+                                            bgcolor: "#fff",
+                                            color: "#fff"
+                                        }
+                                    }
+                                }}
+                                PopperProps={{
+                                    sx: {
+                                        background: '#fff',
+                                        backgroundColor: '#ffffff',
+                                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                                        maxWidth: '400px',
+                                        border: '1px solid rgba(0, 0, 0, 0.1)'
+                                    }
+                                }}
+                            >
+                                  <span className="table-cell-truncate">
+                                    {params.value.length}
+                                  </span>
+                            </Tooltip>
+                        )
                     }
                     {
                         params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
@@ -147,13 +177,42 @@ function PublicationComponent() {
             renderCell: (params: any) =>  (
                 <>
                     {
-                        params.value.length > 0 && <Tooltip title={
-                            params.value.map((ex :any) => {
-                                return(<li><a href={process.env.REACT_APP_PUBLIC_URL + "experiment/"+ ex}>{ex}</a></li>)
-                            })
-                        }>
-                            <span className="table-cell-trucate">{params.value.length}</span>
-                        </Tooltip>
+                        params.value.length > 0 && (
+                            <Tooltip
+                                title={
+                                    <ul style={{ backgroundColor: '#ffffff', margin: 0, padding: 0, listStyleType: 'none' }}>
+                                        {params.value.map((ex: any) => (
+                                            <li key={ex}>
+                                                <a href={process.env.REACT_APP_PUBLIC_URL + "experiment/" + ex}>
+                                                    {ex}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                }
+                                placement="top"
+                                componentsProps={{
+                                    tooltip: {
+                                        sx: {
+                                            bgcolor: "#fff",
+                                            color: "#fff"
+                                        }
+                                    }
+                                }}
+                                PopperProps={{
+                                    sx: {
+                                        background: '#fff',
+                                        backgroundColor: '#ffffff',
+                                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+                                        maxWidth: '400px',
+                                        border: '1px solid rgba(0, 0, 0, 0.1)'
+                                    }
+                                }}
+                            >
+                                  <span className="table-cell-truncate">
+                                    {params.value.length}
+                                  </span>
+                            </Tooltip>)
                     }
                     {
                         params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
