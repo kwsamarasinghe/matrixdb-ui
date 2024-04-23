@@ -34,6 +34,7 @@ interface ExperimentToDisplay {
     imexId: string,
     pmid: string,
     source: string,
+    sourcePSIMI: string,
     spokeexpandedto?: Array<string>,
     directlysupports?: Array<string>,
     inferredto?: Array<string>,
@@ -59,14 +60,15 @@ function ExperimentComponent() {
                     let experiment = {
                         id: experimentData.id,
                         pmid: experimentData.pmid,
-                        source: experimentData.source,
+                        source: experimentData.source.name,
+                        sourcePSIMI: experimentData.source.id.replace(':','_'),
                         spokeexpandedfrom: experimentData?.spokeexpandedfrom,
                         directlysupports: experimentData?.directlysupports,
                         inferredfrom: experimentData?.inferredfrom,
                         detectionMethod: experimentData.interaction_detection_method.name,
-                        detectionMethodPSIMI: experimentData.interaction_detection_method.id,
+                        detectionMethodPSIMI: experimentData.interaction_detection_method.id.replace(':','_'),
                         type: experimentData.interaction_type.name,
-                        typePSIMI: experimentData.interaction_type.id,
+                        typePSIMI: experimentData.interaction_type.id.replace(':','_'),
                         comment: experimentData.comment,
                         intactId: experimentData.xrefs.intact,
                         imexId: experimentData?.xrefs.imex,
@@ -74,12 +76,11 @@ function ExperimentComponent() {
                             return {
                                 id: experimentData.participants[pk].id || experimentData.participants[pk].biomolecule ,
                                 detectionMethod: experimentData.participants[pk].identification_method.name,
-                                detectionMethodPSIMI : experimentData.participants[pk].identification_method.id,
+                                detectionMethodPSIMI : experimentData.participants[pk].identification_method.id?.replace(':','_'),
                                 biologicalRole: experimentData.participants[pk].biological_role.name,
-                                biologicalRolePSIMI: experimentData.participants[pk].biological_role.id,
+                                biologicalRolePSIMI: experimentData.participants[pk].biological_role.id?.replace(':','_'),
                                 experimentalRole: experimentData.participants[pk].experimental_role.name,
-                                experimentalRolePSIMI: experimentData.participants[pk].experimental_role.id
-
+                                experimentalRolePSIMI: experimentData.participants[pk].experimental_role.id?.replace(':','_')
                             }
                         }),
                         parameters: experimentData?.parameters
@@ -335,7 +336,9 @@ function ExperimentComponent() {
                                         <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Source</h4></TableCell>
                                             <TableCell style={cellStyles}>
-                                                {experiment.source}
+                                                <a target='_blank' href={`http://purl.obolibrary.org/obo/${experiment.sourcePSIMI}`}>
+                                                    {experiment.source}
+                                                </a>
                                             </TableCell>
                                         </Grid>
                                         {experiment.parameters && <Grid item xs={6}>
