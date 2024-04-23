@@ -15,7 +15,7 @@ import {
 
 import OverviewComponent from "./OverviewComponent";
 import AssociationsOverviewComponent from "./AssociationsOverviewComponent";
-import KeywordComponent from './KeywordComponent';
+import AnnotationComponent from './AnnotationComponent';
 import ExpressionComponent from "./ExpressionComponent";
 import StructureComponent from "./StructureComponent";
 import Header from "../home/HeaderComponent";
@@ -213,12 +213,12 @@ function BiomoleculeComponent() {
                                                 }
                                                 {
                                                     showKeywords && <ListItem
-                                                        key={'keywords'}
+                                                        key={'annotations'}
                                                         sx={{ py: 0, px: 0, paddingLeft: "5px", paddingBottom: "12px" }}
                                                     >
                                                         <ListItemButton
                                                             component="a"
-                                                            href={`#${'keywords'}`}
+                                                            href={`#${'annotations'}`}
                                                             sx={{
                                                                 marginY: -1,
                                                                 paddingY: 2,
@@ -236,7 +236,7 @@ function BiomoleculeComponent() {
                                                                 fontSize: "14px",
                                                             }}
                                                         >
-                                                          {'Keywords'}
+                                                          {'Annotations'}
                                                         </span>
                                                         </ListItemButton>
                                                     </ListItem>
@@ -258,7 +258,10 @@ function BiomoleculeComponent() {
                                     justifyContent: 'space-between'
                                 }}>
                                     {
-                                        <div style={{marginBottom: '10px'}}>
+                                        <div
+                                            id='overview'
+                                            style={{marginBottom: '10px'}}
+                                        >
                                             <OverviewComponent
                                                 biomoleculeId={biomoleculeId}
                                                 biomolecule={biomolecule}
@@ -313,13 +316,15 @@ function BiomoleculeComponent() {
                                     {
                                         (biomolecule && biomolecule.type !== 'gag' && biomolecule.annotations) &&
                                         ((biomolecule.annotations.go && biomolecule.annotations.go.length >0)
-                                            || (biomolecule.annotations && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0)) &&
+                                            || (biomolecule.annotations && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0
+                                            || (biomolecule.xrefs && biomolecule.xrefs.reactome && biomolecule.xrefs.reactome.length > 0))) &&
                                         <div
-                                            id='keywords'
+                                            id='annotations'
                                             style={{marginBottom: '10px'}}>
-                                            <KeywordComponent
+                                            <AnnotationComponent
                                                 goTerms={biomolecule.annotations.go}
                                                 keywords={biomolecule.annotations.keywords}
+                                                reactome={biomolecule.xrefs.reactome}
                                             />
                                         </div>
                                     }

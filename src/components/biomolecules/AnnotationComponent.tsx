@@ -1,13 +1,7 @@
 import {
     Box,
     Grid,
-    Paper, Tab,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow, Tabs, Tooltip,
+    Paper, Tab, Tabs, Tooltip,
     Typography
 } from "@mui/material";
 import React, {CSSProperties, useEffect, useState} from "react";
@@ -21,10 +15,11 @@ interface Keyword{
     identifier: string,
 }
 
-function KeywordComponent(props: any) {
+function AnnotationComponent(props: any) {
 
     const {goTerms} = props;
     const {keywords} = props;
+    const {reactome} = props;
 
     const keywordColumns: GridColDef[] = [
         {
@@ -87,6 +82,28 @@ function KeywordComponent(props: any) {
         }
     ];
 
+    const reactomeColumns: GridColDef[] = [
+        {
+            field: 'id',
+            headerName: 'ID',
+            width: 150,
+            renderCell: (params: any) =>  (
+                <>
+                    <a href={"https://reactome.org/content/detail/"+params.value} target="_blank">{params.value}</a>
+                </>)
+        },
+        {
+            field: 'type',
+            headerName: 'Type',
+            width: 150,
+        },
+        {
+            field: 'value',
+            headerName: 'Term',
+            width: 1000,
+        }
+    ]
+
     const paperStyle = {
         background: 'rgba(255, 255, 255, 0.9)',
         boxShadow: '3px 3px 8px rgba(0, 0, 0, 0.3)',
@@ -121,7 +138,7 @@ function KeywordComponent(props: any) {
                 <Paper style={paperStyle}>
                     <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
                             <span style={{paddingLeft: '10px'}}>
-                                <h3>GO Terms & Uniprot Keywords</h3>
+                                <h3>Annotations</h3>
                             </span>
                     </div>
                     <Tabs value={tabValue} onChange={handleTabChange}>
@@ -131,6 +148,10 @@ function KeywordComponent(props: any) {
                         {
                             keywords && keywords.length > 0 &&
                             <Tab key={1} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>Uniprot Keywords</Typography>} />
+                        }
+                        {
+                            reactome && reactome.length > 0 &&
+                            <Tab key={2} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>Reactome</Typography>} />
                         }
                     </Tabs>
                     { goTerms && goTerms.length > 0 &&
@@ -172,10 +193,30 @@ function KeywordComponent(props: any) {
                         </Grid>
                     </TabPanel>
                     }
+                    {
+                        reactome && reactome.length > 0 &&
+                        <TabPanel key={2} value={tabValue} index={2}>
+                            <Grid item xs={12}>
+                                <DataGrid
+                                    rows={reactome}
+                                    columns={reactomeColumns}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 5,
+                                            },
+                                        },
+                                    }}
+                                    pageSizeOptions={[5]}
+                                    disableRowSelectionOnClick
+                                />
+                            </Grid>
+                        </TabPanel>
+                    }
             </Paper>
             }
         </>
     );
 }
 
-export default KeywordComponent;
+export default AnnotationComponent;

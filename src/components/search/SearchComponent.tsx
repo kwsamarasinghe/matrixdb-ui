@@ -32,12 +32,6 @@ function SearchComponent() {
         }
     }, [location.search]);
 
-    /*useEffect(() => {
-        if(searchText && searchText != '') {
-            handleSearch();
-        }
-    }, [searchStart]);*/
-
     const handleSearch = (query: string) => {
         http.get("/search?text=" + query)
             .then((searchResponse) => {

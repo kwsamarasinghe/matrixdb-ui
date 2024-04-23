@@ -17,9 +17,7 @@ function MainComponent() {
     const currentPath = location.pathname;
 
     return (
-
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
             <Header pageDetails={{
                 type: "home",
                 id: ""
