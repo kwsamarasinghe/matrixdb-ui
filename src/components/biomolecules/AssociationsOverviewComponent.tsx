@@ -182,7 +182,6 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                         {interactorStats.supportingEvidence > 0 &&
                                             <div style={{ display: 'flex' }}>
                                                 <h4 style={{ display: 'inline-block', margin: '0' }}>Experimentally Supported Interactions: {interactorStats.experimentalInteractions}</h4>
-                                                <h4 style={{ display: 'inline-block', margin: '0', paddingLeft: '20px' }}>Supported Evidence: {interactorStats.supportingEvidence}</h4>
                                             </div>
                                         }
                                         {interactorStats.predictedInteractions > 0 && <h4>Predicted Interactions: <span style={{ color : 'darkred'}}>{interactorStats.predictedInteractions}</span> </h4>}

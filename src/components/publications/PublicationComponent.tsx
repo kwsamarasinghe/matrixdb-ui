@@ -120,7 +120,7 @@ function PublicationComponent() {
         },
         {
             field: 'directlySupportedBy',
-            headerName: 'Binary Evidence',
+            headerName: 'Non-expanded',
             width: 180,
             renderCell: (params: any) =>  (
                 <>
@@ -142,7 +142,7 @@ function PublicationComponent() {
         },
         {
             field: 'spokeExpandedFrom',
-            headerName: 'Spoke Expanded Evidence',
+            headerName: 'Spoke Expanded',
             width: 180,
             renderCell: (params: any) =>  (
                 <>
@@ -256,7 +256,6 @@ function PublicationComponent() {
                                 <div style={{clear: 'left', textAlign: 'left'}}>
                                     <h4><span>Participants : {participants}</span></h4>
                                     <h4><span>Interactions : {interactions}</span></h4>
-                                    <h4><span>Supported Evidence : {evidences} </span></h4>
                                 </div>
                             </div>
                             {
