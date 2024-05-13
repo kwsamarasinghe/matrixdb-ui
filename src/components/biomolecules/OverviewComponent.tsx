@@ -188,10 +188,15 @@ function OverviewComponent(props: any) {
     };
 
     const [tabValue, setTabValue] = useState(0);
+    const [molecularDetailTabValue, setMolecularDetailTabValue] = useState(0);
 
-        const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-            setTabValue(newValue);
-        };
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
+
+    const handleMDTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        setMolecularDetailTabValue(newValue);
+    };
 
     const paperStyle = {
         background: 'rgba(255, 255, 255, 0.9)',
@@ -315,16 +320,32 @@ function OverviewComponent(props: any) {
                     {
                         isExpanded && biomoleculeToDisplay && biomoleculeToDisplay.type === 'gag' &&
                         <>
-                            <Tabs value={tabValue}>
+                            <Tabs value={molecularDetailTabValue} onChange={handleMDTabChange}>
                                 <Tab key={0} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
                                     Symbol Nomenclature For Glycans
                                 </Typography>} />
+                                <Tab key={1} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
+                                    GlycoCT
+                                </Typography>} />
                             </Tabs>
-                            <div style={{paddingTop: '10px'}}>
-                                <Paper style={{ width: '400px'}}>
-                                    <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.molecularDetails.snfg} style={{ width: '400px'}}/>
-                                </Paper>
-                            </div>
+                            <TabPanel key={0} value={molecularDetailTabValue} index={0}>
+                                <div style={{paddingTop: '10px'}}>
+                                    <Paper style={{ width: '400px'}}>
+                                        <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.molecularDetails.snfg} style={{ width: '400px'}}/>
+                                    </Paper>
+                                </div>
+                            </TabPanel>
+                            <TabPanel key={1} value={molecularDetailTabValue} index={1}>
+                                <div style={{paddingTop: '10px'}}>
+                                    <Paper style={{ width: '400px', maxHeight: '200px', overflow: 'auto'}}>
+                                        {
+                                            biomoleculeToDisplay.molecularDetails.glycoCT.split('@').map((line: string, index: number) => (
+                                                <Typography key={index}>{line}</Typography>
+                                            ))
+                                        }
+                                    </Paper>
+                                </div>
+                            </TabPanel>
                         </>
                     }
             </Paper>
