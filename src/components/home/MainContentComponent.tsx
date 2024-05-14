@@ -138,7 +138,7 @@ function MainContentComponent() {
                     }
                     {interactionStatistics && interactionStatistics.length > 0 && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue' , textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Interactions ({statistics.interactions.all})
+                            Binary Interactions ({statistics.interactions.all})
                         </Typography>
                         <div style={{
                             paddingLeft: '30px'
@@ -152,7 +152,7 @@ function MainContentComponent() {
                     </Card>}
                     {statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Evidences ({statistics.experiments.all})
+                            Interactions from IntAct ({statistics.experiments.all})
                         </Typography>
                         <div style={{
                             display: 'flex',
@@ -179,7 +179,7 @@ function MainContentComponent() {
                 </div>
             </div>
 
-            <div style={{
+            {/*<div style={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -286,7 +286,7 @@ function MainContentComponent() {
 
                             </List>
                         </CardContent>
-                    </Card>*/}
+                    </Card>
                     <Card style={{ margin: '10px', ...cardStyle }}>
                         <Typography
                             component="div"
@@ -324,7 +324,7 @@ function MainContentComponent() {
                         </CardContent>
                     </Card>
                 </div>
-            </div>
+            </div>*/}
         </>
     );
 }

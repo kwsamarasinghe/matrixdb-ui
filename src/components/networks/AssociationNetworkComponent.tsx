@@ -10,18 +10,18 @@ import {
     Grid,
     Button,
     IconButton,
-    InputLabel, Slider,
+    InputLabel, Slider, Tooltip,
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DownloadIcon from '@mui/icons-material/Download';
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFilter} from '@fortawesome/free-solid-svg-icons';
 import React from "react";
 import NewFilterComponent from "./filter/FilterComponent";
-import {FilterConfigurationManager} from "./filter/FilterConfigurationManager";
 import {RootState} from "../../stateManagement/store";
 import {connect, ConnectedProps} from "react-redux";
 import FilterManager from "./filter/FilterManager";
@@ -38,64 +38,6 @@ interface Filter {
     }[],
     active: boolean
 }
-
-const filterAssociations = ((biomoleculeId: any, associations: any, participants: any, filters: Array<Filter>) => {
-
-    // Filters partners with the filter criteria
-    let filteredAssociations = new Array<any>();
-    const participantMap = new Map<string, any>();
-    for (const participant of participants) {
-        if (participant.geneExpression) {
-            participant["expressedIn"] = new Array<any>();
-            participant.geneExpression.forEach((expression: any) => {
-                participant["expressedIn"].push(expression.tissueUberonName);
-            });
-        }
-        participantMap.set(participant.id, participant);
-    }
-    if (filters) {
-        // take the last filter criteria and apply it
-        let lastFilter = filters[filters.length - 1];
-        if(lastFilter.subCriteria && lastFilter.subCriteria.length > 0) {
-            if (lastFilter.type === 'interactor') {
-                // Apply the last sub criteria
-                    associations.forEach((association: any) => {
-                        // Get the partner
-                        const partnerId = association.participants.find((participant: any) =>
-                            participant !== biomoleculeId);
-                        if(partnerId) {
-                            const partner = participantMap.get(partnerId);
-                            let subCriteria = lastFilter.subCriteria[lastFilter.subCriteria.length - 1 ];
-                            if(subCriteria) {
-                                if (Array.isArray(partner[subCriteria.property])) {
-                                    if (partner[subCriteria.property].includes(subCriteria.value)) {
-                                        filteredAssociations.push(association);
-                                    }
-                                } else {
-                                    if (partner && partner[subCriteria.property] === subCriteria.value) {
-                                        filteredAssociations.push(association);
-                                    }
-                                }
-                            }
-                        }
-                    });
-            } else if (lastFilter.type === 'interaction') {
-                associations.forEach((association: any) => {
-                    let subCriteria = lastFilter.subCriteria[lastFilter.subCriteria.length - 1 ];
-                    if(subCriteria.property === 'score') {
-                        if(association.score && association.score >= subCriteria.value) {
-                            filteredAssociations.push(association);
-                        }
-                    }
-                });
-            }
-        } else {
-            filteredAssociations = associations;
-        }
-    }
-
-    return filteredAssociations;
-});
 
 function PartnerOverview(props: any) {
 
@@ -1007,6 +949,21 @@ function CytoscapeComponent(props: any) {
 
     let cy : any = null;
 
+    const generateDownloadLink = () => {
+        // Get the cytoscape instance from the ref
+
+        // Generate PNG image data URI of the graph
+        const base64URI = cy.png();
+
+        // Create a temporary anchor element
+        const link = document.createElement('a');
+        // Set href attribute to image data URI
+        link.href = base64URI;
+        // Set download attribute with desired filename
+        link.download = 'cytoscape_graph.png';
+        // Simulate click to trigger download
+        link.click();
+    };
 
     useEffect(() => {
         if (cyRef.current && associations.length > 0) {
@@ -1208,6 +1165,7 @@ function CytoscapeComponent(props: any) {
                     const node = event.target;
                     //alert(`Mouseout on node: ${node.id()}`);
                 });
+
             }
 
             return () => {
@@ -1220,21 +1178,30 @@ function CytoscapeComponent(props: any) {
     }, [participants, associations]);
 
     return (
-        <div style={{display: 'flex'}}>
-            <div style={{ flex: 0.65, backgroundColor: 'lightgray', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                <div style={{ width: '220px', padding: '10px' }}>
-                    {selectedPartnerId && <PartnerOverview partnerId={selectedPartnerId}/>}
-                    {selectedInteraction && <AssociationOverview interaction={selectedInteraction}/>}
+        <>
+            <div style={{display: 'flex'}}>
+                <div style={{ flex: 0.65, backgroundColor: 'lightgray', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                    <div style={{ width: '220px', padding: '10px' }}>
+                        {selectedPartnerId && <PartnerOverview partnerId={selectedPartnerId}/>}
+                        {selectedInteraction && <AssociationOverview interaction={selectedInteraction}/>}
+                    </div>
+                    <div style={{ marginTop: 'auto', padding: '10px' }}>
+                        <Legend/>
+                    </div>
                 </div>
-                <div style={{ marginTop: 'auto', padding: '10px' }}>
-                    <Legend/>
+                <div>
+                    <Tooltip title="Download" arrow>
+                        <IconButton style={{color: 'green'}} onClick={generateDownloadLink} aria-label="download">
+                            <DownloadIcon />
+                        </IconButton>
+                    </Tooltip>
                 </div>
+                <div
+                    ref={cyRef}
+                    style={{flex: 3, height: "800px"}}
+                />
             </div>
-            <div
-                ref={cyRef}
-                style={{flex: 3, height: "800px"}}
-            />
-        </div>
+        </>
     );
 }
 

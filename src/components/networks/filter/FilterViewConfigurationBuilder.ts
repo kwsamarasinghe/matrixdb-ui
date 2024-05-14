@@ -52,15 +52,23 @@ class FilterCriterionViewConfigurationBuilder {
 
             if(this.filterCriterionConfiguration.options) {
 
-                let optionsSet = new Set(filteredNetwork[this.filterType].map((item: any) => {
+                let optionsSet = new Set();
+                filteredNetwork[this.filterType].forEach((item: any) => {
                     if(this.filterCriterionConfiguration?.id) {
                         if (typeof item[this.filterCriterionConfiguration.id] === 'boolean') {
-                            return item ? 'Yes' : 'No';
+                            optionsSet.add(item ? 'Yes' : 'No');
                         } else {
-                            return item[this.filterCriterionConfiguration.id]
+                            if(item[this.filterCriterionConfiguration.id]) {
+                                const value = item[this.filterCriterionConfiguration.id];
+                                if(Array.isArray(value)) {
+                                    value.forEach((value: string) => optionsSet.add(value));
+                                } else {
+                                    optionsSet.add(value)
+                                }
+                            }
                         }
                     }
-                }).filter((value: any) => Boolean(value)));
+                });
 
                 if(optionsSet.size > 0) {
                     this.filterCriterionConfiguration.options.range = Array.from(optionsSet);

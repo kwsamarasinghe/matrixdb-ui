@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import {
     Box,
-    Card,
-    CardContent, Container, Grid, IconButton,
+    IconButton,
     List,
-    ListItem, ListItemIcon, ListItemText,
+    ListItem,
     Pagination, Paper, Tab, Tabs, Tooltip,
     Typography
 } from "@mui/material";
@@ -12,6 +11,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAtom, faBook} from "@fortawesome/free-solid-svg-icons";
 import SpeciesIcon from "../commons/icons/SpeciesIcon";
 import LogoIcon from "../commons/icons/LogoIcon";
+import {InfoOutlined} from "@mui/icons-material";
 
 function ResultDetailsComponent(props: any) {
 
@@ -268,12 +268,18 @@ function ResultComponent(props : any) {
                                             height: '40px',
                                             display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'left',
-                                            paddingLeft: '20px'
+                                            paddingLeft: '20px',
+                                            paddingRight: '20px',
+                                            justifyContent: 'space-between',
                                         }}>
                                             <Typography style={{fontWeight: 'bold', color: 'darkblue' }}>
                                                 Biomolecules
                                             </Typography>
+                                            <Tooltip title="Sorted by the associated partner counts">
+                                                <div style={{ cursor: 'pointer' }}>
+                                                    <InfoOutlined style={{ color: 'gray' }} />
+                                                </div>
+                                            </Tooltip>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                                             <List>
@@ -455,12 +461,18 @@ function ResultComponent(props : any) {
                                             height: '40px',
                                             display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'left',
-                                            paddingLeft: '20px'
+                                            paddingLeft: '20px',
+                                            paddingRight: '20px',
+                                            justifyContent: 'space-between'
                                         }}>
                                             <Typography style={{fontWeight: 'bold', color: 'darkblue' }}>
                                                 Publications
                                             </Typography>
+                                            <Tooltip title="Sorted by the associated partner counts">
+                                                <div style={{ cursor: 'pointer' }}>
+                                                    <InfoOutlined style={{ color: 'gray' }} />
+                                                </div>
+                                            </Tooltip>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                                             <List>

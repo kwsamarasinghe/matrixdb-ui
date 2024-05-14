@@ -1,4 +1,4 @@
-import FilterManager, {Filter, FilterCriterion} from "./FilterManager";
+import FilterManager, {Filter} from "./FilterManager";
 import {FilterViewConfigurationBuilder} from "./FilterViewConfigurationBuilder";
 
 export enum FilterOptionType {
@@ -124,6 +124,14 @@ export class FilterConfigurationManager{
             {
                 id: 'type',
                 label: 'Type',
+                options: {
+                    type: FilterOptionType.list,
+                    range: []
+                }
+            },
+            {
+                id: 'detection_method',
+                label: 'Detection Method',
                 options: {
                     type: FilterOptionType.list,
                     range: []

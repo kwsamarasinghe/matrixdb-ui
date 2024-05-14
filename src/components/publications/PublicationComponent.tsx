@@ -289,14 +289,6 @@ function PublicationComponent() {
                                             </Typography>
                                         </TableCell>
                                     </Grid>
-                                    <Grid item lg={12}>
-                                        <TableCell style={{...labelCellStyle, textAlign: 'right', paddingRight: '10px'}}><h4>Year</h4></TableCell>
-                                        <TableCell style={cellStyles}>
-                                            {publication.pubdate && <Typography variant={"body2"} align="left">
-                                                {publication.pubdate}
-                                            </Typography>}
-                                        </TableCell>
-                                    </Grid>
                                 </Grid>
                             </div>
                         </Paper>

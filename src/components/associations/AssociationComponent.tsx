@@ -19,7 +19,7 @@ interface AssociationToDisplay {
     pmid?: [string],
     participants: [string],
     source: string,
-    score: string,
+    score: string | undefined,
     spokeexpandedfrom?: [string],
     directlysupportedby?: [string],
     inferredfrom?: [string],
@@ -43,7 +43,7 @@ function AssociationComponent() {
                         pmid: associationData.pmids,
                         participants: associationData.participants,
                         source: associationData.source,
-                        score: String(associationData.score),
+                        score: associationData.score ? String(associationData.score) : undefined,
                         prediction_studies: associationData.prediction_studies,
                         publications: associationData.publications
                     }
@@ -220,7 +220,7 @@ function AssociationComponent() {
                                                 })}
                                             </TableCell>
                                         </Grid>
-                                        {<Grid item xs={6}>
+                                        {association.score !== undefined && <Grid item xs={6}>
                                             <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Intact MI Score</h4></TableCell>
                                             <TableCell style={cellStyles}>
                                                 {

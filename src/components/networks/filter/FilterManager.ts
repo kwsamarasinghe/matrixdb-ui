@@ -87,7 +87,11 @@ class FilterManager {
                         return true;
                     }
                 } else {
-                    return interaction[filter.id] === filter.value;
+                    if(Array.isArray(interaction[filter.id])) {
+                        return interaction[filter.id].includes(filter.value);
+                    } else {
+                        return interaction[filter.id] === filter.value;
+                    }
                 }
             });
         });

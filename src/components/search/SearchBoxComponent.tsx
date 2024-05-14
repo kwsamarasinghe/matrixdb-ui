@@ -29,7 +29,7 @@ function SearchBox(props: any) {
                     p: '2px 4px',
                     display: 'flex',
                     alignItems: 'center',
-                    width: 600,
+                    width: '600px',
                     borderRadius: 0
                 }}
             >
