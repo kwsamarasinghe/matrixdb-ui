@@ -98,6 +98,8 @@ const NetworkExplorer: React.FC<any> = ({
             let biomoleculeIds = biomolecules.map((biomolecule: any) => biomolecule.biomolecule_id);
             http.post("/network", {
                 biomolecules: biomoleculeIds
+            },{
+                timeout: 120000
             })
                 .then((networkResponse) => {
                     setNetworkDataAction({...networkResponse.data, biomolecules: JSON.parse(JSON.stringify(biomoleculeIds))});
@@ -186,33 +188,35 @@ const NetworkExplorer: React.FC<any> = ({
 
     function BiomoleculeCard(props: any) {
         let {biomolecule} = props;
-        return(<Card variant="outlined" style={{ marginBottom: '8px' }}>
-            <CardContent style={{ display: 'flex', flexDirection: 'column', width: '300px' }}>
-                <div style={{display: "flex"}}>
-                    <BiomoleculeTypeIcon biomoleculeType={biomolecule?.biomolecule_type}/>
-                    <Typography
-                        variant="body1"
-                        style={{
-                            marginRight: '16px',
-                            marginLeft: '8px'
-                        }}
-                    >
-                        {biomolecule.recommended_name ?  biomolecule.recommended_name : biomolecule.name }
-                    </Typography>
-                    <SpeciesIcon speciesId={getSpeciesNCBI(biomolecule)} width="20" height="20" />
-                </div>
-                <div style={{ display: 'inline-block', paddingTop: '5px' }}>
-                    <Typography
-                        variant="body2"
-                        style={{
-                            marginLeft: '8px'
-                        }}
-                    >
-                        {biomolecule.biomolecule_id }
-                    </Typography>
-                </div>
-            </CardContent>
-        </Card>);
+        return(
+            <Card variant="outlined" style={{ marginBottom: '8px' }}>
+                <CardContent style={{ display: 'flex', flexDirection: 'column', width: '300px' }}>
+                    <div style={{display: "flex"}}>
+                        <BiomoleculeTypeIcon biomoleculeType={biomolecule?.biomolecule_type}/>
+                        <Typography
+                            variant="body1"
+                            style={{
+                                marginRight: '16px',
+                                marginLeft: '8px'
+                            }}
+                        >
+                            {biomolecule.recommended_name ?  biomolecule.recommended_name : biomolecule.name }
+                        </Typography>
+                        <SpeciesIcon speciesId={getSpeciesNCBI(biomolecule)} width="20" height="20" />
+                    </div>
+                    <div style={{ display: 'inline-block', paddingTop: '5px' }}>
+                        <Typography
+                            variant="body2"
+                            style={{
+                                marginLeft: '8px'
+                            }}
+                        >
+                            {biomolecule.biomolecule_id }
+                        </Typography>
+                    </div>
+                </CardContent>
+            </Card>
+        );
     }
 
     return (

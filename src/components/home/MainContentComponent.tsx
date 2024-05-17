@@ -18,6 +18,7 @@ function MainContentComponent() {
     const [statistics, setStatistics] = useState<any>({});
     const [biomoleculeStatistics, setBiomoleculeStatistics] = useState<any>([]);
     const [interactionStatistics, setInteractionStatistics] = useState<any[]>([]);
+    const [proteinProteinInteractionStatistics, setProteinProteinInteractionStatistics] = useState<any>(null);
 
     const logosData = [
         { logoName: "uniprot", text: "UniProt" },
@@ -89,6 +90,11 @@ function MainContentComponent() {
                     { row: 'Multimer', column: 'Multimer', value: interactionData.multimer_multimer || 0 },
                 ];
                 setInteractionStatistics(interactionStatistics);
+                setProteinProteinInteractionStatistics({
+                    all: interactionData.protein_protein.all,
+                    experimental: interactionData.protein_protein.directly_supported,
+                    predicted: interactionData.protein_protein.predicted
+                })
             });
     }, []);
 
@@ -178,7 +184,7 @@ function MainContentComponent() {
                             }
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <Card
+                            {proteinProteinInteractionStatistics && <Card
                                 style={{
                                     flex: '1',
                                     margin: '10px',
@@ -195,18 +201,25 @@ function MainContentComponent() {
                                         marginBottom: '10px',
                                         fontWeight: 'bold'
                                     }}>
-                                    Protein-Protein Interactions
+                                    Protein-Protein Interactions ({proteinProteinInteractionStatistics.all})
                                 </Typography>
                                 <div style={{
                                     paddingTop: '30px'
                                 }}>
                                     <ProteinProteinInteractionComponent
                                         data={[
-                                            { name: "Experimental", value: 240000 },
-                                            { name: "Predicted", value: 140000 }]
+                                            {   name: "Experimental",
+                                                value: proteinProteinInteractionStatistics.experimental,
+                                                color: '#201f1f'
+                                            },
+                                            {
+                                                name: "Predicted",
+                                                value: proteinProteinInteractionStatistics.predicted,
+                                                color: '#b32828'
+                                            }]
                                         }/>
                                 </div>
-                            </Card>
+                            </Card>}
                         </Grid>
                     </Grid>
                     {/*statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>

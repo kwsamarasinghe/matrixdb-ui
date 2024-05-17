@@ -6,13 +6,12 @@ import {
     CircularProgress, Grid, useTheme
 } from "@mui/material";
 import http from "../../commons/http-commons";
-import logo from "../../assets/images/matrixdb_logo_medium.png";
 import SearchBoxComponent from "./SearchBoxComponent";
 import { useNavigate } from 'react-router-dom';
 import ResultComponent from "./ResultComponent";
 import Typography from "@mui/material/Typography";
-import BiomoleculeCircularDisplayComponent from "../statistics/BiomoleculeCircularDisplayCompotnent";
 import Card from "@mui/material/Card";
+import CircleIcon from '@mui/icons-material/Circle';
 
 function SearchComponent() {
 
@@ -108,63 +107,97 @@ function SearchComponent() {
                                         onSearchTextChange={onSearchTextChange}
                                     />
                                 </div>
-                                <Grid container spacing={0}>
-                                    <Grid item xs={12} sm={6}>
-                                        <Typography
-                                            variant="body2"
-                                            style={{
-                                                paddingTop: "8px",
-                                                paddingLeft: "5px"
-                                            }}
-                                        >
-                                            Biomolecule name : <a href="/search?query=heparin">heparin</a>
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            style={{
-                                                paddingTop: "8px",
-                                                paddingLeft: "5px",
-                                            }}
-                                        >
-                                            Gene name (for proteins): <a href="/search?query=MGP">MGP</a>
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            style={{
-                                                paddingTop: "8px",
-                                                paddingLeft: "5px",
-                                            }}
-                                        >
-                                            ChEBI accessions: <a href="/search?query=chebi:28304">CHEBI:28304</a>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <Typography
-                                            variant="body2"
-                                            style={{
-                                                paddingTop: "8px"
-                                            }}
-                                        >
-                                            Uniprot accession : (uniprot) <a href="/search?query=P12109">P07942</a>
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            style={{
-                                                paddingTop: "8px"
-                                            }}
-                                        >
-                                            Complex portal accession: <a href="/search?query=cpx-1650">cpx-1650</a>
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            style={{
-                                                paddingTop: "8px"
-                                            }}
-                                        >
-                                            Pubmed identifiers (for publications): <a href="/search?query=28106549">28106549</a>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
+                                <div style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                    <div style={{
+                                        width: "80%"
+                                    }}>
+                                        <Grid container spacing={0}>
+                                            <Grid item xs={12} sm={6}>
+                                                <Typography
+                                                    variant="body2"
+                                                    style={{
+                                                        paddingTop: "8px",
+                                                        paddingLeft: "5px"
+                                                    }}
+                                                >
+                                                    <CircleIcon style={{
+                                                        fontSize: "0.6em",
+                                                        paddingRight: "4px"
+                                                    }}/>
+                                                    Biomolecule name : <a href="/search?query=heparin">heparin</a>
+                                                </Typography>
+                                                <Typography
+                                                    variant="body2"
+                                                    style={{
+                                                        paddingTop: "8px",
+                                                        paddingLeft: "5px",
+                                                    }}
+                                                >
+                                                    <CircleIcon style={{
+                                                        fontSize: "0.6em",
+                                                        paddingRight: "4px"
+                                                    }}/>
+                                                    Gene name (for proteins): <a href="/search?query=MGP">MGP</a>
+                                                </Typography>
+                                                <Typography
+                                                    variant="body2"
+                                                    style={{
+                                                        paddingTop: "8px",
+                                                        paddingLeft: "5px",
+                                                    }}
+                                                >
+                                                    <CircleIcon style={{
+                                                        fontSize: "0.6em",
+                                                        paddingRight: "4px"
+                                                    }}/>
+                                                    ChEBI accessions: <a href="/search?query=chebi:28304">CHEBI:28304</a>
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <Typography
+                                                    variant="body2"
+                                                    style={{
+                                                        paddingTop: "8px"
+                                                    }}
+                                                >
+                                                    <CircleIcon style={{
+                                                        fontSize: "0.6em",
+                                                        paddingRight: "4px"
+                                                    }}/>
+                                                    Uniprot accession : (uniprot) <a href="/search?query=P12109">P07942</a>
+                                                </Typography>
+                                                <Typography
+                                                    variant="body2"
+                                                    style={{
+                                                        paddingTop: "8px"
+                                                    }}
+                                                >
+                                                    <CircleIcon style={{
+                                                        fontSize: "0.6em",
+                                                        paddingRight: "4px"
+                                                    }}/>
+                                                    Complex portal accession: <a href="/search?query=cpx-1650">cpx-1650</a>
+                                                </Typography>
+                                                <Typography
+                                                    variant="body2"
+                                                    style={{
+                                                        paddingTop: "8px"
+                                                    }}
+                                                >
+                                                    <CircleIcon style={{
+                                                        fontSize: "0.6em",
+                                                        paddingRight: "4px"
+                                                    }}/>
+                                                    Pubmed identifiers (for publications): <a href="/search?query=28106549">28106549</a>
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </div>
+                                </div>
                             </Card>
                         </div>
                 </div>

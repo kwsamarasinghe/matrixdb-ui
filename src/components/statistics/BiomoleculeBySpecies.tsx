@@ -54,7 +54,7 @@ const BiomoleculeBySpeciesComponent:  React.FC<any> = (props) => {
             const svg = d3.select(svgRef.current)
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom);
+                .attr("height", height + margin.top + margin.bottom)
 
             // Y scale
             const y = d3.scaleBand()
@@ -63,7 +63,7 @@ const BiomoleculeBySpeciesComponent:  React.FC<any> = (props) => {
 
             // X scale
             const x = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d3.sum(subgroups.map(key => +d[key]))) || 60]) // Assuming each subgroup's sum is the maximum value
+                .domain([0, d3.max(data, d => d3.sum(subgroups.map(key => +d[key]))) || 60])
                 .range([0, width]);
 
             // Color palette
@@ -103,21 +103,21 @@ const BiomoleculeBySpeciesComponent:  React.FC<any> = (props) => {
                 (data);
 
             svg.append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`)
+                .attr("transform", `translate(${margin.left-30},${margin.top -20})`)
                 .selectAll("g")
                 .data(stackedData)
                 .enter()
                 .append("g")
-                .attr("fill", d => color(d.key) as string)
-                .selectAll("rect")
-                .data(d => d)
-                .enter()
-                .append("rect")
-                .attr("y", d => y(d.data.group)  || 0)
-                .attr("x", d => x(d[0]))
-                .attr("dy", ".35em")
-                .attr("height", y.bandwidth() * 0.95)
-                .attr("width", d => x(d[1]) - x(d[0]));
+                    .attr("fill", d => color(d.key) as string)
+                    .selectAll("rect")
+                    .data(d => d)
+                    .enter()
+                        .append("rect")
+                        .attr("y", d => y(d.data.group)  || 0)
+                        .attr("x", d => x(d[0]))
+                        .attr("dy", ".35em")
+                        .attr("height", y.bandwidth() * 0.95)
+                        .attr("width", d => x(d[1]) - x(d[0]));
 
 
             let legend = svg.append("g")
@@ -127,7 +127,7 @@ const BiomoleculeBySpeciesComponent:  React.FC<any> = (props) => {
                 .data(legendData)
                 .enter()
                 .append("rect")
-                .attr("x", d => d.index * 30 - 55)
+                .attr("x", d => d.index * 30)
                 .attr("y", 100)
                 .attr("width", 30)
                 .attr("height", 30)
@@ -153,7 +153,7 @@ const BiomoleculeBySpeciesComponent:  React.FC<any> = (props) => {
                 .data(legendData)
                 .enter()
                 .append("image")
-                .attr("x", d => d.index * 30 - 55)
+                .attr("x", d => d.index * 30)
                 .attr("y", 105)
                 .attr("xlink:href", d => d.icon)
                 .attr("width", 20)
@@ -165,7 +165,7 @@ const BiomoleculeBySpeciesComponent:  React.FC<any> = (props) => {
                 .enter()
                 .append("text")
                 .attr("class", "label")
-                .attr("x", -10)
+                .attr("x", d => 40)
                 .attr("y", d => y(d)! + y.bandwidth() / 2)
                 .attr("dy", ".35em")
                 .attr("text-anchor", "end")

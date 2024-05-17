@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 interface DataPoint {
     name: string;
     value: number;
+    color: string;
 }
 
 interface ProteinProteinInteractionComponentProps {
@@ -45,7 +46,7 @@ const ProteinProteinInteractionComponent: React.FC<ProteinProteinInteractionComp
             .attr("x", 0)
             .attr("height", y.bandwidth())
             .attr("width", d => x(d.value) - 30)
-            .attr("fill", "steelblue");
+            .style("fill", d => d.color);
 
         svg.append("g")
             .attr("transform", `translate(0,${height})`)
@@ -62,7 +63,7 @@ const ProteinProteinInteractionComponent: React.FC<ProteinProteinInteractionComp
             .attr("x", d => x(d.value) - 25)
             .attr("y", d => y(d.name)! + y.bandwidth() / 2)
             .text(d => Math.round((d.value / data.map((d: any) => d.value).reduce((a,b) => a + b, 0))*100) + '%')
-            .style("font-size", "10px")
+            .style("font-size", "14px")
             .style("font-family", "Arial");
 
         // Add labels for bars
@@ -75,7 +76,7 @@ const ProteinProteinInteractionComponent: React.FC<ProteinProteinInteractionComp
             .attr("x", d => x(0) - 70)
             .attr("y", d => y(d.name)! + y.bandwidth() / 2)
             .text(d => d.name)
-            .style("font-size", "10px")
+            .style("font-size", "12px")
             .style("font-family", "Arial");
         svg.selectAll("path,line").remove();
         svg.selectAll("g.tick").remove();
