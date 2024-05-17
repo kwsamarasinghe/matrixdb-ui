@@ -1,21 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import {List, ListItemText, Tooltip} from "@mui/material";
+import {Grid, List, ListItemText, Tooltip} from "@mui/material";
 import http from "../../commons/http-commons";
 import {faCircleNodes, faScrewdriverWrench} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import BiomoleculeCircularDisplayComponent from "../statistics/BiomoleculeCircularDisplayCompotnent";
 import ExperimentPieChartComponent from "../statistics/ExperimentPieChartComponent";
 import InteractionHeatMapComponent from "../statistics/InteractionHeatMapComponent";
+import cytoscapeLogo from "../../assets/images/cytoscape.png";
+import ProteinProteinInteractionComponent from "../statistics/ProteinProteinInteractionComponent";
+import LogoIcon from "../commons/icons/LogoIcon";
+import BiomoleculeBySpeciesComponent from "../statistics/BiomoleculeBySpecies";
 
 
 function MainContentComponent() {
     const [statistics, setStatistics] = useState<any>({});
     const [biomoleculeStatistics, setBiomoleculeStatistics] = useState<any>([]);
     const [interactionStatistics, setInteractionStatistics] = useState<any[]>([]);
+
+    const logosData = [
+        { logoName: "uniprot", text: "UniProt" },
+        { logoName: "chebi", text: "ChEBI" },
+        { logoName: "complex-portal", text: "Complex Portal" },
+        { logoName: "intact", text: "Intact" },
+        { logoName: "matrisome", text: "Matrisome Project" },
+        { logoName: "bgee", text: "Bgee" }
+    ];
 
     useEffect(() => {
         http.get("/statistics/")
@@ -25,7 +36,8 @@ function MainContentComponent() {
                 let biomoleculeStatistics = [
                     {
                         type: 'Protein',
-                        value: biomoleculeData.protein.all
+                        value: biomoleculeData.protein.all,
+                        bySpecies: biomoleculeData.protein.by_species
                     },
                     {
                         type: 'GAG',
@@ -33,11 +45,14 @@ function MainContentComponent() {
                     },
                     {
                         type: 'Multimer',
-                        value: biomoleculeData.multimer
+                        value: biomoleculeData.multimer.all,
+                        bySpecies: biomoleculeData.multimer.by_species
+
                     },
                     {
                         type: 'PFRAG',
-                        value: biomoleculeData.pfrag
+                        value: biomoleculeData.pfrag.all,
+                        bySpecies: biomoleculeData.pfrag.by_species
                     },
                     {
                         type: 'SmallMolecules',
@@ -56,7 +71,7 @@ function MainContentComponent() {
 
                 let interactionData = statisticsResponse.data.interactions;
                 let interactionStatistics = [
-                    { row: 'Protein', column: 'Protein', value: interactionData.protein_protein.all},
+                    { row: 'Protein', column: 'Protein', value: interactionData.protein_protein.directly_supported},
                     { row: 'Protein', column: 'GAG', value: interactionData.protein_gag || 0},
                     { row: 'Protein', column: 'PFRAG', value: interactionData.protein_pfrag || 0},
                     { row: 'Protein', column: 'Multimer', value: interactionData?.protein_multimer || 0},
@@ -78,11 +93,11 @@ function MainContentComponent() {
     }, []);
 
     const cardStyle = {
-        width: '400px',
         display: 'flex',
         flexDirection: 'column',
         background: '#e7ebef',
-        borderRadius: 0
+        borderRadius: 0,
+        height: '330px'
     } as React.CSSProperties;
 
     interface TruncatedListItemTextProps {
@@ -115,10 +130,10 @@ function MainContentComponent() {
                 alignItems: 'center',
                 paddingTop: '20px',
                 margin: '0 auto',
+                marginBottom: '5px',
                 background: 'rgb(237, 239, 245)',
                 width: '70%'
             }}>
-
                 <Typography
                     variant={'body1'}
                     style={{
@@ -127,30 +142,74 @@ function MainContentComponent() {
                     }}>
                     MatrixDB Content
                 </Typography>
-                <div style={{ display: 'flex', width: '90%' }}>
-                    {statistics.biomolecules &&
-                        <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
-                            <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Biomolecules {statistics.biomolecules.all }
-                            </Typography>
-                            <BiomoleculeCircularDisplayComponent biomoleculeStatistics={biomoleculeStatistics}/>
-                        </Card>
-                    }
-                    {interactionStatistics && interactionStatistics.length > 0 && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
-                        <Typography component="div" style={{ color: 'darkblue' , textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Binary Interactions ({statistics.interactions.all})
-                        </Typography>
-                        <div style={{
-                            paddingLeft: '30px'
-                        }}>
-                            <InteractionHeatMapComponent
-                                data={interactionStatistics}
-                                width={240}
-                                height={240}
-                            />
-                        </div>
-                    </Card>}
-                    {statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
+                <div style={{
+                    display: 'flex',
+                    width: '70%'
+                }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            {
+                                interactionStatistics && interactionStatistics.length > 0 &&
+                                <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
+                                    <Typography
+                                        component="div"
+                                        style={{
+                                            color: 'darkblue' ,
+                                            textAlign: 'center',
+                                            marginLeft: '10px',
+                                            marginTop: '15px',
+                                            marginBottom: '10px',
+                                            fontWeight: 'bold'
+                                        }}>
+                                        Experimentally Supported Binary Interactions
+                                        <br/>
+                                        ({statistics.interactions.all - statistics.interactions.protein_protein.predicted})
+                                    </Typography>
+                                    <div style={{
+                                        paddingTop: '10px'
+                                    }}>
+                                        <InteractionHeatMapComponent
+                                            data={interactionStatistics}
+                                            width={240}
+                                            height={240}
+                                        />
+                                    </div>
+                                </Card>
+                            }
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Card
+                                style={{
+                                    flex: '1',
+                                    margin: '10px',
+                                    ...cardStyle
+                                }}
+                            >
+                                <Typography
+                                    component="div"
+                                    style={{
+                                        color: 'darkblue',
+                                        textAlign: 'center',
+                                        marginLeft: '10px',
+                                        marginTop: '15px',
+                                        marginBottom: '10px',
+                                        fontWeight: 'bold'
+                                    }}>
+                                    Protein-Protein Interactions
+                                </Typography>
+                                <div style={{
+                                    paddingTop: '30px'
+                                }}>
+                                    <ProteinProteinInteractionComponent
+                                        data={[
+                                            { name: "Experimental", value: 240000 },
+                                            { name: "Predicted", value: 140000 }]
+                                        }/>
+                                </div>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                    {/*statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                         <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
                             Interactions from IntAct ({statistics.experiments.all})
                         </Typography>
@@ -175,20 +234,77 @@ function MainContentComponent() {
                                     }
                                 ]} width={200} height={200}/>
                         </div>
-                    </Card>}
+                    </Card>*/}
+                </div>
+                <div
+                    style={{
+                        display: 'flex',
+                        width: '70%'
+                    }}
+                >
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            {statistics.biomolecules &&
+                                <Card
+                                    style={{
+                                        flex: '1',
+                                        margin: '10px',
+                                        ...cardStyle
+                                    }}
+                                >
+                                    <Typography
+                                        component="div"
+                                        style={{
+                                            color: 'darkblue',
+                                            textAlign: 'center',
+                                            marginLeft: '10px',
+                                            marginTop: '15px',
+                                            marginBottom: '10px',
+                                            fontWeight: 'bold'
+                                        }}>
+                                        Biomolecules {statistics.biomolecules.all }
+                                    </Typography>
+                                    <BiomoleculeCircularDisplayComponent
+                                        biomoleculeStatistics={biomoleculeStatistics}
+                                        width={240}
+                                        height={240}
+                                    />
+                                </Card>
+                            }
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            {statistics.biomolecules && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
+                                <Typography
+                                    component="div"
+                                    style={{
+                                        color: 'darkblue' ,
+                                        textAlign: 'center',
+                                        marginLeft: '10px',
+                                        marginTop: '15px',
+                                        marginBottom: '10px',
+                                        fontWeight: 'bold'
+                                    }}>
+                                    Protein, Multimer & Protein Fragments by Species
+                                </Typography>
+                                <BiomoleculeBySpeciesComponent
+                                    biomoleculeStatistics={biomoleculeStatistics}
+                                />
+                            </Card>}
+                        </Grid>
+                    </Grid>
                 </div>
             </div>
 
-            {/*<div style={{
+            <div style={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 margin: '0 auto',
                 width: '70%',
-                marginBottom: '20px',
-                background: 'rgb(237, 239, 245)'
+                marginBottom: '5px',
+                background: 'rgb(197,205,229)',
+                paddingTop: '5px'
             }}>
-
                 <Typography
                     variant={'body1'}
                     style={{
@@ -196,135 +312,79 @@ function MainContentComponent() {
                         marginBottom: '5px',
                         marginTop: '5px'
                     }}>
-                    Tools & Resources
+                    Build Interaction Networks
                 </Typography>
-                <div style={{
-                    display: 'flex',
-                    width: '90%',
-                    justifyContent: 'center'
-                }}>
-                    <Card style={{ margin: '10px', ...cardStyle }}>
-                        <Typography
-                            component="div"
-                            style={{
-                                color: 'darkblue',
-                                textAlign: 'center',
-                                marginLeft: '10px',
-                                marginTop: '10px',
-                                marginBottom: '5px',
-                                fontWeight: 'bold'
-                            }}>
-                            Tools
-                        </Typography>
-                        <CardContent>
-                            <List>
-                                <ListItemText style={{
-                                    margin: '8px 0',
-                                    padding: '12px',
-                                }}
-                                    primary={
-                                        <React.Fragment>
-                                            <FontAwesomeIcon
-                                                icon={faCircleNodes}
-                                                color={'darkblue'}
-                                                style={{
-                                                    paddingRight: '5px'
-                                                }}
-                                            />
-                                            <strong><a href={"/networks"} >Network Explorer </a></strong>
-                                        </React.Fragment>
-                                    }/>
-                                <ListItemText style={{
-                                    margin: '8px 0',
-                                    padding: '12px',
-                                }}
-                                    primary={
-                                        <React.Fragment>
-                                            <FontAwesomeIcon
-                                                icon={faScrewdriverWrench}
-                                                color={'darkblue'}
-                                                style={{
-                                                    paddingRight: '5px'
-                                                }}
-                                            />
-                                            <strong>GAG Builder</strong>
-                                        </React.Fragment>
-                                    }/>
-                            </List>
-                        </CardContent>
-                    </Card>
-                    {/*<Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
-                        <Typography component="div" style={{ color: 'darkblue' , textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            How to Cite
-                        </Typography>
-                        <CardContent>
-                            <List>
-                                <ListItemText style={{marginBottom: '5px'}}>
-                                    <TruncatedListItemText
-                                        text="MatrixDB: integration of new data with a focus on glycosaminoglycan interactions."
-                                        url="https://pubmed.ncbi.nlm.nih.gov/30371822/"
-                                    />
-                                </ListItemText>
-                                <ListItemText>
-                                    <TruncatedListItemText
-                                        text="MatrixDB, the extracellular matrix interaction database: updated content, a new navigator and expanded functionalities."
-                                        url="http://www.ncbi.nlm.nih.gov/pubmed/25378329"
-                                    />
-                                </ListItemText>
-                                <ListItemText>
-                                    <TruncatedListItemText
-                                        text="MatrixDB, the extracellular matrix interaction database."
-                                        url="http://www.ncbi.nlm.nih.gov/pubmed/20852260"
-                                    />
-                                </ListItemText>
-                                <ListItemText>
-                                    <TruncatedListItemText
-                                        text="MatrixDB, a database focused on extracellular protein-protein and protein-carbohydrate interactions."
-                                        url="http://www.ncbi.nlm.nih.gov/pubmed/19147664"
-                                    />
-                                </ListItemText>
-
-                            </List>
-                        </CardContent>
-                    </Card>
-                    <Card style={{ margin: '10px', ...cardStyle }}>
-                        <Typography
-                            component="div"
-                            style={{
-                                color: 'darkblue',
-                                textAlign: 'center',
-                                marginLeft: '10px',
-                                marginTop: '10px',
-                                marginBottom: '5px',
-                                fontWeight: 'bold'
-                            }}>
-                            Interaction Networks
-                        </Typography>
-                        <CardContent>
-                            <List>
-                                <ListItemText style={{
-                                    margin: '8px 0',
-                                    padding: '12px',
-                                }}
-                                    primary={
-                                        <React.Fragment>
-                                            <strong>Network of ...</strong>
-                                        </React.Fragment>
-                                    }/>
-                                <ListItemText style={{
-                                    margin: '8px 0',
-                                    padding: '12px',
-                                }}
-                                    primary={
-                                        <React.Fragment>
-                                            <strong>Network of ...</strong>
-                                        </React.Fragment>
-                                    }/>
-                            </List>
-                        </CardContent>
-                    </Card>
+                <Typography
+                    variant={'body2'}
+                    style={{
+                        marginBottom: '5px',
+                        marginTop: '5px',
+                        width: '50%'
+                    }}>
+                    <FontAwesomeIcon
+                        icon={faCircleNodes}
+                        style={{
+                            fontSize: '1.5em',
+                            paddingRight: '5px'
+                        }}
+                        color='green'
+                    />
+                    Interaction networks can be built and filtered using <a href="/networks" target="_blank">Network explorer</a>
+                </Typography>
+                <Typography
+                    variant={'body2'}
+                    style={{
+                        marginBottom: '5px',
+                        marginTop: '5px',
+                        width: '50%'
+                    }}>
+                    <img src={cytoscapeLogo} style={{width: '25px', height: 'auto'}}/>
+                    Interaction network can be exported as an image or in cytoscape compatible format
+                </Typography>
+            </div>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                margin: '0 auto',
+                width: '70%',
+                marginBottom: '5px',
+                background: 'rgb(237, 239, 245)',
+                paddingTop: '5px'
+            }}>
+                <Typography
+                    variant={'body1'}
+                    style={{
+                        fontWeight: 'bold',
+                        marginBottom: '5px',
+                        marginTop: '5px'
+                    }}>
+                    Data Sources
+                </Typography>
+                <div
+                    style={{
+                        display: 'flex',
+                        width: '40%'
+                    }}
+                >
+                    <Grid container spacing={2}>
+                        {logosData.map((item, index) => (
+                            <Grid key={index} item xs={12} sm={4} md={4} lg={4}>
+                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                    <div style={{ display: "flex" }}>
+                                        <LogoIcon logoName={item.logoName} width="40" height="40" />
+                                    </div>
+                                    <div style={{ display: "flex", alignItems: "center", textAlign: "center" }}>
+                                        <Typography variant="body2" style={{ fontWeight: 'bold', marginLeft: '5px' }}>
+                                            {item.text}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            </Grid>
+                        ))}
+                    </Grid>
                 </div>
-            </div>*/}
+            </div>
         </>
     );
 }

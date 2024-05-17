@@ -194,6 +194,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
                         <CSVLink
                             data={rows}
                             headers={['id','association', 'directlySupportedBy', 'spokeExpandedFrom']}
+                            filename={`${biomoleculeIds[0]}-interactions.csv`}
                         >
                             <Typography variant={"body2"}>
                                 <FontAwesomeIcon

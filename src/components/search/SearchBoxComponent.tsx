@@ -29,13 +29,11 @@ function SearchBox(props: any) {
                     p: '2px 4px',
                     display: 'flex',
                     alignItems: 'center',
-                    width: '600px',
                     borderRadius: 0
                 }}
             >
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search MatrixDB e.g GAG_1"
                     inputProps={{ 'aria-label': 'e.g Heparin' }}
                     onChange={onSearchTextChange}
                     onKeyDown={onPressEnter}

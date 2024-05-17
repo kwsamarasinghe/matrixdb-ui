@@ -94,7 +94,9 @@ function OverviewComponent(props: any) {
         if(biomolecule.xrefs && biomolecule.xrefs.interpro) {
             biomoleculeToDisplay.interpro = biomolecule.xrefs.interpro;
         }
-        biomoleculeToDisplay.ecmness = biomolecule.ecmness;
+        if(biomolecule.ecm) {
+            biomoleculeToDisplay.ecmness = 'MatrixDB ECM';
+        }
         setBiomoleculeToDisplay(biomoleculeToDisplay);
 
         // Define the tabs
@@ -244,6 +246,20 @@ function OverviewComponent(props: any) {
                                     height={'40px'}
                                 />
                             </div>
+                        }
+                        {
+                            biomoleculeToDisplay?.ecmness &&
+                            <Avatar
+                                sx={{
+                                    width: 28,
+                                    height: 28,
+                                    color: '#fff',
+                                    fontSize: 8,
+                                    fontWeight: 'bold'
+                                }}
+                            >
+                                "ECM"
+                            </Avatar>
                         }
                     </div>
                     <div style={{float: 'right'}}>

@@ -97,9 +97,17 @@ function Header(props: HeaderProps) {
                     </button>}
 
                     {
-                        pageDetails.type !== 'biomolecule' && <button style={{ color: 'white', background: 'transparent', border: 'none', cursor: 'pointer', position: 'relative', marginRight: '10px' }}
-                                                                         title={"Go to Explorer"}
-                                                                         onClick={goToExplorer}
+                        pageDetails.type !== 'biomolecule' &&
+                        <button style={{
+                            color: 'white',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            position: 'relative',
+                            marginRight: '10px'
+                        }}
+                            title={"Go to Explorer"}
+                            onClick={goToExplorer}
                         >
                             <FontAwesomeIcon
                                 icon={faCircleNodes}

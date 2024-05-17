@@ -3,13 +3,16 @@ import { useLocation } from 'react-router-dom';
 
 import {
     Box, Button,
-    CircularProgress,useTheme
+    CircularProgress, Grid, useTheme
 } from "@mui/material";
 import http from "../../commons/http-commons";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
 import SearchBoxComponent from "./SearchBoxComponent";
 import { useNavigate } from 'react-router-dom';
 import ResultComponent from "./ResultComponent";
+import Typography from "@mui/material/Typography";
+import BiomoleculeCircularDisplayComponent from "../statistics/BiomoleculeCircularDisplayCompotnent";
+import Card from "@mui/material/Card";
 
 function SearchComponent() {
 
@@ -21,6 +24,13 @@ function SearchComponent() {
 
     const location = useLocation();
     const currentPath = location.pathname;
+
+    const searchBoxCardStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'rgb(197, 205, 229)',
+        borderRadius: 0
+    } as React.CSSProperties;
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -72,19 +82,90 @@ function SearchComponent() {
         <>
             { currentPath === '/' &&
                 <div className={"App-search"}>
-                        <div>
-                            <img src={logo} className={"App-logo"}/>
-                        </div>
                         <div style={{textAlign: 'center'}}>
                             <h3>The extracellular matrix interaction database</h3>
                             <h5>Database focused on interactions established by extracellular matrix proteins, proteoglycans and polysaccharide</h5>
                         </div>
-                        <div className={"App-search"}>
-                            <SearchBoxComponent
-                                onClickSearch={onClickSearch}
-                                onPressEnter={onPressEnter}
-                                onSearchTextChange={onSearchTextChange}
-                            />
+                        <div style={{width: '70%'}}>
+                            <Card style={{ flex: '1', ...searchBoxCardStyle }}>
+                                <Typography
+                                    variant="body2"
+                                    style={{
+                                        paddingTop: "5px",
+                                        paddingLeft: "5px",
+                                        fontWeight: "bolder"
+                                    }}
+                                >
+                                    Simple Search
+                                </Typography>
+                                <div style={{
+                                    paddingLeft: "5px",
+                                    paddingRight: "5px"
+                                }}>
+                                    <SearchBoxComponent
+                                        onClickSearch={onClickSearch}
+                                        onPressEnter={onPressEnter}
+                                        onSearchTextChange={onSearchTextChange}
+                                    />
+                                </div>
+                                <Grid container spacing={0}>
+                                    <Grid item xs={12} sm={6}>
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                paddingTop: "8px",
+                                                paddingLeft: "5px"
+                                            }}
+                                        >
+                                            Biomolecule name : <a href="/search?query=heparin">heparin</a>
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                paddingTop: "8px",
+                                                paddingLeft: "5px",
+                                            }}
+                                        >
+                                            Gene name (for proteins): <a href="/search?query=MGP">MGP</a>
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                paddingTop: "8px",
+                                                paddingLeft: "5px",
+                                            }}
+                                        >
+                                            ChEBI accessions: <a href="/search?query=chebi:28304">CHEBI:28304</a>
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                paddingTop: "8px"
+                                            }}
+                                        >
+                                            Uniprot accession : (uniprot) <a href="/search?query=P12109">P07942</a>
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                paddingTop: "8px"
+                                            }}
+                                        >
+                                            Complex portal accession: <a href="/search?query=cpx-1650">cpx-1650</a>
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                paddingTop: "8px"
+                                            }}
+                                        >
+                                            Pubmed identifiers (for publications): <a href="/search?query=28106549">28106549</a>
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Card>
                         </div>
                 </div>
             }
@@ -92,9 +173,6 @@ function SearchComponent() {
                 searchStart && <div style={{textAlign: 'center', paddingTop: '20px'}}>
                     <CircularProgress />
                     </div>
-            }
-            {
-                /*!searchStart && searchDone && <h5>{searchResults.length} Results</h5>*/
             }
             {
                 !searchStart && searchDone && searchResults.length === 0  && <h5>Sorry we couldn't find what you looking for</h5>

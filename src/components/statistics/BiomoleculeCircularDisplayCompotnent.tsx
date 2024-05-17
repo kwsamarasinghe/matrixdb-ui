@@ -3,15 +3,13 @@ import * as d3 from 'd3';
 import Paper from '@mui/material/Paper';
 
 const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
+    const {width, height} = props;
     const svgRef = useRef<HTMLDivElement>(null);
     const {biomoleculeStatistics} = props;
 
     useEffect(() => {
         if(biomoleculeStatistics.length === 0) return;
         if (svgRef.current) {
-            const width = 200;
-            const height = 210;
-
             const svg = d3.select(svgRef.current)
                 .append("svg")
                 .attr("width", width)
@@ -91,8 +89,8 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
 
 
             var simulation = d3.forceSimulation<Data>(data)
-                .force("center", d3.forceCenter().x(width / 2).y(height / 2)) // Attraction to the center of the svg area
-                .force("charge", d3.forceManyBody<Data>().strength(.1)) // Nodes are attracted to each other if the value is > 0
+                .force("center", d3.forceCenter().x(width / 2).y(height / 2))
+                .force("charge", d3.forceManyBody<Data>().strength(.1))
                 .force("collide", d3.forceCollide<Data>().strength(.2).radius((d) => size(d.value) + 3).iterations(1));
 
             simulation.on("tick", () => {

@@ -1,8 +1,12 @@
 import React from 'react';
 import UniprotIcon from '../../../assets/images/uniprot.png';
-import ChebiIcon from '../../../assets/images/chebi-logo.jpg';
+import ChebiIcon from '../../../assets/images/ChEBI_logo.png';
 import CPXIcon from '../../../assets/images/cpx-logo.png';
 import MatrixdbIcon from '../../../assets/images/matrixdb_logo_medium.png';
+import IntactIcon from '../../../assets/images/intact_logo.png';
+import BgeeIcon from '../../../assets/images/bgee_logo.png';
+import MatrisomeIcon from '../../../assets/images/matrisome_logo.png';
+
 
 import {faStarOfLife} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -30,6 +34,15 @@ const LogoIcon: React.FC<LogoIconProps> = ({ logoName, width, height }) => {
             break;
         case 'matrixdb':
             iconPath = MatrixdbIcon;
+            break;
+        case 'intact':
+            iconPath = IntactIcon;
+            break;
+        case 'matrisome':
+            iconPath = MatrisomeIcon;
+            break;
+        case 'bgee':
+            iconPath = BgeeIcon;
             break;
         default:
             iconPath = null; // Handle case where no icon matches

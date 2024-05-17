@@ -14,9 +14,10 @@ interface HeatmapProps {
     height: number;
 }
 
-const InteractionHeatMapComponent: React.FC<HeatmapProps> = ({ data, width, height }) => {
+const InteractionHeatMapComponent: React.FC<HeatmapProps> = (props) => {
     const svgRef = useRef<HTMLDivElement>(null);
-    const heatMapData = data;
+    const heatMapData = props.data;
+    const {width, height} = props;
 
     useEffect(() => {
         if(!heatMapData || heatMapData.length === 0) return;
@@ -42,7 +43,8 @@ const InteractionHeatMapComponent: React.FC<HeatmapProps> = ({ data, width, heig
         const columns = Array.from(new Set(data.map((d: any) => d.column)));
 
 
-        const colorScale = d3.scaleSequential(d3.interpolateBlues).domain([0, d3.max(data, (d) => d.value) || 1]);
+        const colorScale = d3.scaleSequential(d3.interpolateBlues)
+            .domain([0, d3.max(data, (d) => d.value) || 1]);
 
         var Tooltip = d3.select(svgRef.current)
             .append("div")
@@ -89,7 +91,8 @@ const InteractionHeatMapComponent: React.FC<HeatmapProps> = ({ data, width, heig
             .padding(0.05);
 
         svg.append('g')
-            .style('font-size', 11)
+            .style('font-size', 10)
+            .style("font-family", "Arial")
             .attr('transform', `translate(${margin.left}, 20)`)
             .call(d3.axisBottom(x).tickSize(0).tickSizeOuter(0))
             .select('.domain').remove();
@@ -101,7 +104,8 @@ const InteractionHeatMapComponent: React.FC<HeatmapProps> = ({ data, width, heig
             .padding(0.05);
 
         svg.append('g')
-            .style('font-size', 11)
+            .style('font-size', 10)
+            .style("font-family", "Arial")
             .attr('transform', `translate(${margin.left - 5}, ${margin.top})`)
             .call(d3.axisLeft(y).tickSize(0))
             .select('.domain').remove();
@@ -116,8 +120,7 @@ const InteractionHeatMapComponent: React.FC<HeatmapProps> = ({ data, width, heig
         <div style={{
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: '10px'
+            alignItems: 'center'
         }}>
             <div ref={svgRef}></div>
         </div>

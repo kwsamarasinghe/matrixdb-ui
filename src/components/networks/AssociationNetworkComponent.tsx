@@ -16,6 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DownloadIcon from '@mui/icons-material/Download';
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -913,7 +914,7 @@ function FilterComponent(props: any) {
 
 function CytoscapeComponent(props: any) {
 
-    const {participants, associations} = props;
+    const {biomoleculeId, participants, associations} = props;
     const [selectedPartnerId, setSelectedPartnerId] = useState(null);
     const [selectedInteraction, setSelectedInteraction] = useState(null);
     const cyRef = useRef(null);
@@ -950,19 +951,26 @@ function CytoscapeComponent(props: any) {
     let cy : any = null;
 
     const generateDownloadLink = () => {
-        // Get the cytoscape instance from the ref
+        if(cy) {
+            const base64URI = cy.png();
+            const link = document.createElement('a');
+            link.href = base64URI;
+            link.download = `${biomoleculeId}-interactions-cytoscape-graph.png`;
+            link.click();
+        }
+    };
 
-        // Generate PNG image data URI of the graph
-        const base64URI = cy.png();
-
-        // Create a temporary anchor element
-        const link = document.createElement('a');
-        // Set href attribute to image data URI
-        link.href = base64URI;
-        // Set download attribute with desired filename
-        link.download = 'cytoscape_graph.png';
-        // Simulate click to trigger download
-        link.click();
+    const generateCytoscapeLink = () => {
+        if(cy) {
+            const jsonGraph = JSON.stringify(cy.json());
+            const base64URI = `data:application/json;base64,${btoa(jsonGraph)}`;
+            const link = document.createElement('a');
+            link.href = base64URI;
+            link.download = `${biomoleculeId}-interactions-cytoscape.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     };
 
     useEffect(() => {
@@ -1165,7 +1173,6 @@ function CytoscapeComponent(props: any) {
                     const node = event.target;
                     //alert(`Mouseout on node: ${node.id()}`);
                 });
-
             }
 
             return () => {
@@ -1190,9 +1197,14 @@ function CytoscapeComponent(props: any) {
                     </div>
                 </div>
                 <div>
-                    <Tooltip title="Download" arrow>
-                        <IconButton style={{color: 'green'}} onClick={generateDownloadLink} aria-label="download">
-                            <DownloadIcon />
+                    <Tooltip title="Download an image" arrow>
+                        <IconButton size="small" style={{color: 'green'}} onClick={generateDownloadLink} aria-label="download">
+                            <PhotoCameraIcon/>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Export to cytoscape" arrow>
+                        <IconButton size="small" style={{color: 'green'}} onClick={generateCytoscapeLink} aria-label="download">
+                            <DownloadIcon/>
                         </IconButton>
                     </Tooltip>
                 </div>
@@ -1238,12 +1250,6 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
             </div>
 
             <div style={{flex: 1.35, backgroundColor: 'lightgray'}}>
-                {/*<FilterComponent
-                    associations={associations}
-                    participants={participants}
-                    onFilterAdd={onFilterAdd}
-                    onFilterDelete={onFilterDelete}
-                />*/}
                 <NewFilterComponent/>
             </div>
         </div>
