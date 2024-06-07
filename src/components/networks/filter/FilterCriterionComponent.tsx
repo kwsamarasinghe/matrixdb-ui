@@ -88,7 +88,8 @@ export const EditingFilterCriterionComponent: React.FC<any> = ({
 export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
                                                     filterType,
                                                     criterion,
-                                                    onAdd
+                                                    onAdd,
+                                                    onRemove
                                                 })  => {
     const { label, subCriteria, value} = criterion;
     const filterCriterionId = criterion.id;
@@ -150,9 +151,13 @@ export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
                                                 renderInput={(params) => (
                                                     <TextField {...params} variant="outlined" />
                                                 )}
-                                                onChange={(event, newValue) =>
-                                                    onAdd(filterType, { id: filterCriterionId, subCriteria: { id: id,  value: newValue }})
-                                                }
+                                                onChange={(event, newValue) => {
+                                                    if(newValue) {
+                                                        onAdd(filterType, { id: filterCriterionId, subCriteria: { id: id,  value: newValue }})
+                                                    } else {
+                                                        onRemove(filterType, { id: filterCriterionId, subCriteria: { id: id}});
+                                                    }
+                                                }}
                                             />
                                         )
                                     }
@@ -166,9 +171,13 @@ export const FilterWithSubCriteriaComponent: React.FC<FilterCriterionProps> = ({
                                                     value={subCriteriaValue}
                                                     step={100}
                                                     valueLabelDisplay='auto'
-                                                    onChange={(event, newValue) =>
-                                                        onAdd(filterType, { id: filterCriterionId, subCriteria: { id: id,  value: newValue }})
-                                                    }
+                                                    onChange={(event, newValue) => {
+                                                        if(newValue) {
+                                                            onAdd(filterType, { id: filterCriterionId, subCriteria: { id: id,  value: newValue }})
+                                                        } else {
+                                                            onRemove(filterType, { id: filterCriterionId, subCriteria: { id: id}});
+                                                        }
+                                                    }}
                                                 />
                                             </div>
                                         )
@@ -188,11 +197,14 @@ interface FilterCriterionProps {
     filterType: string,
     criterion: FilterCriterionConfiguration,
     onAdd: (filterType: string, filterCriterion: FilterCriterion) => void;
+    onRemove: (filterType: string, filterCriterion: FilterCriterion) => void;
 }
 const FilterCriterionComponent: React.FC<FilterCriterionProps> = ({
                                                 filterType,
                                                 criterion,
-                                                onAdd}) => {
+                                                onAdd,
+                                                onRemove
+                                            }) => {
 
     const {id, label, options, value} = criterion;
 
@@ -220,9 +232,13 @@ const FilterCriterionComponent: React.FC<FilterCriterionProps> = ({
                         renderInput={(params) => (
                             <TextField {...params} variant="outlined" />
                         )}
-                        onChange={(event, newValue) =>
-                            onAdd(filterType, { id: id, value: newValue })
-                        }
+                        onChange={(event, newValue) => {
+                            if(newValue) {
+                                onAdd(filterType, { id: id, value: newValue });
+                            } else {
+                                onRemove(filterType, { id: id });
+                            }
+                        }}
                     />
                 )
             }
@@ -236,9 +252,13 @@ const FilterCriterionComponent: React.FC<FilterCriterionProps> = ({
                             value={value}
                             step={0.1}
                             valueLabelDisplay='auto'
-                            onChange={(event, newValue) =>
-                                onAdd(filterType, { id: id, value: newValue })
-                            }
+                            onChange={(event, newValue) => {
+                                if(newValue) {
+                                    onAdd(filterType, { id: id, value: newValue });
+                                } else {
+                                    onRemove(filterType, { id: id});
+                                }
+                            }}
                         />
                     </div>
                 )

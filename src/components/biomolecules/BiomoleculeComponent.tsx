@@ -252,83 +252,82 @@ function BiomoleculeComponent() {
                                 flexDirection: 'column',
                                 justifyContent: 'space-between'
                             }}>
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-between'
-                                }}>
-                                    {
-                                        <div
-                                            id='overview'
-                                            style={{marginBottom: '10px'}}
-                                        >
-                                            <OverviewComponent
-                                                biomoleculeId={biomoleculeId}
-                                                biomolecule={biomolecule}
-                                            />
-                                        </div>
-                                    }
-                                    {
-                                        biomoleculeId &&
-                                        <div
-                                            id='interactions'
-                                            style={{marginBottom: '10px'
-                                        }}>
-                                            <AssociationsOverviewComponent
-                                                biomoleculeId={biomoleculeId}
-                                                onInteractionLoad={onInteractionLoad}
-                                            />
-                                        </div>
-                                    }
-                                    {
-                                        (biomolecule && biomolecule.type === 'protein' ||
-                                        biomolecule && biomolecule.type === 'pfrag' ||
-                                        biomolecule && biomolecule.type === 'multimer' ) && biomoleculeId &&
-                                        <div
-                                            id='expressions'
-                                            style={{marginBottom: '10px'}}>
-                                            <ExpressionComponent
-                                                biomolecule={biomolecule}
-                                                onExpressionLoad={onExpressionLoad}
-                                            />
-                                        </div>
-                                    }
-                                    {
-                                        biomolecule && biomolecule.xrefs && biomolecule.xrefs.pdb && biomolecule.xrefs.pdb.length > 0 &&
-                                        <div
-                                            id='structures'
-                                            style={{marginBottom: '10px'}}>
-                                            <StructureComponent
-                                                pdb={biomolecule.xrefs.pdb}
-                                            />
-                                        </div>
-                                    }
-                                    {
-                                        biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb && biomolecule.molecular_details.pdb.length > 0 &&
-                                        <div
-                                            id='structures'
-                                            style={{marginBottom: '10px'}}>
-                                            <StructureComponent
-                                                pdb={biomolecule.molecular_details.pdb}
-                                            />
-                                        </div>
-                                    }
-                                    {
-                                        (biomolecule && biomolecule.type !== 'gag' && biomolecule.annotations) &&
-                                        ((biomolecule.annotations.go && biomolecule.annotations.go.length >0)
-                                            || (biomolecule.annotations && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0
-                                            || (biomolecule.xrefs && biomolecule.xrefs.reactome && biomolecule.xrefs.reactome.length > 0))) &&
-                                        <div
-                                            id='annotations'
-                                            style={{marginBottom: '10px'}}>
-                                            <AnnotationComponent
-                                                goTerms={biomolecule.annotations.go}
-                                                keywords={biomolecule.annotations.keywords}
-                                                reactome={biomolecule.xrefs.reactome}
-                                            />
-                                        </div>
-                                    }
-                                </div>
+                                {
+                                    <div
+                                        id='overview'
+                                        style={{
+                                            marginTop: '15px',
+                                            marginBottom: '10px'
+                                        }}
+                                    >
+                                        <OverviewComponent
+                                            biomoleculeId={biomoleculeId}
+                                            biomolecule={biomolecule}
+                                        />
+                                    </div>
+                                }
+                                {
+                                    biomoleculeId &&
+                                    <div
+                                        id='interactions'
+                                        style={{
+                                            marginBottom: '10px'
+                                        }}
+                                    >
+                                        <AssociationsOverviewComponent
+                                            biomoleculeId={biomoleculeId}
+                                            onInteractionLoad={onInteractionLoad}
+                                        />
+                                    </div>
+                                }
+                                {
+                                    (biomolecule && biomolecule.type === 'protein' ||
+                                    biomolecule && biomolecule.type === 'pfrag' ||
+                                    biomolecule && biomolecule.type === 'multimer' ) && biomoleculeId &&
+                                    <div
+                                        id='expressions'
+                                        style={{marginBottom: '10px'}}>
+                                        <ExpressionComponent
+                                            biomolecule={biomolecule}
+                                            onExpressionLoad={onExpressionLoad}
+                                        />
+                                    </div>
+                                }
+                                {
+                                    biomolecule && biomolecule.xrefs && biomolecule.xrefs.pdb && biomolecule.xrefs.pdb.length > 0 &&
+                                    <div
+                                        id='structures'
+                                        style={{marginBottom: '10px'}}>
+                                        <StructureComponent
+                                            pdb={biomolecule.xrefs.pdb}
+                                        />
+                                    </div>
+                                }
+                                {
+                                    biomolecule && biomolecule.molecular_details && biomolecule.molecular_details.pdb && biomolecule.molecular_details.pdb.length > 0 &&
+                                    <div
+                                        id='structures'
+                                        style={{marginBottom: '10px'}}>
+                                        <StructureComponent
+                                            pdb={biomolecule.molecular_details.pdb}
+                                        />
+                                    </div>
+                                }
+                                {
+                                    (biomolecule && biomolecule.type !== 'gag' && biomolecule.annotations) &&
+                                    ((biomolecule.annotations.go && biomolecule.annotations.go.length >0)
+                                        || (biomolecule.annotations && biomolecule.annotations.keywords && biomolecule.annotations.keywords.length > 0
+                                        || (biomolecule.xrefs && biomolecule.xrefs.reactome && biomolecule.xrefs.reactome.length > 0))) &&
+                                    <div
+                                        id='annotations'
+                                        style={{marginBottom: '10px'}}>
+                                        <AnnotationComponent
+                                            goTerms={biomolecule.annotations.go}
+                                            keywords={biomolecule.annotations.keywords}
+                                            reactome={biomolecule.xrefs.reactome}
+                                        />
+                                    </div>
+                                }
                             </div>
                         </Box>
                     </Box>

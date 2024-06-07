@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
     Avatar,
-    Box,
+    Box, Chip,
     CircularProgress,
     Divider, Grid,
     IconButton,
@@ -15,9 +15,6 @@ import {
 } from "@mui/material";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPerson } from '@fortawesome/free-solid-svg-icons';
-import InterproComponent from "./overview/XrefListComponent";
 import XrefListComponent from "./overview/XrefListComponent";
 import SpeciesIcon from "../commons/icons/SpeciesIcon";
 
@@ -39,7 +36,8 @@ interface BiomoleculeToDisplay {
     interpro: Array<string> | [],
     subcellularLocation: string,
     function?: any,
-    ecmness?: any
+    ecmness?: any,
+    ecm?: boolean
 }
 
 
@@ -94,9 +92,13 @@ function OverviewComponent(props: any) {
         if(biomolecule.xrefs && biomolecule.xrefs.interpro) {
             biomoleculeToDisplay.interpro = biomolecule.xrefs.interpro;
         }
-        if(biomolecule.ecm) {
-            biomoleculeToDisplay.ecmness = 'MatrixDB ECM';
+        if(biomolecule.ecmness) {
+            biomoleculeToDisplay.ecmness = biomolecule.ecmness;
         }
+        if(biomolecule.ecm) {
+            biomoleculeToDisplay.ecm = biomolecule.ecm;
+        }
+
         setBiomoleculeToDisplay(biomoleculeToDisplay);
 
         // Define the tabs
@@ -119,7 +121,10 @@ function OverviewComponent(props: any) {
         if(biomoleculeToDisplay && biomoleculeToDisplay.interpro && biomoleculeToDisplay.interpro.length > 0 ) {
             tabConfig.push({
                 label: 'Domain Annotations',
-                renderContent: () => <XrefListComponent xrefList={biomoleculeToDisplay.interpro}/>
+                renderContent: () => <XrefListComponent
+                    xrefList={biomoleculeToDisplay.interpro}
+                    xrefLink={"https://www.ebi.ac.uk/interpro/entry/InterPro/"}
+                />
             })
         }
 
@@ -233,7 +238,13 @@ function OverviewComponent(props: any) {
             }
             {
                 biomolecule && <Paper style={paperStyle}>
-                    <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            background: '#e1ebfc'
+                        }}
+                    >
                         <div style={{ paddingLeft: '20px'}}>
                             <h2>{biomoleculeToDisplay && biomoleculeToDisplay.id} : {biomoleculeToDisplay && biomoleculeToDisplay.name}</h2>
                         </div>
@@ -247,20 +258,45 @@ function OverviewComponent(props: any) {
                                 />
                             </div>
                         }
-                        {
-                            biomoleculeToDisplay?.ecmness &&
-                            <Avatar
-                                sx={{
-                                    width: 28,
-                                    height: 28,
-                                    color: '#fff',
-                                    fontSize: 8,
-                                    fontWeight: 'bold'
-                                }}
-                            >
-                                "ECM"
-                            </Avatar>
-                        }
+                        <div style={{
+                            marginLeft: 'auto',
+                            paddingRight: '20px',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            paddingTop: '5px'
+                        }}>
+                            {
+                                biomoleculeToDisplay?.ecm &&
+                                <div>
+                                    <Chip
+                                        sx={{
+                                            borderColor: 'darkblue',
+                                            color: 'darkblue'
+                                        }}
+                                        size="small"
+                                        label="MatrixDB ECM"
+                                        variant="outlined"
+                                    />
+                                </div>
+                            }
+                            {
+                                biomoleculeToDisplay?.ecmness &&
+                                <div style={{
+                                    paddingTop: '2px'
+                                }}>
+                                    <Chip
+                                        sx={{
+                                            borderColor: 'green',
+                                            color: 'green',
+                                        }}
+                                        size="small"
+                                        label={`Matrisome ${biomoleculeToDisplay.ecmness.matrisome.category}`}
+                                        variant="outlined"
+                                    />
+                                </div>
+                            }
+                        </div>
+
                     </div>
                     <div style={{float: 'right'}}>
                             <IconButton onClick={toggleExpansion}>
@@ -277,7 +313,7 @@ function OverviewComponent(props: any) {
                                     }
                                 </TableCell>
                             </Grid>
-                            {biomoleculeToDisplay?.otherNames && <Grid item xs={6}>
+                            {biomoleculeToDisplay?.otherNames && biomoleculeToDisplay.otherNames.length > 0 && <Grid item xs={6}>
                                 <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Other Names</h4></TableCell>
                                 <TableCell style={cellStyles}>
                                     {

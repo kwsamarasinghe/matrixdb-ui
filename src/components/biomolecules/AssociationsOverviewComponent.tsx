@@ -1,34 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Box, CircularProgress, IconButton, Paper, Tab, Tabs, Tooltip, Typography
+    Box, CircularProgress, IconButton, Paper, Tab, Tabs
 } from "@mui/material";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import http from "../../commons/http-commons";
 import AssociationNetworkComponent from "../networks/AssociationNetworkComponent";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { CSVLink } from 'react-csv';
-import {faFileDownload} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {connect, ConnectedProps} from "react-redux";
 import * as actions from "../../stateManagement/actions";
 import AssociationListComponent from "../tables/AssociationListComponent";
 import {AppDispatch, RootState} from "../../stateManagement/store";
 
-interface Interactors{
-    count: number,
-    direct: number,
-    inferred: number,
-    predictions: number,
-    details: {
-        [partner: string]: {
-            association: string,
-            directlySupportedBy: string[],
-            spokeExpandedFrom: string[],
-            inferredFrom: String[]
-        }
-    }
-}
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -65,18 +47,17 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
 
     const [interactors, setInteractors] = useState<any | null>();
     const [interactorStats, setInteractorStats] = useState<any | null>();
-    const [loaded, setLoaded] = useState(false);
     const [isExpanded, setIsExpanded] = useState(true);
     const [tabValue, setTabValue] = useState(0);
 
     useEffect(() => {
         // Get network for biomoleculeId
         http.post('/network', {
-            biomolecules: [biomoleculeId]
-        })
+                biomolecules: [biomoleculeId],
+                second_neighborhood: false
+            })
             .then((networkResponse) => {
                 let networkData = networkResponse.data;
-                networkData.biomolecules = [biomoleculeId];
                 setNetworkDataAction(networkData);
                 if(networkData) {
                     setInteractors(networkData.interactors);
@@ -103,7 +84,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                         experimentalInteractions += 1;
                     }
 
-                    if(interaction?.prediction) {
+                    if(interaction?.type === 2) {
                         predictedInteractions +=1;
                     }
                 });
@@ -114,7 +95,10 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                     onInteractionLoad();
                 }
                 setInteractorStats(interactorStats);
-            });
+            })
+            .catch((reason: any) => {
+                console.log("Error in response, " + reason);
+            })
     }, [biomoleculeId]);
 
     const paperStyle = {
@@ -135,7 +119,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
             {value === index && <Box p={3}>{children}</Box>}
           </div>
         );
-      };
+    };
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);

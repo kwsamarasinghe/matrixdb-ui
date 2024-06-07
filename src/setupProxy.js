@@ -7,7 +7,8 @@ module.exports = function(app) {
             target: 'http://localhost:8000/',
             changeOrigin: true,
             secure: false,
-            logLevel: "debug"
+            logLevel: "debug",
+            proxyTimeout: 1200000
         })
     );
 }

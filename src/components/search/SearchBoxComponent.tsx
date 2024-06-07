@@ -29,7 +29,8 @@ function SearchBox(props: any) {
                     p: '2px 4px',
                     display: 'flex',
                     alignItems: 'center',
-                    borderRadius: 0
+                    borderRadius: 0,
+                    width: '100%'
                 }}
             >
                 <InputBase

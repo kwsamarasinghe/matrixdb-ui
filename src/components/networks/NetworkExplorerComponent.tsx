@@ -1,28 +1,22 @@
 import React, {useEffect, useState} from "react";
 import {
-    Alert,
-    AppBar,
-    Autocomplete, Avatar, Box, Card, CardContent,
-    IconButton,
-    InputLabel, LinearProgress, List, ListItem,
-    Paper,
+    Alert, Avatar, Box, Card, Grid,
+    IconButton, LinearProgress,
     TextField,
-    Toolbar, Tooltip,
-    Typography,
-    useTheme
+    Typography, Tabs, Tab
 } from "@mui/material";
 import AssociationNetworkComponent from "./AssociationNetworkComponent";
 import http from "../../commons/http-commons";
-import BuildIcon from "@mui/icons-material/Build";
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import ClearIcon from "@mui/icons-material/Clear";
-import HeaderComponent from "../home/HeaderComponent";
 import Header from "../home/HeaderComponent";
 import Footer from "../home/Footer";
-import {connect, ConnectedProps} from "react-redux";
+import {connect} from "react-redux";
 import {AppDispatch, RootState} from "../../stateManagement/store";
 import * as actions from "../../stateManagement/actions";
-import SpeciesIcon from "../commons/icons/SpeciesIcon";
+import SearchBoxComponent from "../search/SearchBoxComponent";
+import CircleIcon from "@mui/icons-material/Circle";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import NetworkExplorerHelp from "../help/NetworkExplorerHelp";
+import BiomoleculeSelectionComponent from "./BiomoleculeSelectionComponent";
 
 const mapStateToProps = (state: RootState) => ({
     currentState: state.currentState,
@@ -42,31 +36,21 @@ const NetworkExplorer: React.FC<any> = ({
                                           setNetworkDataAction
                                         }) => {
 
-    const [searchQuery,setSearchQuery] = useState<string | null>(null);
-    const [suggestions, setSuggestions] = useState<Array<string>>([]);
-    const [suggestionNameMapping, setSuggestionNameMapping] = useState<Map<string,any> | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string|null>(null);
     const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false);
     const [loadingNetwork, setLoadingNetwork] = useState<boolean>(false);
-    const [biomolecules, setBiomolecules] = useState<[any] | []>([]);
+    const [biomolecules, setBiomolecules] = useState<any[] | []>([]);
+    const [selectedBiomolecules, setSelectedBiomolecules] = useState<any[] | []>([]);
+
     const [network, setNetwork] = useState<any | null>(null);
     const [networkGenerationError, setNetworkGenerationError] = useState<boolean>(false);
-    const theme = useTheme();
-
-    useEffect(() => {
-        if(searchQuery && searchQuery.length >= 3) {
-            setLoadingSuggestions(true);
-            http.get("/biomolecules/suggestions/" + searchQuery)
-                .then((suggestionResponse) => {
-                    let nameMapping : Map<string, string> = new Map<string, string>();
-                    suggestionResponse.data.suggestions.forEach((suggestion:any) => nameMapping.set(suggestion.biomolecule_id as string, suggestion));
-                    if(nameMapping.size !== 0) {
-                        setSuggestionNameMapping(nameMapping);
-                        setSuggestions([...nameMapping.keys()]);
-                    }
-                    setLoadingSuggestions(false);
-                });
-        }
-    }, [searchQuery]);
+    const [open, setOpen] = useState(false);
+    const searchBoxCardStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'rgb(197, 205, 229)',
+        borderRadius: 0
+    } as React.CSSProperties;
 
     useEffect(() => {
         let biomoelcules = getFromLocalStorage("selectedBiomolecules");
@@ -92,14 +76,17 @@ const NetworkExplorer: React.FC<any> = ({
         }
     };
 
-    const generateNetwork = () => {
-        if(biomolecules.length > 0 ) {
+    const onSelectionChange = (selectedBiomolecules: any) => {
+        setSelectedBiomolecules(selectedBiomolecules);
+    }
+
+    const generateNetwork = (onlyDirectPartners: boolean) => {
+        if(selectedBiomolecules && selectedBiomolecules.length > 0 ) {
             setLoadingNetwork(true);
-            let biomoleculeIds = biomolecules.map((biomolecule: any) => biomolecule.biomolecule_id);
+            let biomoleculeIds = selectedBiomolecules.map((biomolecule: any) => biomolecule.biomolecule_id);
             http.post("/network", {
-                biomolecules: biomoleculeIds
-            },{
-                timeout: 120000
+                biomolecules: biomoleculeIds,
+                onlyDirectPartners: onlyDirectPartners
             })
                 .then((networkResponse) => {
                     setNetworkDataAction({...networkResponse.data, biomolecules: JSON.parse(JSON.stringify(biomoleculeIds))});
@@ -108,125 +95,274 @@ const NetworkExplorer: React.FC<any> = ({
                         associations: networkResponse.data.associations
                     });
                     setLoadingNetwork(false);
+                    setValue(1);
                 })
                 .catch((reason: any) => {
                     setNetworkGenerationError(true);
                 });
         }
-    }
+    };
 
-    const clearBiomolecules = () => {
-        setBiomolecules([]);
-        setNetwork(null);
-        setLoadingNetwork(false);
-        saveToLocalStorage("selectedBiomolecules", []);
-    }
-
-    const footerHeight = 60;
-    const paperHeight = `calc(100vh - ${footerHeight}px)`;
-
-    const renderOptions = (params: any) => {
-        return (<TextField {...params} variant="outlined"/>);
-    }
-
-    function BiomoleculeTypeIcon(props: any){
-        let {biomoleculeType} = props;
-        const defaultStyles = {
-            width: 28,
-            height: 28,
-            color: '#fff',
-            fontSize: 8,
-            fontWeight: 'bold'
-        };
-
-        const cases = {
-            "protein": { backgroundColor: '#f89406', text: "PROT" },
-            "gag": { backgroundColor: '#018FD5', text: "GAG" },
-            "multimer": { backgroundColor: '#6a09c5', text: "MULT" },
-            "pfrag": { backgroundColor: '#f5e214', text: "PRAG" }
-        };
-
-        let styles : any;
-        switch(biomoleculeType) {
-            case "protein":
-                styles = { backgroundColor: '#f89406', text: "PROT" };
-                break
-            case "gag":
-                styles = { backgroundColor: '#018FD5', text: "GAG" };
-                break
-            case "multimer":
-                styles = { backgroundColor: '#6a09c5', text: "MULT" };
-                break
-            case "pfrag":
-                styles = { backgroundColor: '#f5e214', text: "PRAG" }
-                break
+    const onPressEnter = (e: React.KeyboardEvent) =>{
+        if(searchQuery && searchQuery.length >= 3) {
+            setLoadingSuggestions(true);
+            http.get("/biomolecules/suggestions/" + searchQuery)
+                .then((suggestionResponse) => {
+                    setBiomolecules(suggestionResponse.data.biomolecules);
+                    setLoadingSuggestions(false);
+                    setValue(0);
+                });
         }
+    };
 
+    const onClickSearch = (query: string) => {
+
+    }
+
+    const onSearchTextChange = (e : any) => {
+        setValue(0);
+        setSearchQuery(e.target.value);
+    }
+
+    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+        // Prevent toggling if the event is from a Tab or Shift keydown event
+        if (event.type === 'keydown' && (event as React.KeyboardEvent).key === 'Tab') {
+            return;
+        }
+        if (event.type === 'keydown' && (event as React.KeyboardEvent).key === 'Shift') {
+            return;
+        }
+        setOpen(open);
+    };
+
+    const [value, setValue] = useState<number>(0);
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
+    interface TabPanelProps {
+        children?: React.ReactNode;
+        index: number;
+        value: number;
+    }
+    const TabPanel: React.FC<TabPanelProps> = ({ children, value, index, ...other }) => {
         return (
-            <Avatar
-                sx={{
-                    ...defaultStyles,
-                    ...styles
-                }}
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`ne-tabs-${index}`}
+                aria-labelledby={`ne-tabs-${index}`}
+                {...other}
             >
-                {styles.text}
-            </Avatar>
+                {value === index && (
+                    <Box sx={{ p: 3 }}>
+                        <Typography>{children}</Typography>
+                    </Box>
+                )}
+            </div>
         );
-    }
-
-    const getSpeciesNCBI = (biomolecule: any) => {
-        if(biomolecule.species) {
-            return biomolecule.species;
-        } else {
-            let biomoleculeId = biomolecule.biomolecule_id;
-            let biomolTokens = biomoleculeId.split('_');
-            if(biomolTokens.length > 1) {
-                return biomolTokens[biomolTokens.length - 1].toLowerCase();
-            }
-        }
-    }
-
-    function BiomoleculeCard(props: any) {
-        let {biomolecule} = props;
-        return(
-            <Card variant="outlined" style={{ marginBottom: '8px' }}>
-                <CardContent style={{ display: 'flex', flexDirection: 'column', width: '300px' }}>
-                    <div style={{display: "flex"}}>
-                        <BiomoleculeTypeIcon biomoleculeType={biomolecule?.biomolecule_type}/>
-                        <Typography
-                            variant="body1"
-                            style={{
-                                marginRight: '16px',
-                                marginLeft: '8px'
-                            }}
-                        >
-                            {biomolecule.recommended_name ?  biomolecule.recommended_name : biomolecule.name }
-                        </Typography>
-                        <SpeciesIcon speciesId={getSpeciesNCBI(biomolecule)} width="20" height="20" />
-                    </div>
-                    <div style={{ display: 'inline-block', paddingTop: '5px' }}>
-                        <Typography
-                            variant="body2"
-                            style={{
-                                marginLeft: '8px'
-                            }}
-                        >
-                            {biomolecule.biomolecule_id }
-                        </Typography>
-                    </div>
-                </CardContent>
-            </Card>
-        );
-    }
+    };
 
     return (
-        <>
-            <Header pageDetails={{
-                type: 'network',
-            }}/>
-            <div style={{ height: '100%', minHeight: '81vh', display: 'flex' }}>
-                <div style={{width: '20%', padding: '20px' }}>
-                    <Paper elevation={1} style={{ padding: '20px' }}>
+        <div
+            className="App"
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '100vh'
+            }}
+        >
+            <Header
+                pageDetails={{
+                    type: 'network',
+                }}
+            />
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingTop: "20px"
+            }}>
+                <div style={{
+                    display: 'flex',
+                    background: '#e0e7f2',
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <div style={{
+                        width: '70%',
+                        paddingBottom: '10px'
+                    }}>
+                        <Box sx={{
+                            backgroundColor: 'lightcoral'
+                        }}>
+                            <Card style={{ flex: '1', ...searchBoxCardStyle }}>
+                                <div style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    paddingLeft: "10px",
+                                    paddingTop: "10px",
+                                    paddingBottom: "10px"
+                                }}>
+                                    <div style={{
+                                        display: "flex",
+                                        width: "95%"
+                                    }}>
+                                        <SearchBoxComponent
+                                            onClickSearch={onClickSearch}
+                                            onPressEnter={onPressEnter}
+                                            onSearchTextChange={onSearchTextChange}
+                                        />
+                                    </div>
+                                    <div style={{
+                                        display: "flex",
+                                        width: "5%",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <IconButton
+                                            onClick={toggleDrawer(true)}
+                                            size={'small'}
+                                        >
+                                            <HelpOutlineIcon/>
+                                        </IconButton>
+                                        <NetworkExplorerHelp open={open} onClose={toggleDrawer}/>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Box>
+                    </div>
+                </div>
+
+                {
+                    biomolecules.length === 0 &&
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}>
+                        <div style={{
+                            width: '100%'
+                        }}>
+                            <Typography
+                                variant="body2"
+                                style={{
+                                    paddingTop: "4px"
+                                }}
+                            >
+                                <CircleIcon style={{
+                                    fontSize: "0.6em",
+                                    paddingRight: "4px"
+                                }}/>
+                                Search for biomolecules with free text queries
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                style={{
+                                    paddingTop: "4px"
+                                }}
+                            >
+                                <CircleIcon style={{
+                                    fontSize: "0.6em",
+                                    paddingRight: "4px"
+                                }}/>
+                                Select the biomolecules to be added to the network
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                style={{
+                                    paddingTop: "4px"
+                                }}
+                            >
+                                <CircleIcon style={{
+                                    fontSize: "0.6em",
+                                    paddingRight: "4px"
+                                }}/>
+                                Generate network and export it to an image or cytoscape export
+                            </Typography>
+                        </div>
+                    </div>
+                }
+                {
+                    biomolecules.length > 0  &&
+                    <div style={{
+                        display: 'flex',
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        {
+                            <div style={{
+                                display: 'flex',
+                                width: '100%',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                                <div style={{
+                                    width: '70%'
+                                }}>
+                                    <Grid
+                                        container
+                                        spacing={0}
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                    >
+                                        {
+                                            <>
+                                                <Box sx={{ width: '100%' }}>
+                                                    <Tabs value={value} onChange={handleChange}>
+                                                        <Tab
+                                                            label={
+                                                                <Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
+                                                                    Biomolecule Selection
+                                                                </Typography>
+                                                            }
+                                                        />
+                                                        {
+                                                            network &&
+                                                            <Tab
+                                                                label={
+                                                                    <Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
+                                                                        Network
+                                                                    </Typography>
+                                                                }
+                                                            />
+                                                        }
+                                                    </Tabs>
+                                                    <TabPanel value={value} index={0}>
+                                                        <BiomoleculeSelectionComponent
+                                                            searchQuery={searchQuery}
+                                                            biomolecules={biomolecules}
+                                                            selectedBiomolecules={selectedBiomolecules}
+                                                            onSelectionChange={onSelectionChange}
+                                                            onGenerateNetwork={generateNetwork}
+                                                        />
+                                                    </TabPanel>
+                                                    {
+                                                        network &&
+                                                        <TabPanel value={value} index={1}>
+                                                            <Grid item xs={12} md={12} sm={12}>
+                                                                <AssociationNetworkComponent
+                                                                    biomoleculeIds={selectedBiomolecules.map((biomolecule: any) => biomolecule.biomolecule_id) as string[]}
+                                                                />
+                                                            </Grid>
+                                                        </TabPanel>
+                                                    }
+                                                </Box>
+                                            </>
+                                        }
+                                    </Grid>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <div style={{width: '40%', padding: '20px' }}>
+                    {/*<Paper elevation={1} style={{ padding: '20px' }}>
                         <div style={{
                             paddingTop: '10px',
                             display: 'flex',
@@ -328,7 +464,7 @@ const NetworkExplorer: React.FC<any> = ({
                                 </Tooltip>
                             }
                         </div>
-                    </Paper>
+                    </Paper>*/}
                 </div>
 
                 <div style={{
@@ -336,14 +472,6 @@ const NetworkExplorer: React.FC<any> = ({
                     padding: '20px',
                     overflowY: 'auto'
                 }}>
-                    {
-                        !loadingNetwork && biomolecules.length > 0 && network && !networkGenerationError &&
-                        <>
-                            <AssociationNetworkComponent
-                                biomoleculeIds={biomolecules}
-                            />
-                        </>
-                    }
                     {
                         networkGenerationError &&
                         <>
@@ -356,7 +484,7 @@ const NetworkExplorer: React.FC<any> = ({
                         </>
                     }
                     {
-                        loadingNetwork &&
+                        loadingNetwork && biomolecules &&
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -401,9 +529,6 @@ const NetworkExplorer: React.FC<any> = ({
                         </div>
                     }
                 </div>
-
-
-
             </div>
             {/*<div style={{height: '81vh', width: '20%', maxWidth: '400px'}}>
                 <Paper
@@ -472,7 +597,7 @@ const NetworkExplorer: React.FC<any> = ({
             </div>*/}
             <Footer/>
 
-        </>
+        </div>
     );
 }
 

@@ -66,6 +66,10 @@ function MainContentComponent() {
                     {
                         type: 'LIPID',
                         value: biomoleculeData.lipid
+                    },
+                    {
+                        type: 'SPEP',
+                        value: biomoleculeData.spep
                     }
                 ];
                 setBiomoleculeStatistics(biomoleculeStatistics);
@@ -88,6 +92,15 @@ function MainContentComponent() {
                     { row: 'Multimer', column: 'GAG', value: interactionData.gag_multimer || 0},
                     { row: 'Multimer', column: 'PFRAG', value: interactionData.multimer_pfrag || 0 },
                     { row: 'Multimer', column: 'Multimer', value: interactionData.multimer_multimer || 0 },
+                    { row: 'Other', column: 'Protein', value: interactionData.protein_other || 0 },
+                    { row: 'Other', column: 'PFRAG', value: interactionData.pfrag_other ||  0},
+                    { row: 'Other', column: 'GAG', value: interactionData.gag_other || 0},
+                    { row: 'Other', column: 'Multimer', value: interactionData.multimer_other || 0 },
+                    { row: 'Protein', column: 'Other', value: interactionData.protein_other || 0 },
+                    { row: 'PFRAG', column: 'Other', value: interactionData.pfrag_other ||  0},
+                    { row: 'GAG', column: 'Other', value: interactionData.gag_other || 0},
+                    { row: 'Multimer', column: 'Other', value: interactionData.multimer_other || 0 },
+                    { row: 'Other', column: 'Other', value: 0 },
                 ];
                 setInteractionStatistics(interactionStatistics);
                 setProteinProteinInteractionStatistics({
@@ -164,22 +177,17 @@ function MainContentComponent() {
                                             textAlign: 'center',
                                             marginLeft: '10px',
                                             marginTop: '15px',
-                                            marginBottom: '10px',
                                             fontWeight: 'bold'
                                         }}>
                                         Experimentally Supported Binary Interactions
                                         <br/>
                                         ({statistics.interactions.all - statistics.interactions.protein_protein.predicted})
                                     </Typography>
-                                    <div style={{
-                                        paddingTop: '10px'
-                                    }}>
-                                        <InteractionHeatMapComponent
-                                            data={interactionStatistics}
-                                            width={240}
-                                            height={240}
-                                        />
-                                    </div>
+                                    <InteractionHeatMapComponent
+                                        data={interactionStatistics}
+                                        width={260}
+                                        height={260}
+                                    />
                                 </Card>
                             }
                         </Grid>
@@ -222,32 +230,6 @@ function MainContentComponent() {
                             </Card>}
                         </Grid>
                     </Grid>
-                    {/*statistics.experiments && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
-                        <Typography component="div" style={{ color: 'darkblue', textAlign: 'center', marginLeft: '10px', marginTop: '15px', marginBottom: '10px', fontWeight: 'bold' }}>
-                            Interactions from IntAct ({statistics.experiments.all})
-                        </Typography>
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            <ExperimentPieChartComponent data={
-                                [
-                                    {
-                                        title: '2-participants',
-                                        value: statistics.experiments.binary
-                                    },
-                                    {
-                                        title: 'n-participants',
-                                        value: statistics.experiments.n_ary
-                                    },
-                                    {
-                                        title: '1-participant',
-                                        value: statistics.experiments.unary
-                                    }
-                                ]} width={200} height={200}/>
-                        </div>
-                    </Card>*/}
                 </div>
                 <div
                     style={{
@@ -377,7 +359,7 @@ function MainContentComponent() {
                 <div
                     style={{
                         display: 'flex',
-                        width: '40%'
+                        width: '60%'
                     }}
                 >
                     <Grid container spacing={2}>
@@ -385,7 +367,7 @@ function MainContentComponent() {
                             <Grid key={index} item xs={12} sm={4} md={4} lg={4}>
                                 <div style={{ display: "flex", flexDirection: "row" }}>
                                     <div style={{ display: "flex" }}>
-                                        <LogoIcon logoName={item.logoName} width="40" height="40" />
+                                        <LogoIcon logoName={item.logoName} width="60" height="auto" />
                                     </div>
                                     <div style={{ display: "flex", alignItems: "center", textAlign: "center" }}>
                                         <Typography variant="body2" style={{ fontWeight: 'bold', marginLeft: '5px' }}>

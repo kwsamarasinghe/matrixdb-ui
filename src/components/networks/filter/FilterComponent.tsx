@@ -42,7 +42,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
     const filterConfigurationManger = new FilterConfigurationManager(network);
 
     useEffect(() => {
-        let currentFilterConfiguration = filterConfigurationManger.getFilterConguration(currentFilters);
+        let currentFilterConfiguration = filterConfigurationManger.getFilterConfiguration(currentFilters);
         setFilterViewConfiguration(currentFilterConfiguration);
     }, [currentFilters]);
 
@@ -121,6 +121,19 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
         //updateFilterAction(newFilters);
     }
 
+    const onFilterCriterionClear = (filterType: string, filterCriteria: FilterCriterion)  => {
+        // Should remove from current filters
+        let newFilters = JSON.parse(JSON.stringify(currentFilters));
+        if(filterType === 'interactor') {
+            let newInteractorCriteria = newFilters.interactors.filter((filter: any) => filter.id !== filterCriteria.id);
+            newFilters.interactors = newInteractorCriteria;
+        } else {
+            let newInteractionCriteria = newFilters.interactions.filter((filter: any) => filter.id !== filterCriteria.id);
+            newFilters.interactions = newInteractionCriteria;
+        }
+        setCurrentFilters(newFilters);
+    }
+
     const onFilterCancel = () => {
         updateFilterAction({interactors: [], interactions: []});
     }
@@ -173,6 +186,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                                                 filterType='interactor'
                                                                 criterion={filterCriterionConfiguration}
                                                                 onAdd={onFilterCriterionAdd}
+                                                                onRemove={onFilterCriterionClear}
                                                             />
                                                         );
                                                     } else {
@@ -181,6 +195,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                                                 filterType='interactor'
                                                                 criterion={filterCriterionConfiguration}
                                                                 onAdd={onFilterCriterionAdd}
+                                                                onRemove={onFilterCriterionClear}
                                                             />
                                                         );
                                                     }
@@ -210,6 +225,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                                                     filterType='interaction'
                                                                     criterion={filterCriterionConfiguration}
                                                                     onAdd={onFilterCriterionAdd}
+                                                                    onRemove={onFilterCriterionClear}
                                                                 />
                                                             )
                                                         })
@@ -219,6 +235,7 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                                                 filterType='interaction'
                                                                 criterion={filterCriterionConfiguration}
                                                                 onAdd={onFilterCriterionAdd}
+                                                                onRemove={onFilterCriterionClear}
                                                             />
                                                         )
                                                     }
@@ -229,11 +246,10 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                 </>
                             }
                             {
-                                ((currentFilters.interactors && currentFilters.interactors.length > 0) ||
-                                    (currentFilters.interactions && currentFilters.interactions.length > 0))  &&
-                                (<div style={{
-                                    paddingTop: '20px'
-                                }}>
+                                (
+                                    <div style={{
+                                        paddingTop: '20px'
+                                    }}>
                                     <Button
                                         variant="outlined"
                                         size="small"
@@ -268,7 +284,8 @@ const NewFilterComponent: React.FC<NewFilterComponentProps> = ({
                                         </IconButton>
                                         Apply
                                     </Button>
-                                </div>)
+                                </div>
+                                )
                             }
                         </div>
                     </>

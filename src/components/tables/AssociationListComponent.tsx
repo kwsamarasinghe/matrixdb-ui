@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {RootState} from "../../stateManagement/store";
 import {connect, ConnectedProps} from "react-redux";
 import {DataGrid, GridColDef} from "@mui/x-data-grid";
-import {Tooltip, Typography} from "@mui/material";
+import {Input, Tooltip, Typography} from "@mui/material";
 import {CSVLink} from "react-csv";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileDownload} from "@fortawesome/free-solid-svg-icons";
 
 const mapStateToProps = (state: RootState) => ({
     network: state.network,
+    filters: state.filters
 });
 
 const connector = connect(mapStateToProps);
@@ -16,11 +17,19 @@ const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 type AssociationListProps = PropsFromRedux & {biomoleculeIds: [string] | []};
-const AssociationListComponent : React.FC<AssociationListProps> = ({network, biomoleculeIds}) => {
+const AssociationListComponent : React.FC<AssociationListProps> = ({
+                                                                       network,
+                                                                       filters,
+                                                                       biomoleculeIds
+                                                                    }) => {
 
     const rows = network.interactions.map((interaction: any) => {
         let partner = interaction.participants
-            .filter((biomolecule: string) => biomolecule !== biomoleculeIds[0])[0];
+            .filter((biomolecule: string) => {
+                let partnerId = network.context.interactors[biomolecule];
+                return partnerId !== biomoleculeIds[0];
+            })[0];
+        partner = network.context.interactors[partner];
         if(!partner) partner = biomoleculeIds[0];
 
         let directlySupported = [];
@@ -38,7 +47,8 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
             association: interaction.id,
             directlySupportedBy: directlySupported,
             spokeExpandedFrom: spokeExpandedFrom,
-            score: interaction.score
+            score: interaction.score,
+            type:  interaction.type === 1 ? "Experimental" : "Predicted"
         }
     });
     const columns: GridColDef[] = [
@@ -174,9 +184,24 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
                 </>
             ),
             sortComparator: (v1, v2) =>  parseInt(v2) - parseInt(v1)
+        },
+        {
+            field: 'type',
+            headerName: 'Type',
+            width: 120,
+            renderCell: (params: any) =>  (
+                <span
+                    style={{
+                        color: params.value === 'Experimental' ? "black" : "red",
+                        fontWeight: 'bold'
+                    }}
+                >
+                    {params.value}
+                </span>
+            ),
+            sortComparator: (v1, v2) =>  parseInt(v2) - parseInt(v1)
         }
     ];
-
 
     return(
         <>
@@ -184,52 +209,63 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({network, bio
                 network.interactors && network.interactors.length > 0 &&
                 <div style={{
                     display: 'flex',
-                    flexDirection: 'column'
+                    justifyContent: 'center',
+                    alignItems: 'center'
                 }}>
                     <div style={{
                         display: 'flex',
-                        justifyContent: 'center',
-                        paddingBottom: '5px'
+                        flexDirection: 'column',
+                        width: '1100px'
                     }}>
-                        <CSVLink
-                            data={rows}
-                            headers={['id','association', 'directlySupportedBy', 'spokeExpandedFrom']}
-                            filename={`${biomoleculeIds[0]}-interactions.csv`}
-                        >
-                            <Typography variant={"body2"}>
-                                <FontAwesomeIcon
-                                    icon={faFileDownload}
-                                    style={{
-                                        marginRight: '10px',
-                                        fontSize: '1.5em'
-                                    }}
-                                    color={'darkgreen'}
-                                />Export as CSV
-                            </Typography>
-
-                        </CSVLink>
-                    </div>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: '1100px',
-                        margin: '0 auto',
-                        border: '1px solid #ccc',
-                    }}>
-                        <DataGrid
-                            rows={rows}
-                            columns={columns}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 5,
+                        <div style={{
+                            display: 'flex',
+                            paddingBottom: '5px'
+                        }}>
+                            <div
+                                style={{
+                                    marginLeft: 'auto'
+                                }}
+                            >
+                                <CSVLink
+                                    data={rows}
+                                    headers={['id','association', 'directlySupportedBy', 'spokeExpandedFrom']}
+                                    filename={`${biomoleculeIds[0]}-interactions.csv`}
+                                >
+                                    <Typography variant={"body2"}>
+                                        <FontAwesomeIcon
+                                            icon={faFileDownload}
+                                            style={{
+                                                marginRight: '10px',
+                                                fontSize: '1.5em'
+                                            }}
+                                            color={'darkgreen'}
+                                        />Export as CSV
+                                    </Typography>
+                                </CSVLink>
+                            </div>
+                        </div>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '1100px',
+                            margin: '0 auto',
+                            border: '1px solid #ccc',
+                        }}>
+                            <DataGrid
+                                rows={rows}
+                                columns={columns}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 5,
+                                        },
                                     },
-                                },
-                            }}
-                            pageSizeOptions={[5]}
-                            disableRowSelectionOnClick
-                        />
+                                }}
+                                pageSizeOptions={[5]}
+                                disableRowSelectionOnClick
+                            />
+                        </div>
                     </div>
                 </div>
             }

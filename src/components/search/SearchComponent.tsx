@@ -75,8 +75,6 @@ function SearchComponent() {
         //navigate('/search?query=' + query);
     }
 
-    const theme = useTheme();
-
     return (
         <>
             { currentPath === '/' &&
@@ -87,19 +85,10 @@ function SearchComponent() {
                         </div>
                         <div style={{width: '70%'}}>
                             <Card style={{ flex: '1', ...searchBoxCardStyle }}>
-                                <Typography
-                                    variant="body2"
-                                    style={{
-                                        paddingTop: "5px",
-                                        paddingLeft: "5px",
-                                        fontWeight: "bolder"
-                                    }}
-                                >
-                                    Simple Search
-                                </Typography>
                                 <div style={{
                                     paddingLeft: "5px",
-                                    paddingRight: "5px"
+                                    paddingRight: "5px",
+                                    paddingTop: "10px"
                                 }}>
                                     <SearchBoxComponent
                                         onClickSearch={onClickSearch}
@@ -110,7 +99,8 @@ function SearchComponent() {
                                 <div style={{
                                     display: "flex",
                                     justifyContent: "center",
-                                    alignItems: "center"
+                                    alignItems: "center",
+                                    paddingBottom: "5px"
                                 }}>
                                     <div style={{
                                         width: "80%"
@@ -141,7 +131,7 @@ function SearchComponent() {
                                                         fontSize: "0.6em",
                                                         paddingRight: "4px"
                                                     }}/>
-                                                    Gene name (for proteins): <a href="/search?query=MGP">MGP</a>
+                                                    Gene name (for proteins): <a href="/search?query=LOX">LOX</a>
                                                 </Typography>
                                                 <Typography
                                                     variant="body2"
@@ -168,7 +158,7 @@ function SearchComponent() {
                                                         fontSize: "0.6em",
                                                         paddingRight: "4px"
                                                     }}/>
-                                                    Uniprot accession : (uniprot) <a href="/search?query=P12109">P07942</a>
+                                                    Uniprot accession : (uniprot) <a href="/search?query=P12109">P12109</a>
                                                 </Typography>
                                                 <Typography
                                                     variant="body2"
@@ -212,35 +202,52 @@ function SearchComponent() {
             }
             {
                 searchDone && currentPath !== '/' &&
-                <><div style={{
-                    alignItems: 'center',
-                    position: 'sticky',
-                    top: '0',
-                    zIndex: theme.zIndex.drawer + 1,
-                }}>
+                <>
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        paddingTop: "20px"
+                    }}>
                     {
                         searchDone && Object.keys(searchResults).length > 0 &&
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                            paddingTop: '20px'
-                        }}>
-                            <div>
-                                <SearchBoxComponent
-                                    searchQuery={searchText}
-                                    onClickSearch={onClickSearch}
-                                    onPressEnter={onPressEnter}
-                                    onSearchTextChange={onSearchTextChange}
-                                />
+                        <>
+                            <div style={{
+                                display: 'flex',
+                                background: '#e0e7f2',
+                                height: '100px',
+                                width: '100%',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                                <div style={{
+                                    width: '53%',
+                                    paddingBottom: '10px'
+                                }}>
+                                    <Box sx={{
+                                        backgroundColor: 'lightcoral'
+                                    }}>
+                                        <SearchBoxComponent
+                                            searchQuery={searchText}
+                                            onClickSearch={onClickSearch}
+                                            onPressEnter={onPressEnter}
+                                            onSearchTextChange={onSearchTextChange}
+                                        />
+                                    </Box>
+                                </div>
                             </div>
-                        </div>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                                <ResultComponent searchResults={searchResults}/>
+                            </div>
+                        </>
                     }
-                </div>
-                <div>
-                    <ResultComponent searchResults={searchResults}/>
-                </div></>
+                    </div>
+                </>
             }
         </>
     );

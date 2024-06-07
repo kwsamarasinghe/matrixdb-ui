@@ -30,7 +30,8 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
                 'GAG': '#018FD5',
                 'SmallMolecules': 'lightBlue',
                 'CAT': 'black',
-                'LIPID': 'lightpink'
+                'LIPID': 'lightpink',
+                'SPEP': '#d3b486'
             };
 
             const color = d3.scaleOrdinal()

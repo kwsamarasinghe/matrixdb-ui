@@ -13,24 +13,48 @@ export interface Filter {
 
 class FilterManager {
 
+    private readonly filterConfiguration : any;
     private readonly networkData: any;
+    private readonly networkContext: any;
+    private readonly reverseNetworkContext: any;
 
-    constructor(networkData: any) {
+    constructor(networkData: any, filterConfiguration: any) {
         this.networkData = networkData;
+        this.networkContext = networkData.context;
+        this.reverseNetworkContext = this.reverseContext(this.networkContext);
+        this.filterConfiguration = filterConfiguration;
     }
 
-    private filterInteractors(filterCriterion : any, networkData: any) {
-        let filteredInteractions = networkData.interactors.filter((interactor : any) => {
-            return interactor[filterCriterion.key] === filterCriterion.value;
-        });
-        networkData.interactors = filteredInteractions;
-    }
+    private reverseContext(context: any): any {
+        let interactorContext = context.interactors;
+        let interactionContext = context.interactions;
 
-    private filterInteractions(filterCriterion: any, networkData: any) {
-        let filteredInteractions = networkData.interactions.filter((interaction : any) => {
-            return interaction[filterCriterion.key] === filterCriterion.value;
+        let reversContext : any = {
+            interactors: {},
+            interactions: {}
+        };
+
+        // Interactor context
+        Object.keys(interactorContext).map((contextType: string) => {
+            let contextTypeMap = interactorContext[contextType];
+            reversContext.interactors[contextType] = {};
+            Object.keys(contextTypeMap).forEach((key: any) => {
+                reversContext.interactors[contextType][key] = {};
+                Object.keys(contextTypeMap[key]).forEach((subkey: any) => {
+                    reversContext.interactors[contextType][key][contextTypeMap[key][subkey]] = Number(subkey);
+                })
+            });
         });
-        networkData.interactions = filteredInteractions;
+
+        Object.keys(interactionContext).map((contextType: string) => {
+           let contextTypeMap = interactionContext[contextType];
+            reversContext.interactions[contextType] = {};
+           Object.keys(contextTypeMap).forEach((key: any) => {
+               reversContext.interactions[contextType][contextTypeMap[key]] = Number(key);
+           });
+        });
+
+        return reversContext;
     }
 
     public getFilteredNetwork(filters: Filter) {
@@ -47,6 +71,7 @@ class FilterManager {
         // Apply filter to interactors and interactions
         let filteredInteractors = filteredNetwork.interactors;
         filters.interactors.forEach((filter: FilterCriterion) => {
+            // Get the reverse context mapping
             filteredInteractors = filteredInteractors.filter((interactor: any) => {
                     if(interactor.id === filteredNetwork.biomolecules[0]) {
                         return true;
@@ -55,16 +80,25 @@ class FilterManager {
                     if(filter.subCriteria) {
                         if(!interactor[filter.id]) return false;
                         if(interactor[filter.id] && interactor[filter.id].length === 0) return false;
+
+                        let filterValue: string;
+                        if(this.reverseNetworkContext.interactors[filter.id][filter.subCriteria.id]) {
+                            filterValue = this.reverseNetworkContext.interactors[filter.id][filter.subCriteria.id][filter.subCriteria.value];
+                        } else {
+                            filterValue = filter.subCriteria.value;
+                        }
+
                         let criteriaValue = interactor[filter.id].find((criterionValue: any) => {
                             if(filter.subCriteria) {
                                 if(typeof filter.subCriteria.value === 'number') {
-                                    if(criterionValue[filter.subCriteria.id] >= filter.subCriteria.value) {
+                                    if(criterionValue[filter.subCriteria.id] >= filterValue) {
                                         return true;
                                     }
                                 } else {
-                                    return criterionValue[filter.subCriteria.id] === filter.subCriteria.value;
+                                    return criterionValue[filter.subCriteria.id] === filterValue;
                                 }
                             }
+                            return false;
                         });
                         return !!criteriaValue;
                     }
@@ -76,23 +110,33 @@ class FilterManager {
                     } else {
                         return (filter.value && interactor[filter.id] === filter.value);
                     }
+                    return false;
             });
         });
 
         let filteredInteractions = filteredNetwork.interactions;
         filters.interactions.forEach((filter: FilterCriterion) => {
+            // Get the reverse context mapping
+            let filterValue: string;
+            if(this.reverseNetworkContext.interactions[filter.id]) {
+                filterValue = this.reverseNetworkContext.interactions[filter.id][filter.value];
+            } else {
+                filterValue = filter.value;
+            }
+
             filteredInteractions = filteredInteractions.filter((interaction: any) => {
                 if(typeof filter.value === 'number') {
-                    if(interaction[filter.id] >= filter.value) {
+                    if(interaction[filter.id] >= filterValue) {
                         return true;
                     }
                 } else {
                     if(Array.isArray(interaction[filter.id])) {
-                        return interaction[filter.id].includes(filter.value);
+                        return interaction[filter.id].includes(filterValue);
                     } else {
-                        return interaction[filter.id] === filter.value;
+                        return interaction[filter.id] === filterValue;
                     }
                 }
+                return false;
             });
         });
 
@@ -106,12 +150,28 @@ class FilterManager {
             (filteredInteractors.map((interactor: any) => interactor.id).includes(p2) && p1 === filteredNetwork.biomolecules[0])) {
                 return true
             }
+            return false;
         });
 
         filteredNetwork.interactors = filteredInteractors;
         filteredNetwork.interactions = filteredInteractions;
-
         return filteredNetwork;
+    }
+
+    public getContext(criteriaType: string, criteria: string, subCriteria: string | undefined, value: string) {
+        if(subCriteria) {
+            if(this.networkContext[criteriaType][criteria][subCriteria]) {
+                console.log(criteria + " " +subCriteria)
+                return this.networkContext[criteriaType][criteria][subCriteria][value];
+            } else {
+                return value;
+            }
+        }
+        if(this.networkContext[criteriaType][criteria]) {
+            return this.networkContext[criteriaType][criteria][value];
+        } else {
+            return value;
+        }
     }
 
     public getNetwork(){

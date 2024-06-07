@@ -86,7 +86,7 @@ const InteractionHeatMapComponent: React.FC<HeatmapProps> = (props) => {
             .on("mouseleave", mouseleave);
 
         var x = d3.scaleBand()
-            .range([0, 160])
+            .range([0, 200])
             .domain(columns)
             .padding(0.05);
 
@@ -99,7 +99,7 @@ const InteractionHeatMapComponent: React.FC<HeatmapProps> = (props) => {
 
 
         var y = d3.scaleBand()
-            .range([0, 160])
+            .range([0, 200])
             .domain(rows)
             .padding(0.05);
 

@@ -68,11 +68,11 @@ function Header(props: HeaderProps) {
             position="static"
         >
             <Toolbar className={'App-search-header'}>
-                <div>
-                    <a href="/">
+                <a href="/">
+                    <div>
                         <img src={logo} style={{width: '50px', height: '50px'}} className={"App-logo"}/>
-                    </a>
-                </div>
+                    </div>
+                </a>
                 <div style={{ marginLeft: 'auto' }}>
                     {pageDetails.type === 'biomolecule' && <button style={{ color: 'white', background: 'transparent', border: 'none', cursor: 'pointer', position: 'relative', marginRight: '10px' }}
                             title={"Add " + pageDetails.id +" to Explorer"}

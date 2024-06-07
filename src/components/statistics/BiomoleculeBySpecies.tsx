@@ -188,7 +188,7 @@ const BiomoleculeBySpeciesComponent:  React.FC<any> = (props) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            paddingTop: '10px'
+            paddingTop: '40px'
         }}>
             <div ref={svgRef}></div>
         </div>

@@ -29,7 +29,7 @@ export interface FilterConfiguration {
 /**
  * Manager class which builds the FilterConfiguration for FilterView using the Configuration Builder
  */
-export class FilterConfigurationManager{
+export class FilterConfigurationManager {
 
     private readonly networkData: any;
     private filterManager : FilterManager;
@@ -50,12 +50,12 @@ export class FilterConfigurationManager{
                     type: FilterOptionType.list,
                     range: []
                 },
-                condition: (filter) => {
+                /*condition: (filter) => {
                     if(filter.interactors.length === 0 ) return false
                     return filter.interactors
                         .map((filterCriterion) => filterCriterion.id === 'type' && filterCriterion.value === 'protein')
                         .reduce((finalValue: boolean, currentValue: boolean) => finalValue || currentValue, false);
-                }
+                }*/
             },
             {
                 id: 'geneExpression',
@@ -77,12 +77,12 @@ export class FilterConfigurationManager{
                         }
                     }
                 ],
-                condition: (filter) => {
+                /*condition: (filter) => {
                     if(filter.interactors.length === 0 ) return false
                     return filter.interactors
                         .map((filterCriterion) => filterCriterion.id === 'type' && filterCriterion.value === 'protein')
                         .reduce((finalValue: boolean, currentValue: boolean) => finalValue || currentValue, false);
-                }
+                }*/
             },
             {
                 id: 'proteomicsExpression',
@@ -112,12 +112,12 @@ export class FilterConfigurationManager{
                         }
                     }
                 ],
-                condition: (filter) => {
+                /*condition: (filter) => {
                     if(filter.interactors.length === 0 ) return false
                     return filter.interactors
                         .map((filterCriterion) => filterCriterion.id === 'type' && filterCriterion.value === 'protein')
                         .reduce((finalValue: boolean, currentValue: boolean) => finalValue || currentValue, false);
-                }
+                }*/
             }
         ],
         interaction: [
@@ -149,11 +149,11 @@ export class FilterConfigurationManager{
     }
     constructor(networkData: any) {
         this.networkData = networkData;
-        this.filterManager = new FilterManager(this.networkData);
+        this.filterManager = new FilterManager(this.networkData, this.filterConfiguration);
     }
 
-    public getFilterConguration (filters?: any) {
-        if(filters) {
+    public getFilterConfiguration (filters?: any) {
+        if(filters && (filters.interactors.length > 0 || filters.interactions.length > 0)) {
             return new FilterViewConfigurationBuilder(this.filterConfiguration, this.filterManager)
                 .with(filters)
                 .build();
@@ -161,7 +161,7 @@ export class FilterConfigurationManager{
             return new FilterViewConfigurationBuilder(this.filterConfiguration, this.filterManager)
                 .build();
         }
-
     }
+
 }
 

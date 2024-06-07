@@ -61,9 +61,17 @@ class FilterCriterionViewConfigurationBuilder {
                             if(item[this.filterCriterionConfiguration.id]) {
                                 const value = item[this.filterCriterionConfiguration.id];
                                 if(Array.isArray(value)) {
-                                    value.forEach((value: string) => optionsSet.add(value));
+                                    value.forEach((value: string) => {
+                                        if(this.filterCriterionConfiguration?.id) {
+                                            let label = this.filterManager.getContext(this.filterType,
+                                                this.filterCriterionConfiguration.id, undefined, value);
+                                            optionsSet.add(label);
+                                        }
+                                    });
                                 } else {
-                                    optionsSet.add(value)
+                                    let label = this.filterManager.getContext(this.filterType,
+                                        this.filterCriterionConfiguration.id, undefined, value);
+                                    optionsSet.add(label);
                                 }
                             }
                         }
@@ -101,10 +109,19 @@ class FilterCriterionViewConfigurationBuilder {
                                     optionSet.add(item ? 'Yes' : 'No');
                                 } else {
                                     if (Array.isArray(item[filterCriterionId])){
-                                        item[filterCriterionId].forEach((subItem: any) => optionSet.add(subItem[subfilterCriterion.id]));
+                                        item[filterCriterionId].forEach((subItem: any) => {
+                                            if(this.filterCriterionConfiguration?.id) {
+                                                let label = this.filterManager.getContext(this.filterType,
+                                                    this.filterCriterionConfiguration.id, subfilterCriterion.id, subItem[subfilterCriterion.id]);
+                                                optionSet.add(label);
+                                            }
+                                        });
                                     } else {
-                                        optionSet.add(item[filterCriterionId][subfilterCriterion.id]);
-
+                                        if(this.filterCriterionConfiguration?.id) {
+                                            let label = this.filterManager.getContext(this.filterType,
+                                                this.filterCriterionConfiguration.id, subfilterCriterion.id, item[filterCriterionId][subfilterCriterion.id]);
+                                            optionSet.add(label);
+                                        }
                                     }
                                 }
                             }
@@ -153,6 +170,7 @@ export class FilterViewConfigurationBuilder {
             this.filterManager,
             this.filters
         );
+
         this.filterConfiguration.interactor?.forEach((filterCriterionConfiguration: FilterCriterionConfiguration) => {
             if(!filterCriterionConfiguration.condition ||
                 (filterCriterionConfiguration.condition && filterCriterionConfiguration.condition(this.filters))) {
