@@ -29,8 +29,9 @@ const BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
                 return biomolecule.species === filterCriteria.value;
             } else if(filterCriteria.type === 'goTerms') {
                 return biomolecule?.go_names?.includes(filterCriteria.value);
+            } else if(filterCriteria.type === 'biomolecule'){
+                return biomolecule.biomolecule_type === filterCriteria.value;
             }
-            return false;
         });
         if(filteredBiomolecules.length === 0 || !filteredBiomolecules) filteredBiomolecules = [];
         setFilteredBiomolecules(filteredBiomolecules);

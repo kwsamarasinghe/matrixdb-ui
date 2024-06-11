@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
-    Alert, Avatar, Box, Card, Grid,
+    Alert, Box, Card, Grid,
     IconButton, LinearProgress,
-    TextField,
     Typography, Tabs, Tab
 } from "@mui/material";
 import AssociationNetworkComponent from "./AssociationNetworkComponent";
@@ -83,6 +82,7 @@ const NetworkExplorer: React.FC<any> = ({
     const generateNetwork = (onlyDirectPartners: boolean) => {
         if(selectedBiomolecules && selectedBiomolecules.length > 0 ) {
             setLoadingNetwork(true);
+            setValue(1);
             let biomoleculeIds = selectedBiomolecules.map((biomolecule: any) => biomolecule.biomolecule_id);
             http.post("/network", {
                 biomolecules: biomoleculeIds,
@@ -95,7 +95,7 @@ const NetworkExplorer: React.FC<any> = ({
                         associations: networkResponse.data.associations
                     });
                     setLoadingNetwork(false);
-                    setValue(1);
+                    setNetworkGenerationError(false);
                 })
                 .catch((reason: any) => {
                     setNetworkGenerationError(true);
@@ -108,7 +108,9 @@ const NetworkExplorer: React.FC<any> = ({
             setLoadingSuggestions(true);
             http.get("/biomolecules/suggestions/" + searchQuery)
                 .then((suggestionResponse) => {
-                    setBiomolecules(suggestionResponse.data.biomolecules);
+                    // Only consider the bimolecules with interactions
+                    let biomoleculesWithInteractions = suggestionResponse.data.biomolecules.filter((biomolecule: any) => biomolecule.interaction_count > 0);
+                    setBiomolecules(biomoleculesWithInteractions);
                     setLoadingSuggestions(false);
                     setValue(0);
                 });
@@ -342,7 +344,7 @@ const NetworkExplorer: React.FC<any> = ({
                                                         />
                                                     </TabPanel>
                                                     {
-                                                        network &&
+                                                        network && !loadingNetwork &&
                                                         <TabPanel value={value} index={1}>
                                                             <Grid item xs={12} md={12} sm={12}>
                                                                 <AssociationNetworkComponent
@@ -499,7 +501,7 @@ const NetworkExplorer: React.FC<any> = ({
                                     textAlign: 'center',
                                 }}>
                                     <Typography variant={'body1'}>
-                                        Building interaction network for {biomolecules.map((b: any) => b.biomoelcule_id).join(', ')}
+                                        Building interaction network for {selectedBiomolecules.map((b: any) => b.biomolecule_id).join(', ')}
                                     </Typography>
                                     <LinearProgress />
                                 </Box>
