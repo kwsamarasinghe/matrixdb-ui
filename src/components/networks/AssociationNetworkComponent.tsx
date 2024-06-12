@@ -1,45 +1,20 @@
 import {useEffect, useState, useRef} from "react";
-import http from "../../commons/http-commons";
 import cytoscape from "cytoscape";
 import {
     Card,
     CardContent,
     Typography,
-    Autocomplete,
     TextField,
-    Grid,
-    Button,
-    IconButton,
-    InputLabel, Slider, Tooltip, Chip,
+    IconButton,Tooltip, Chip, Box, Paper,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import CheckIcon from '@mui/icons-material/Check';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import DownloadIcon from '@mui/icons-material/Download';
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFilter} from '@fortawesome/free-solid-svg-icons';
 import React from "react";
 import NewFilterComponent from "./filter/FilterComponent";
 import {RootState} from "../../stateManagement/store";
 import {connect, ConnectedProps} from "react-redux";
 import FilterManager from "./filter/FilterManager";
 import cytoscapeLogo from "../../assets/images/cytoscape.png";
-
-interface Filter {
-    type : string,
-    subCriteria: {
-        property: string,
-        value: string
-        propertyAttributes?: [
-            attribute: string,
-            value: string
-        ]
-    }[],
-    active: boolean
-}
 
 function PartnerOverview(props: any) {
 
@@ -50,8 +25,8 @@ function PartnerOverview(props: any) {
             <Card style={{ flex: 0.35, backgroundColor: 'white', margin: '10px' }}>
                 <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
-                        <a href={"/biomolecule/" + partner.id} style={{ wordBreak: 'break-all' }}>
-                            {partner.names && partner.names.name || partner.biomoleculeId}
+                        <a href={"/biomolecule/" + partner.biomoleculeId} style={{ wordBreak: 'break-all' }}>
+                            {partner.name || (partner.names && partner.names.name) || partner.biomoleculeId}
                         </a>
                     </Typography>
                     <Typography color="textSecondary">
@@ -123,7 +98,7 @@ function AssociationOverview(props: any) {
                                             <strong>Binary</strong>
                                         </Typography>
                                     }
-                                    {association.experiments.direct[experimentType].map((experiment: any, index: number) => (
+                                    { association.experiments.direct[experimentType].map((experiment: any, index: number) => (
                                         <div key={index} style={{ wordWrap: 'break-word' }}>
                                             <Typography variant="caption" color="textSecondary">
                                                 {experiment}
@@ -176,10 +151,16 @@ function Legend(){
 
 function CytoscapeComponent(props: any) {
 
-    const {biomoleculeId, participants, associations, context} = props;
+    const { biomoleculeId, participants, associations, context, originalNetwork } = props;
     const [selectedPartner, setSelectedPartner] = useState(null);
     const [selectedInteraction, setSelectedInteraction] = useState(null);
     const cyRef = useRef(null);
+
+    const [quickSearchText, setQuickSearchText] = useState<string | null>(null);
+    const [searchDone, setSearchDone] = useState<boolean>(false);
+
+    const [filteredParticipants, setFilteredParticipnats] = useState<number>(0);
+    const [filteredAssociations, setFilteredAssociations] = useState<number>(0);
 
     const circularLayout = {
         name: 'circle',
@@ -235,7 +216,38 @@ function CytoscapeComponent(props: any) {
         }
     };
 
-    useEffect(() => {
+    const onSeachText = (event: any) => {
+        let searchText = event.target.value;
+        setQuickSearchText(searchText);
+    }
+
+    const onQuickSearch = (event: any) => {
+        if (event.key === 'Enter') {
+            setSearchDone(true);
+            drawGraph();
+        }
+    }
+
+    const getQuickSearchAssociations = () => {
+        if(searchDone && quickSearchText) {
+            let filteredParticipants = participants.filter((participant: any) => {
+                if(participant.name) {
+                    return participant.name.toLowerCase().includes(quickSearchText.toLowerCase());
+                }
+                return false;
+
+            });
+            let filterParticipantIds = filteredParticipants.map((filterParticipant: any) => filterParticipant.id);
+            let filteredAssociations = associations.filter((association: any) => {
+                let participants = association.participants;
+                return (filterParticipantIds.includes(participants[0]) || filterParticipantIds.includes(participants[1]));
+            });
+            return filteredAssociations;
+        }
+        return null;
+    }
+
+    const drawGraph = () => {
         if (cyRef.current && associations.length > 0) {
             //let elements = [];
             /*elements.push({
@@ -281,7 +293,7 @@ function CytoscapeComponent(props: any) {
 
             });*/
 
-            let elements : Array<any> = [];
+            let elements: Array<any> = [];
             /*participants.forEach((participant: any) => {
                 elements.push({
                     data: {
@@ -291,21 +303,26 @@ function CytoscapeComponent(props: any) {
                 });
             });*/
 
-            console.log("statrting to draw the graph")
-
             let filteredParticipants = new Set<string>();
 
-            associations.forEach((association: any) => {
-                association.participants.forEach((participant: string) => {
-                    filteredParticipants.add(participant);
+            let quickSearchAssociations = getQuickSearchAssociations();
+            if (quickSearchAssociations) {
+                quickSearchAssociations.forEach((association: any) => {
+                    association.participants.forEach((participant: string) => {
+                        filteredParticipants.add(participant);
+                    });
                 });
-            });
-            console.log("Associations added")
+            } else {
+                associations.forEach((association: any) => {
+                    association.participants.forEach((participant: string) => {
+                        filteredParticipants.add(participant);
+                    });
+                });
+            }
 
             let participantsToDraw: any[] = [];
             participants.forEach((participant: any) => {
-                console.log("Adding parnter " +  participant.id)
-                if(filteredParticipants.has(participant.id)) {
+                if (filteredParticipants.has(participant.id)) {
                     participantsToDraw.push({
                         data: {
                             id: participant.id,
@@ -315,33 +332,56 @@ function CytoscapeComponent(props: any) {
                     });
                 }
             });
-            console.log("participant added")
+            setFilteredParticipnats(participantsToDraw.length);
+
             let associationsToDraw: any[] = [];
-            associations.forEach((association: any) => {
-                // Check for self interactions
-                let firstParticipant = association.participants[0];
-                let secondParticipant;
-                if(association.participants.length === 1) {
-                    secondParticipant = association.participants[0];
-                } else {
-                    secondParticipant = association.participants[1];
-                }
-                console.log("assoc " +  firstParticipant + " " + secondParticipant)
-                associationsToDraw.push({
-                    data: {
-                        source: firstParticipant,
-                        target: secondParticipant,
-                        label: association.id,
-                        type:  association.type && association.type === 2 ? 'predicted' : 'experimental'
+            if (quickSearchAssociations) {
+                quickSearchAssociations.forEach((association: any) => {
+                    // Check for self interactions
+                    let firstParticipant = association.participants[0];
+                    let secondParticipant;
+                    if (association.participants.length === 1) {
+                        secondParticipant = association.participants[0];
+                    } else {
+                        secondParticipant = association.participants[1];
                     }
+                    associationsToDraw.push({
+                        data: {
+                            source: firstParticipant,
+                            target: secondParticipant,
+                            label: association.id,
+                            type: association.type && association.type === 2 ? 'predicted' : 'experimental'
+                        }
+                    });
                 });
-            });
+            } else {
+                associations.forEach((association: any) => {
+                    // Check for self interactions
+                    let firstParticipant = association.participants[0];
+                    let secondParticipant;
+                    if (association.participants.length === 1) {
+                        secondParticipant = association.participants[0];
+                    } else {
+                        secondParticipant = association.participants[1];
+                    }
+                    associationsToDraw.push({
+                        data: {
+                            source: firstParticipant,
+                            target: secondParticipant,
+                            label: association.id,
+                            type: association.type && association.type === 2 ? 'predicted' : 'experimental'
+                        }
+                    });
+                });
+            }
+            setFilteredAssociations(associationsToDraw.length);
+
             elements.push(...participantsToDraw);
             elements.push(...associationsToDraw);
-            console.log("Associations added")
-            if(!cy) {
+
+            if (!cy) {
                 let layout;
-                if(filteredParticipants.size < 20) {
+                if (filteredParticipants.size < 20) {
                     layout = circularLayout;
                 } else {
                     layout = coseLayout;
@@ -353,7 +393,7 @@ function CytoscapeComponent(props: any) {
                     layout: layout,
                     style: [
                         {
-                            selector: 'node[id="'+biomoleculeId+'"]',
+                            selector: 'node[id="' + biomoleculeId + '"]',
                             style: {
                                 label: 'data(label)',
                                 width: "20px",
@@ -438,11 +478,11 @@ function CytoscapeComponent(props: any) {
                 console.log("Calculated the node size")
                 cy.zoom(1.5);
 
-                cy.on('click', 'node', function (event : any) {
+                cy.on('click', 'node', function (event: any) {
                     const node = event.target;
                     let nodeId = parseInt(node.id());
                     let selectedPartner = participants.filter((p: any) => p.id === nodeId)[0];
-                    let sortedIds = [props.biomoleculeId, context.interactors[selectedPartner.id]].sort();
+                    let sortedIds = [props.biomoleculeId, context.interactors.interactor_mapping[selectedPartner.id]].sort();
                     let selectedInteraction = associations.find((association: any) => association.id === sortedIds[0] + '__' + sortedIds[1]);
                     if (selectedInteraction) {
                         setSelectedInteraction(selectedInteraction);
@@ -450,19 +490,19 @@ function CytoscapeComponent(props: any) {
                     }
                 });
 
-                cy.on('mouseover', 'node', function (event : any) {
+                cy.on('mouseover', 'node', function (event: any) {
                     const node = event.target;
                     let nodeId = parseInt(node.id());
                     let selectedPartner = participants.filter((p: any) => p.id === nodeId)[0];
                     let newSelectedPartner = JSON.parse(JSON.stringify(selectedPartner))
-                    if(selectedPartner) {
-                        newSelectedPartner.biomoleculeId = context.interactors[nodeId];
+                    if (selectedPartner) {
+                        newSelectedPartner.biomoleculeId = context.interactors.interactor_mapping[nodeId];
                         setSelectedPartner(newSelectedPartner);
                         setSelectedInteraction(null);
                     }
                 });
 
-                cy.on('mouseout', 'node', function (event : any) {
+                cy.on('mouseout', 'node', function (event: any) {
                     const node = event.target;
                     //alert(`Mouseout on node: ${node.id()}`);
                 });
@@ -474,38 +514,110 @@ function CytoscapeComponent(props: any) {
                 }*/
             };
         }
+    }
 
+    useEffect(() => {
+        drawGraph();
     }, [participants, associations]);
 
     return (
         <>
-            <div style={{display: 'flex'}}>
-                <div style={{ flex: 0.65, backgroundColor: 'lightgray', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                    <div style={{ width: '220px', padding: '10px' }}>
-                        {selectedPartner && <PartnerOverview partner={selectedPartner}/>}
-                        {selectedInteraction && <AssociationOverview interaction={selectedInteraction}/>}
-                    </div>
-                    <div style={{ marginTop: 'auto', padding: '10px' }}>
-                        <Legend/>
-                    </div>
-                </div>
-                <div>
+            <Box display="flex">
+                <Box
+                    flex={0.65}
+                    bgcolor="lightgray"
+                    display="flex"
+                    flexDirection="column"
+                    position="relative"
+                >
+                    <Box width="220px" p={1}>
+                        {selectedPartner && <PartnerOverview partner={selectedPartner} />}
+                        {selectedInteraction && <AssociationOverview interaction={selectedInteraction} />}
+                    </Box>
+                    <Box mt="auto" p={1}>
+                        <Legend />
+                    </Box>
+                </Box>
+                <Box display="flex" flexDirection="column">
                     <Tooltip title="Download an image" arrow>
-                        <IconButton size="small" style={{color: 'green'}} onClick={generateDownloadLink} aria-label="download">
-                            <PhotoCameraIcon/>
+                        <IconButton size="small" style={{ color: 'green' }} onClick={generateDownloadLink} aria-label="download">
+                            <PhotoCameraIcon />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Export to cytoscape" arrow>
-                        <IconButton size="small" style={{color: 'green'}} onClick={generateCytoscapeLink} aria-label="download">
-                            <img src={cytoscapeLogo} style={{width: '25px', height: 'auto'}}/>
+                        <IconButton size="small" style={{ color: 'green' }} onClick={generateCytoscapeLink} aria-label="download">
+                            <img src={cytoscapeLogo} style={{ width: '25px', height: 'auto' }} />
                         </IconButton>
                     </Tooltip>
-                </div>
-                <div
-                    ref={cyRef}
-                    style={{flex: 3, height: "800px"}}
-                />
-            </div>
+                </Box>
+                <Box flex={3} position="relative">
+                    <Box
+                        ref={cyRef}
+                        sx={{ width: '100%', height: '800px', position: 'relative' }}
+                    />
+                        <Paper
+                            elevation={3}
+                            sx={{
+                                position: 'absolute',
+                                top: '10px',
+                                right: '10px',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: '#fff',
+                            }}
+                        >
+                            <TextField
+                                id="outlined-textarea"
+                                label="Quick Search"
+                                placeholder="Search for participant(s)"
+                                onChange={onSeachText}
+                                onKeyDown={onQuickSearch}
+                                size="small"
+                            />
+                        </Paper>
+                        {
+                            (
+                                !quickSearchText && (originalNetwork.participants !== participants.length ||
+                                originalNetwork.associations !== associations.length
+                            )) &&
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    position: 'absolute',
+                                    bottom: '10px',
+                                    right: '10px',
+                                    width: '170px',
+                                    height: '100px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: '#fff',
+                                }}
+                            >
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column'
+                                }}>
+                                    <div style={{
+                                        display: 'flex'
+                                    }}>
+                                        <Typography variant="body2">
+                                            Participants: {filteredParticipants} / {originalNetwork.participants}
+                                        </Typography>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex'
+                                    }}>
+                                        <Typography variant="body2">
+                                            Associations: {filteredAssociations} / {originalNetwork.associations}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            </Paper>
+                        }
+                </Box>
+            </Box>
         </>
     );
 }
@@ -531,7 +643,11 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
     return (
         <div style={{ display: 'flex' }}>
             <div
-                style={{ flex: 3.65, height: "800px" }}
+                style={{
+                    flex: 3.65,
+                    flexDirection: "column",
+                    height: "800px"
+                }}
             >
                 {
                     currentNetwork.interactors && currentNetwork.interactors.length > 0 && currentNetwork.interactions.length > 0 &&
@@ -540,6 +656,10 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
                         participants={currentNetwork.interactors}
                         associations={currentNetwork.interactions}
                         context={network.context}
+                        originalNetwork={{
+                            participants: network.interactors.length,
+                            associations: network.interactions.length,
+                        }}
                     />
                 }
             </div>

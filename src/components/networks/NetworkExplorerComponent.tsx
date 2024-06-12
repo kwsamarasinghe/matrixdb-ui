@@ -89,7 +89,7 @@ const NetworkExplorer: React.FC<any> = ({
                 onlyDirectPartners: onlyDirectPartners
             })
                 .then((networkResponse) => {
-                    setNetworkDataAction({...networkResponse.data, biomolecules: JSON.parse(JSON.stringify(biomoleculeIds))});
+                    setNetworkDataAction(networkResponse.data);
                     setNetwork({
                         participantIds: networkResponse.data.participants,
                         associations: networkResponse.data.associations

@@ -2,8 +2,7 @@ import {SimpleTreeView} from "@mui/x-tree-view/SimpleTreeView";
 import {TreeItem} from "@mui/x-tree-view/TreeItem";
 import {Box, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {faCircleNodes, faFilter} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import http from "../../../commons/http-commons";
 
 interface BiomoleculeFilterProps {
     searchQuery: string;
@@ -16,7 +15,7 @@ function BiomoleculeFilter(props: BiomoleculeFilterProps) {
     const {searchQuery, biomolecules, onFilterSelection} = props;
     const [filter, setFilter] = useState<Map<string, any>
         | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [ncbiTaxonomy, setncbiTaxonomy] = useState<any | null>(null);
 
     useEffect(() => {
         // Group by the different categories
@@ -69,6 +68,29 @@ function BiomoleculeFilter(props: BiomoleculeFilterProps) {
 
     }, [props.searchQuery, props.biomolecules]);
 
+    useEffect(() => {
+        if(!ncbiTaxonomy) {
+            http.get("/metadata/ncbi")
+                .then((ncbiResponse: any) => {
+                    interface NcbiData {
+                        commonName: string;
+                        name: string;
+                    }
+                    let ncbiMap: { [key: string]: NcbiData } = {};
+
+                    if(ncbiResponse.data.ncbi) {
+                        Object.keys(ncbiResponse.data.ncbi).forEach((ncbiId: any) => {
+                            ncbiMap[ncbiId] = {
+                                commonName : ncbiResponse.data.ncbi[ncbiId].common_name,
+                                name: ncbiResponse.data.ncbi[ncbiId].name
+                            }
+                        });
+                        setncbiTaxonomy(ncbiMap);
+                    }
+                });
+        }
+    }, []);
+
     return(
         <>
             <div
@@ -95,37 +117,51 @@ function BiomoleculeFilter(props: BiomoleculeFilterProps) {
                 maxWidth: 400
             }}>
                 {
-                    filter &&
+                    filter && ncbiTaxonomy &&
                     <SimpleTreeView>
                         {
                             Array.from(filter.keys()).map((key: string) => (
-                                <TreeItem key={key} itemId={key} label={key}>
+                                <TreeItem
+                                    key={key}
+                                    itemId={key}
+                                    label={key}
+                                    onClick={() => onFilterSelection({
+                                        type: 'biomolecule',
+                                        value: key
+                                    })}
+                                >
                                     {
                                         Object.keys(filter.get(key)).map((subKey: any) => {
-                                            if (subKey !== "count") {
+                                            if (subKey !== "count" && Object.keys(filter.get(key)[subKey]).length > 0) {
                                                 return (
                                                     <TreeItem
-                                                        key={subKey}
-                                                        itemId={subKey}
+                                                        key={`${key}_${subKey}`}
+                                                        itemId={`${key}_${subKey}`}
                                                         label={subKey}
                                                     >
                                                         {
-                                                            Object.keys(filter.get(key)[subKey]).map((nestedKey: any) => (
-                                                                <TreeItem
-                                                                    key={nestedKey}
-                                                                    itemId={`${key}_${nestedKey}_${subKey}`}
-                                                                    label={`${nestedKey} (${filter.get(key)[subKey][nestedKey]})`}
-                                                                    onClick={() => onFilterSelection({
-                                                                        type: subKey,
-                                                                        value: nestedKey
-                                                                    })}
-                                                                />
-                                                            ))
+                                                            Object.keys(filter.get(key)[subKey]).map((nestedKey: any) => {
+                                                                let label = nestedKey;
+                                                                if(subKey === 'species') {
+                                                                    label = ncbiTaxonomy[nestedKey] ? ncbiTaxonomy[nestedKey].name : nestedKey;
+                                                                }
+                                                                return (
+                                                                    <TreeItem
+                                                                        key={`${key}_${subKey}_${nestedKey}`}
+                                                                        itemId={`${key}_${subKey}_${nestedKey}`}
+                                                                        label={label}
+                                                                        onClick={() => onFilterSelection({
+                                                                            type: subKey,
+                                                                            value: nestedKey
+                                                                        })}
+                                                                    />
+                                                                )
+                                                            })
                                                         }
                                                     </TreeItem>
                                                 );
                                             } else {
-                                                return null; // Returning null to avoid rendering an empty element
+                                                return null;
                                             }
                                         })
                                     }
