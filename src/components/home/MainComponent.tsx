@@ -17,13 +17,20 @@ function MainComponent() {
     const currentPath = location.pathname;
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <div style={{
+            fontFamily: 'Arial',
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh'
+        }}>
             <Header pageDetails={{
                 type: "home",
                 id: ""
             }}/>
             <main style={{ flex: 1}}>
-                <div style={{marginBottom: '20px'}}>
+                <div style={{
+                    marginBottom: '20px'
+                }}>
                     <SearchComponent/>
                 </div>
                 {currentPath !== '/search' && <MainContentComponent/>}

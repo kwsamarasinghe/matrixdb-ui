@@ -26,10 +26,10 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
     const rows = network.interactions.map((interaction: any) => {
         let partner = interaction.participants
             .filter((biomolecule: string) => {
-                let partnerId = network.context.interactors[biomolecule];
+                let partnerId = network.context.interactors.interactor_mapping[biomolecule];
                 return partnerId !== biomoleculeIds[0];
             })[0];
-        partner = network.context.interactors[partner];
+        partner = network.context.interactors.interactor_mapping[partner];
         if(!partner) partner = biomoleculeIds[0];
 
         let directlySupported = [];
@@ -199,7 +199,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                     {params.value}
                 </span>
             ),
-            sortComparator: (v1, v2) =>  parseInt(v2) - parseInt(v1)
+            sortComparator: (v1, v2) =>  v2.localeCompare(v1)
         }
     ];
 

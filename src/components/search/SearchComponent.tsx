@@ -78,10 +78,10 @@ function SearchComponent() {
     return (
         <>
             { currentPath === '/' &&
-                <div className={"App-search"}>
+                <div className={"App App-search"}>
                         <div style={{textAlign: 'center'}}>
-                            <h3>The extracellular matrix interaction database</h3>
-                            <h5>Database focused on interactions established by extracellular matrix proteins, proteoglycans and polysaccharide</h5>
+                            <h2>The extracellular matrix interaction database</h2>
+                            <h4>Database focused on interactions established by extracellular matrix proteins, proteoglycans and polysaccharide</h4>
                         </div>
                         <div style={{width: '70%'}}>
                             <Card style={{ flex: '1', ...searchBoxCardStyle }}>

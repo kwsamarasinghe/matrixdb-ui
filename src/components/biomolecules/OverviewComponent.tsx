@@ -36,6 +36,7 @@ interface BiomoleculeToDisplay {
     interpro: Array<string> | [],
     subcellularLocation: string,
     function?: any,
+    relations?: any,
     ecmness?: any,
     ecm?: boolean
 }
@@ -85,7 +86,14 @@ function OverviewComponent(props: any) {
         biomoleculeToDisplay.molecularDetails= biomolecule.molecular_details;
 
         biomoleculeToDisplay.function = biomolecule.annotations?.function;
-        biomoleculeToDisplay.subcellularLocation = biomolecule.annotations?.subcellular_location?.join(",");
+        biomoleculeToDisplay.relations = biomolecule.relations;
+        if(biomolecule.relations?.belongs_to) {
+            if(!Array.isArray(biomolecule.relations.belongs_to)) {
+                biomolecule.relations.belongs_to = [biomolecule.relations.belongs_to];
+            }
+        }
+        biomoleculeToDisplay.subcellularLocation = biomolecule.annotations?.subcellular_location?.join(",") || biomolecule.annotations?.location;
+        biomoleculeToDisplay.structure = biomoleculeToDisplay.molecularDetails?.structure;
         biomoleculeToDisplay.crossRefs = biomolecule.xrefs;
         biomoleculeToDisplay.description = biomolecule.description;
 
@@ -103,12 +111,42 @@ function OverviewComponent(props: any) {
 
         // Define the tabs
         let tabConfig = [];
-        if(biomoleculeToDisplay && biomoleculeToDisplay.subcellularLocation) {
-            tabConfig.push({label: 'Subcellular Location', renderContent: () => biomoleculeToDisplay.subcellularLocation.replaceAll(',', ', ') })
+
+        if(biomoleculeToDisplay && biomoleculeToDisplay.relations && biomoleculeToDisplay.relations.belongs_to) {
+            if(biomoleculeToDisplay.type === 'pfrag') {
+                tabConfig.push({
+                    label: 'Processed From',
+                    renderContent: () => {
+                        return biomoleculeToDisplay.relations.belongs_to.map((element: string, index: number) => (
+                            <div>
+                                <a key={index} href={`/biomolecule/${element}`}>
+                                    {element}
+                                </a>
+                            </div>
+                        ));
+                    }
+                });
+            }
         }
 
         if(biomoleculeToDisplay && biomoleculeToDisplay.description) {
             tabConfig.push({label: 'Comment', renderContent: () => biomoleculeToDisplay.description })
+        }
+
+        if(biomoleculeToDisplay && biomoleculeToDisplay.structure) {
+            if(biomoleculeToDisplay.type === 'gag') {
+                tabConfig.push({label: 'GAG Sequence', renderContent: () => biomoleculeToDisplay.structure });
+            }
+        }
+
+        if(biomoleculeToDisplay && biomoleculeToDisplay.structure) {
+            if(biomoleculeToDisplay.type === 'gag') {
+                tabConfig.push({label: 'GAG Sequence', renderContent: () => biomoleculeToDisplay.structure });
+            }
+        }
+
+        if(biomoleculeToDisplay && biomoleculeToDisplay.subcellularLocation) {
+            tabConfig.push({label: 'Cellular Location', renderContent: () => biomoleculeToDisplay.subcellularLocation.replaceAll(',', ', ') });
         }
 
         if(biomoleculeToDisplay && biomoleculeToDisplay.function) {
@@ -337,13 +375,24 @@ function OverviewComponent(props: any) {
                                     }
                                 </TableCell>
                             </Grid>}
-                            {biomoleculeToDisplay?.molecularDetails?.stoichiometry  && <Grid item xs={6}>
-                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Stoichiometry</h4></TableCell>
-                                <TableCell style={cellStyles}>
-                                    {
-                                        biomoleculeToDisplay?.molecularDetails.stoichiometry
-                                    }
-                                </TableCell>
+                            {biomoleculeToDisplay?.molecularDetails?.stochiometry  && <Grid item xs={6}>
+                                <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Stochiometry</h4></TableCell>
+                                {
+                                    <TableCell style={cellStyles}>
+                                        {
+                                            biomoleculeToDisplay.molecularDetails.stochiometry
+                                                    .map((stochiometry: any, index: number) => (
+                                                        <span key={index}>
+                                                            {`${stochiometry.min} `}
+                                                            <a href={`/biomolecule/${stochiometry.id}`}>
+                                                                {stochiometry.id}
+                                                            </a>
+                                                        </span>
+                                                    ))
+                                                    .reduce((prev: any, curr: any) => [prev, ' + ', curr])
+                                        }
+                                    </TableCell>
+                                }
                             </Grid>}
                         </Grid>
                     </div>

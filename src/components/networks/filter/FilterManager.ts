@@ -73,7 +73,7 @@ class FilterManager {
         filters.interactors.forEach((filter: FilterCriterion) => {
             // Get the reverse context mapping
             filteredInteractors = filteredInteractors.filter((interactor: any) => {
-                    if(interactor.id === filteredNetwork.biomolecules[0]) {
+                    if(filteredNetwork.biomolecules.includes(interactor.id)) {
                         return true;
                     }
 
@@ -145,9 +145,9 @@ class FilterManager {
             let p1 = interaction.participants[0];
             let p2 = interaction.participants[1];
 
-            if((filteredInteractors.map((interactor: any) => interactor.id).includes(p1) && p2 === filteredNetwork.biomolecules[0])
+            if((filteredInteractors.map((interactor: any) => interactor.id).includes(p1) && filteredNetwork.biomolecules.includes(p2))
             ||
-            (filteredInteractors.map((interactor: any) => interactor.id).includes(p2) && p1 === filteredNetwork.biomolecules[0])) {
+            (filteredInteractors.map((interactor: any) => interactor.id).includes(p2) && filteredNetwork.biomolecules.includes(p1))) {
                 return true
             }
             return false;

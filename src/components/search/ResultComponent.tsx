@@ -277,7 +277,12 @@ function ResultComponent(props : any) {
     }
 
     const getMostRelevant = (biomolecules: any[]) => {
-        return biomolecules.filter((biomolecule: any) => biomolecule.most_relevant);
+        let mostRelevant = biomolecules.filter((biomolecule: any) => biomolecule.most_relevant);
+        if(mostRelevant.length === 0) {
+            return biomolecules;
+        } else {
+            return mostRelevant;
+        }
     }
 
     return (
@@ -304,6 +309,8 @@ function ResultComponent(props : any) {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
+                                    paddingLeft: '20px',
+                                    paddingRight: '20px',
                                 }}>
                                     <Typography style={{
                                         fontWeight: 'bold',
@@ -350,7 +357,7 @@ function ResultComponent(props : any) {
                                                                 />
                                                             </div>
                                                         )}
-                                                        <div style={{ flex: '70%' }}>
+                                                        <div style={{ flex: '60%' }}>
                                                             <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
                                                                 {displayName(result)}
                                                             </a>
@@ -436,7 +443,7 @@ function ResultComponent(props : any) {
                                                                     />
                                                                 </div>
                                                             )}
-                                                            <div style={{ flex: '70%' }}>
+                                                            <div style={{ flex: '60%' }}>
                                                                 <a href={`/biomolecule/${result.biomolecule_id}`} color="inherit">
                                                                     {displayName(result)}
                                                                 </a>
