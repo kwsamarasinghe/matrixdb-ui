@@ -103,22 +103,26 @@ const NetworkExplorer: React.FC<any> = ({
         }
     };
 
+    const launchSearch = () => {
+        setLoadingSuggestions(true);
+        http.get("/biomolecules/suggestions/" + searchQuery)
+            .then((suggestionResponse) => {
+                // Only consider the bimolecules with interactions
+                let biomoleculesWithInteractions = suggestionResponse.data.biomolecules.filter((biomolecule: any) => biomolecule.interaction_count > 0);
+                setBiomolecules(biomoleculesWithInteractions);
+                setLoadingSuggestions(false);
+                setValue(0);
+            });
+    }
+
     const onPressEnter = (e: React.KeyboardEvent) =>{
         if(searchQuery && searchQuery.length >= 3) {
-            setLoadingSuggestions(true);
-            http.get("/biomolecules/suggestions/" + searchQuery)
-                .then((suggestionResponse) => {
-                    // Only consider the bimolecules with interactions
-                    let biomoleculesWithInteractions = suggestionResponse.data.biomolecules.filter((biomolecule: any) => biomolecule.interaction_count > 0);
-                    setBiomolecules(biomoleculesWithInteractions);
-                    setLoadingSuggestions(false);
-                    setValue(0);
-                });
+            launchSearch();
         }
     };
 
     const onClickSearch = (query: string) => {
-
+        launchSearch();
     }
 
     const onSearchTextChange = (e : any) => {
