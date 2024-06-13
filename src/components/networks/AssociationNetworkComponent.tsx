@@ -72,41 +72,13 @@ function AssociationOverview(props: any) {
                             {association.id && association.id}
                         </a>
                     </Typography>
-                    {association.score && <Typography variant="body2">
+                    {association.score && association.score!== 0 && <Typography variant="body2">
                         <strong>Score: {association.score} </strong>
                     </Typography>}
                     {
                         association.type && association.type === 2 && <Typography variant="body2" color="#946011">
                             <strong>Predicted</strong>
                         </Typography>
-                    }
-                    {association.experiments &&
-                            association.experiments.direct &&
-                            Object.keys(association.experiments.direct).map((experimentType: any) => (
-                                <React.Fragment key={experimentType}>
-                                    {
-                                        association.experiments.direct[experimentType].length > 0 &&
-                                        experimentType === 'spoke_expanded_from' &&
-                                        <Typography variant="caption" color="textSecondary">
-                                            <strong>Spoke Expanded From</strong>
-                                        </Typography>
-                                    }
-                                    {
-                                        association.experiments.direct[experimentType].length > 0 &&
-                                        experimentType === 'binary' &&
-                                        <Typography variant="caption" color="textSecondary">
-                                            <strong>Binary</strong>
-                                        </Typography>
-                                    }
-                                    { association.experiments.direct[experimentType].map((experiment: any, index: number) => (
-                                        <div key={index} style={{ wordWrap: 'break-word' }}>
-                                            <Typography variant="caption" color="textSecondary">
-                                                {experiment}
-                                            </Typography>
-                                        </div>
-                                    ))}
-                                </React.Fragment>
-                            ))
                     }
                 </CardContent>
             </Card>
