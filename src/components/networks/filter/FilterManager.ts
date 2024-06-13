@@ -141,16 +141,15 @@ class FilterManager {
         });
 
         // Remove interactions associated in filtered biomolecules
+        let allInteractors = filteredNetwork.interactors.map((interactor: any) => interactor.id);
+        let filteredInteractorIds = filteredInteractors.map((interactor: any) => interactor.id);
+        let removedInteractorIds = allInteractors.filter((id : number)=> !filteredInteractorIds.includes(id));
+
         filteredInteractions = filteredInteractions.filter((interaction: any) => {
             let p1 = interaction.participants[0];
             let p2 = interaction.participants[1];
 
-            if((filteredInteractors.map((interactor: any) => interactor.id).includes(p1) && filteredNetwork.biomolecules.includes(p2))
-            ||
-            (filteredInteractors.map((interactor: any) => interactor.id).includes(p2) && filteredNetwork.biomolecules.includes(p1))) {
-                return true
-            }
-            return false;
+            return !(removedInteractorIds.includes(p1) || removedInteractorIds.includes(p2));
         });
 
         filteredNetwork.interactors = filteredInteractors;

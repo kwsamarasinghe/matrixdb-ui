@@ -650,7 +650,7 @@ const AssociationNetworkComponent : React.FC<AssociationNetworkProps> = ({
                 }}
             >
                 {
-                    currentNetwork.interactors && currentNetwork.interactors.length > 0 && currentNetwork.interactions.length > 0 &&
+                    currentNetwork.interactors &&
                     <CytoscapeComponent
                         biomoleculeId={biomoleculeIds[0]}
                         participants={currentNetwork.interactors}

@@ -64,7 +64,7 @@ const NetworkParticipantBoard: React.FC<any> = (props: any) => {
                     participants.length > 0 &&
                     <>
                         <div>
-                            Only include direct partners <Checkbox
+                            Exclude partner interactions <Checkbox
                             value={onlyDirectPartners} onClick={() => setOnlyDirectPartners(!onlyDirectPartners)}/>
                         </div>
                         <div style={{
