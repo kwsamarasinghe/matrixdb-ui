@@ -5,11 +5,12 @@ import SearchIcon from "@mui/icons-material/Search";
 function SearchBox(props: any) {
 
     const [searchText, setSearchText] = useState<string | null>(null);
+    const [searchTextChange, setSearchTextChange] = useState<boolean>(false);
 
     const onPressEnter = (e: React.KeyboardEvent) =>{
         if( e.key === 'Enter' ){
             e.preventDefault();
-            props.onPressEnter(e);
+            props.onPressEnter(e, searchText);
         }
     };
 
@@ -18,7 +19,8 @@ function SearchBox(props: any) {
     }
     const onSearchTextChange = (e : any) => {
         setSearchText(e.target.value);
-        props.onSearchTextChange(e);
+        setSearchTextChange(true);
+        //props.onSearchTextChange(e);
     }
 
     return (
@@ -38,7 +40,7 @@ function SearchBox(props: any) {
                     inputProps={{ 'aria-label': 'e.g Heparin' }}
                     onChange={onSearchTextChange}
                     onKeyDown={onPressEnter}
-                    value={props.searchQuery}
+                    value={searchText || (!searchTextChange && props.searchQuery) || ""}
                 />
                 <IconButton
                     type="button"

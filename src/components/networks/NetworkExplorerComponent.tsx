@@ -14,7 +14,7 @@ import * as actions from "../../stateManagement/actions";
 import SearchBoxComponent from "../search/SearchBoxComponent";
 import CircleIcon from "@mui/icons-material/Circle";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import NetworkExplorerHelp from "../help/NetworkExplorerHelp";
+import HelpDrawerComponent from "../help/HelpDrawerComponent";
 import BiomoleculeSelectionComponent from "./BiomoleculeSelectionComponent";
 
 const mapStateToProps = (state: RootState) => ({
@@ -103,9 +103,9 @@ const NetworkExplorer: React.FC<any> = ({
         }
     };
 
-    const launchSearch = () => {
+    const launchSearch = (query: string) => {
         setLoadingSuggestions(true);
-        http.get("/biomolecules/suggestions/" + searchQuery)
+        http.get(`/search?query=${query}`)
             .then((suggestionResponse) => {
                 // Only consider the bimolecules with interactions
                 let biomoleculesWithInteractions = suggestionResponse.data.biomolecules.filter((biomolecule: any) => biomolecule.interaction_count > 0);
@@ -115,31 +115,22 @@ const NetworkExplorer: React.FC<any> = ({
             });
     }
 
-    const onPressEnter = (e: React.KeyboardEvent) =>{
+    const onPressEnter = (e: React.KeyboardEvent, searchQuery: string) =>{
+        setSearchQuery(searchQuery);
         if(searchQuery && searchQuery.length >= 3) {
-            launchSearch();
+            launchSearch(searchQuery);
         }
     };
 
     const onClickSearch = (query: string) => {
-        launchSearch();
+        setSearchQuery(query);
+        launchSearch(query);
     }
 
     const onSearchTextChange = (e : any) => {
         setValue(0);
         setSearchQuery(e.target.value);
     }
-
-    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-        // Prevent toggling if the event is from a Tab or Shift keydown event
-        if (event.type === 'keydown' && (event as React.KeyboardEvent).key === 'Tab') {
-            return;
-        }
-        if (event.type === 'keydown' && (event as React.KeyboardEvent).key === 'Shift') {
-            return;
-        }
-        setOpen(open);
-    };
 
     const [value, setValue] = useState<number>(0);
 
@@ -229,12 +220,16 @@ const NetworkExplorer: React.FC<any> = ({
                                         alignItems: "center"
                                     }}>
                                         <IconButton
-                                            onClick={toggleDrawer(true)}
+                                            onClick={() => setOpen(true)}
                                             size={'small'}
                                         >
                                             <HelpOutlineIcon/>
                                         </IconButton>
-                                        <NetworkExplorerHelp open={open} onClose={toggleDrawer}/>
+                                        <HelpDrawerComponent
+                                            helpType="NETWORK_EXPLORER"
+                                            open={open}
+                                            onClose={() => setOpen(false)}
+                                        />
                                     </div>
                                 </div>
                             </Card>

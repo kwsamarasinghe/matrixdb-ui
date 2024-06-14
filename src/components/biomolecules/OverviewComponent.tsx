@@ -139,11 +139,6 @@ function OverviewComponent(props: any) {
             }
         }
 
-        if(biomoleculeToDisplay && biomoleculeToDisplay.structure) {
-            if(biomoleculeToDisplay.type === 'gag') {
-                tabConfig.push({label: 'GAG Sequence', renderContent: () => biomoleculeToDisplay.structure });
-            }
-        }
 
         if(biomoleculeToDisplay && biomoleculeToDisplay.subcellularLocation) {
             tabConfig.push({label: 'Cellular Location', renderContent: () => biomoleculeToDisplay.subcellularLocation.replaceAll(',', ', ') });

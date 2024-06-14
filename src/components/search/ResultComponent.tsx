@@ -8,12 +8,10 @@ import {
     Typography
 } from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faAtom, faBook} from "@fortawesome/free-solid-svg-icons";
+import {faAtom, faBook, faArrowTurnUp, faArrowTurnDown} from "@fortawesome/free-solid-svg-icons";
 import SpeciesIcon from "../commons/icons/SpeciesIcon";
 import LogoIcon from "../commons/icons/LogoIcon";
 import {InfoOutlined} from "@mui/icons-material";
-import AssociationListComponent from "../tables/AssociationListComponent";
-import AssociationNetworkComponent from "../networks/AssociationNetworkComponent";
 
 function ResultDetailsComponent(props: any) {
 
@@ -59,34 +57,55 @@ function ResultDetailsComponent(props: any) {
                     justifyContent: 'center',
                     paddingTop: '20px',
                 }}>
-                    <div style={{
-                        display: 'flex'
+                    <Paper style={{
+                        padding: '10px',
+                        textAlign: 'center',
+                        marginBottom: '20px',
+                        width: '98%',
+                        minWidth: '1000px',
+                        borderRadius: 0
                     }}>
-                        <Tabs value={0} onChange={() => {}} centered>
-                            {
-                                <Tab
-                                    label="Biomolecules"
-                                    icon={<IconButton>
-                                        <FontAwesomeIcon icon={faAtom} size={"2xs"}/>
-                                    </IconButton>}
-                                    iconPosition="start"
-                                    style={{ padding: '4px', margin: '0' }}
-                                />
-                            }
-                            {
-                                <Tab
-                                    label="Publications"
-                                    icon={<IconButton>
-                                        <FontAwesomeIcon icon={faBook} size={"2xs"}/>
-                                    </IconButton>}
-                                    iconPosition="start"
-                                />
-                            }
-                        </Tabs>
-                    </div>
-                    <div style={{
-                        display: 'flex'
-                    }}>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <div style={{
+                                display: 'flex'
+                            }}>
+                                <Tooltip title="See Less">
+                                    <IconButton onClick={props.onSeeLess}>
+                                        <FontAwesomeIcon icon={faArrowTurnUp}  size={'xs'}/>
+                                    </IconButton>
+                                </Tooltip>
+                            </div>
+                            <div style={{
+                                display: 'flex'
+                            }}>
+                                <Tabs value={0} onChange={() => {}} centered>
+                                    {
+                                        <Tab
+                                            label="Biomolecules"
+                                            icon={<IconButton>
+                                                <FontAwesomeIcon icon={faAtom} size={"2xs"}/>
+                                            </IconButton>}
+                                            iconPosition="start"
+                                            style={{ padding: '4px', margin: '0' }}
+                                        />
+                                    }
+                                    {
+                                        <Tab
+                                            label="Publications"
+                                            icon={<IconButton>
+                                                <FontAwesomeIcon icon={faBook} size={"2xs"}/>
+                                            </IconButton>}
+                                            iconPosition="start"
+                                        />
+                                    }
+                                </Tabs>
+                            </div>
+                        </div>
                         <TabPanel value={tabValue} index={0}>
                             <div style={{
                                 display: 'flex',
@@ -111,7 +130,8 @@ function ResultDetailsComponent(props: any) {
                                                 }}>
                                                     <div style={{
                                                         display: 'flex',
-                                                        flexDirection: 'row'
+                                                        flexDirection: 'row',
+                                                        width: '500px'
                                                     }}>
                                                         {result.species && <div style={{ flex: '10%',paddingRight: '10px' }}>
                                                             <SpeciesIcon
@@ -130,7 +150,10 @@ function ResultDetailsComponent(props: any) {
                                                             </div>
                                                         )}
                                                         <div style={{
-                                                            width: '70%'
+                                                            width: '70%',
+                                                            display: 'flex',
+                                                            justifyContent: 'left',
+                                                            alignItems: 'left'
                                                         }}>
                                                             <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                                                                 <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/" + result.biomolecule_id}>
@@ -223,7 +246,7 @@ function ResultDetailsComponent(props: any) {
                                 }
                             </div>
                         </TabPanel>
-                    </div>
+                    </Paper>
                 </div>
         }
         </>
@@ -257,14 +280,13 @@ const TruncatedListItemText: React.FC<TruncatedListItemTextProps> = ({ text, url
 
 function ResultComponent(props : any) {
 
+    const [viewMode, setViewMode] = useState<string>("relevant");
     const [expandBiomolecules, setExpandBiomolecules] = useState<boolean>(false);
     const [expandPublications, setExpandPublications] = useState<boolean>(false);
 
     const truncateText = (text : string, maxLength: number) => {
         return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
     };
-
-    const showExpanded = () => expandBiomolecules || expandPublications;
 
     const displayName = (biomolecule: any) => {
         if(biomolecule.recommended_name) {
@@ -285,15 +307,23 @@ function ResultComponent(props : any) {
         }
     }
 
+    const onSeeMore = () => {
+        setViewMode("DETAILED");
+    }
+
+    const onSeeLess = () => {
+        setViewMode("NORMAL");
+    }
+
     return (
         <>
             {
-                !showExpanded() && <>
+                viewMode !== 'DETAILED' && <>
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        paddingTop: '30px'
+                        paddingTop: '5px'
                     }}>
                         {props.searchResults.biomolecules && props.searchResults.biomolecules.length > 0 &&
                             <Paper style={{
@@ -301,7 +331,8 @@ function ResultComponent(props : any) {
                                 textAlign: 'center',
                                 marginBottom: '20px',
                                 width: '98%',
-                                minWidth: '1000px'
+                                minWidth: '1000px',
+                                borderRadius: 0
                             }}>
                                 <div style={{
                                     background: 'rgb(225, 235, 252)',
@@ -337,7 +368,7 @@ function ResultComponent(props : any) {
                                                     <div key={index} style={{
                                                         display: 'flex',
                                                         marginBottom: '10px',
-                                                        width: '400px'
+                                                        width: '500px'
                                                     }}>
                                                         {result.species && (
                                                             <div style={{ flex: '10%', paddingRight: '10px' }}>
@@ -422,7 +453,7 @@ function ResultComponent(props : any) {
                                                     <Typography>
                                                         <div key={index} style={{
                                                             display: 'flex',
-                                                            width: '400px',
+                                                            width: '500px',
                                                             marginBottom: '10px'
                                                         }}>
                                                             {result.species && (
@@ -509,13 +540,11 @@ function ResultComponent(props : any) {
                                 }}>
                                     {
                                         props.searchResults.biomolecules && props.searchResults.biomolecules.length > 10 &&
-                                        <span style={{
-                                            color: 'blue',
-                                            textDecoration: 'underline',
-                                            cursor: 'pointer'
-                                        }} onClick={() => setExpandBiomolecules(true)}>
-                                            See more ...
-                                        </span>
+                                        <Tooltip title="See More">
+                                            <IconButton onClick={() => onSeeMore()}>
+                                                <FontAwesomeIcon icon={faArrowTurnDown}  size={'xs'}/>
+                                            </IconButton>
+                                        </Tooltip>
                                     }
                                 </div>
                             </Paper>
@@ -628,7 +657,11 @@ function ResultComponent(props : any) {
                 </>
             }
             {
-                showExpanded() && <ResultDetailsComponent searchResults={props.searchResults.biomolecules}/>
+                viewMode === 'DETAILED' &&
+                <ResultDetailsComponent
+                    searchResults={props.searchResults.biomolecules}
+                    onSeeLess={onSeeLess}
+                />
             }
         </>
     );

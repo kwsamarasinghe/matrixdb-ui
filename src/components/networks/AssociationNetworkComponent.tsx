@@ -72,9 +72,11 @@ function AssociationOverview(props: any) {
                             {association.id && association.id}
                         </a>
                     </Typography>
-                    {association.score && association.score!== 0 && <Typography variant="body2">
-                        <strong>Score: {association.score} </strong>
-                    </Typography>}
+                    {
+                        association.score && association.score!== 0 && <Typography variant="body2">
+                            <strong>Score: {association.score} </strong>
+                        </Typography>
+                    }
                     {
                         association.type && association.type === 2 && <Typography variant="body2" color="#946011">
                             <strong>Predicted</strong>
