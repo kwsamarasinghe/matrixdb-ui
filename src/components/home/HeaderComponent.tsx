@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-
 import {AppBar, Toolbar, useTheme} from "@mui/material";
 import logo from "../../assets/images/matrixdb_logo_medium.png";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNodes} from '@fortawesome/free-solid-svg-icons';
-import {faDownload} from '@fortawesome/free-solid-svg-icons';
-import {faInfo} from '@fortawesome/free-solid-svg-icons';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import {saveToLocalStorage} from "../../commons/memory-manager";
 
 interface HeaderProps {
     pageDetails: {
@@ -18,7 +16,6 @@ interface HeaderProps {
 
 function Header(props: HeaderProps) {
 
-
     const {pageDetails} = props;
     const [selectedBiomolecules, setSelectedBiomolecules] = useState<string[]>([]);
     const [biomoleculeAdded, setBiomoleculeAdded] = useState(false);
@@ -28,13 +25,15 @@ function Header(props: HeaderProps) {
         setSelectedBiomolecules(getFromLocalStorage("selectedBiomolecules"));
     }, []);
 
-    const saveToLocalStorage = (key: string, data: any) => {
-        try {
-            localStorage.setItem(key, JSON.stringify(data));
-        } catch (error) {
-            console.error('Error saving to local storage:', error);
+    useEffect(() => {
+        let currentBiomoleculeId = props.pageDetails.id;
+        if(currentBiomoleculeId && selectedBiomolecules) {
+            let selectedBiomoleculeIds = selectedBiomolecules.map((biomolecule: any) => biomolecule.id);
+            if(selectedBiomoleculeIds.includes(currentBiomoleculeId)) {
+                setBiomoleculeAdded(true);
+            }
         }
-    };
+    }, [props.pageDetails, selectedBiomolecules]);
 
     const getFromLocalStorage = (key: string) => {
         try {
@@ -48,15 +47,31 @@ function Header(props: HeaderProps) {
 
     const onBiomoleculeAdd = () => {
         if(pageDetails && pageDetails.id) {
-            setBiomoleculeAdded(true);
-            let selected = getFromLocalStorage("selectedBiomolecules");
-            if(!selected) selected = [];
-            saveToLocalStorage("selectedBiomolecules", [...selected, pageDetails.id])
+            if(biomoleculeAdded) {
+                goToExplorer();
+            } else {
+                setBiomoleculeAdded(true);
+                let selected = getFromLocalStorage("selectedBiomolecules");
+                if(!selected) selected = [];
+
+                if(!selected.includes(pageDetails.id)) {
+                    saveToLocalStorage("selectedBiomolecules", [...selected, pageDetails.id]);
+                }
+            }
         }
     }
 
     const goToExplorer = () => {
         navigate("/networks")
+    }
+
+    const isBiomoleculeAdded = () => {
+        let selected = getFromLocalStorage("selectedBiomolecules");
+        return selected && selected.includes(pageDetails.id);
+    }
+
+    const getBiomoleculeCount = () => {
+        return getFromLocalStorage("selectedBiomolecules").length;
     }
 
     const theme = useTheme();
@@ -74,30 +89,43 @@ function Header(props: HeaderProps) {
                     </div>
                 </a>
                 <div style={{ marginLeft: 'auto' }}>
-                    {pageDetails.type === 'biomolecule' && <button style={{ color: 'white', background: 'transparent', border: 'none', cursor: 'pointer', position: 'relative', marginRight: '10px' }}
-                            title={"Add " + pageDetails.id +" to Explorer"}
-                            onClick={onBiomoleculeAdd}
-                    >
-                        <FontAwesomeIcon
-                            icon={faCircleNodes}
-                            style={{ fontSize: '1.5em' }}
-                            color={!biomoleculeAdded ? 'green': 'blue' }
-
-                        />
-                        {!biomoleculeAdded && <FontAwesomeIcon
-                            icon={faPlus}
-                            style={{ position: 'absolute', top: '-8px', fontSize: '0.8em' }}
-                            color={'green'}
-                        />}
-                        {selectedBiomolecules && selectedBiomolecules.length > 0 && (
-                            <div style={{ position: 'absolute', top: '-8px', fontSize: '0.8em', color: 'green' }}>
-                                {selectedBiomolecules.length}
-                            </div>
-                        )}
-                    </button>}
-
                     {
-                        pageDetails.type !== 'biomolecule' &&
+                        pageDetails.type === 'biomolecule' &&
+                        <button style={{
+                            color: 'white',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            position: 'relative',
+                            marginRight: '10px'
+                        }}
+                            title={isBiomoleculeAdded() ? "Go to Explorer" : "Add " + pageDetails.id +" to Explorer"}
+                            onClick={onBiomoleculeAdd}
+                        >
+                            <FontAwesomeIcon
+                                icon={faCircleNodes}
+                                style={{ fontSize: '1.5em' }}
+                                color={!isBiomoleculeAdded() ? 'green': 'white' }
+                            />
+                            {
+                                !isBiomoleculeAdded() &&
+                                <FontAwesomeIcon
+                                    icon={faPlus}
+                                    style={{ position: 'absolute', top: '-8px', fontSize: '0.8em' }}
+                                    color={'green'}
+                                />
+                            }
+                            {
+                                selectedBiomolecules && selectedBiomolecules.length > 0 && (
+                                    <div style={{ position: 'absolute', top: '-8px', fontSize: '0.8em', color: 'white' }}>
+                                        {getBiomoleculeCount()}
+                                    </div>
+                                )
+                            }
+                        </button>
+                    }
+                    {
+                        pageDetails.type !== 'biomolecule' && pageDetails.type !== 'network' &&
                         <button style={{
                             color: 'white',
                             background: 'transparent',

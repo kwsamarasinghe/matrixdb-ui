@@ -16,6 +16,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import HelpDrawerComponent from "../help/HelpDrawerComponent";
 import BiomoleculeSelectionComponent from "./BiomoleculeSelectionComponent";
+import {getFromLocalStorage} from "../../commons/memory-manager";
 
 const mapStateToProps = (state: RootState) => ({
     currentState: state.currentState,
@@ -52,28 +53,14 @@ const NetworkExplorer: React.FC<any> = ({
     } as React.CSSProperties;
 
     useEffect(() => {
-        let biomoelcules = getFromLocalStorage("selectedBiomolecules");
-        if(!biomoelcules) biomoelcules = [];
-        setBiomolecules(biomolecules);
+        let biomolecules = getFromLocalStorage("selectedBiomolecules");
+        if(!biomolecules) biomolecules = [];
+
+        http.get(`/search?query=id:${biomolecules.join(',')}&mode=1`)
+            .then((searchResponse) => {
+                setBiomolecules(searchResponse.data.biomolecules);
+            });
     }, []);
-
-    const getFromLocalStorage = (key: string) => {
-        try {
-            const storedData = localStorage.getItem(key);
-            return storedData ? JSON.parse(storedData) : null;
-        } catch (error) {
-            console.error('Error retrieving from local storage:', error);
-            return null;
-        }
-    };
-
-    const saveToLocalStorage = (key: string, data: any) => {
-        try {
-            localStorage.setItem(key, JSON.stringify(data));
-        } catch (error) {
-            console.error('Error saving to local storage:', error);
-        }
-    };
 
     const onSelectionChange = (selectedBiomolecules: any) => {
         setSelectedBiomolecules(selectedBiomolecules);
