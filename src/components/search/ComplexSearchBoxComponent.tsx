@@ -293,15 +293,41 @@ function ComplexSearchBoxComponents(props: any) {
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
                 <div style={{
-                    paddingLeft: "5px",
-                    paddingRight: "5px"
+                    display: "flex",
+                    flexDirection: "row",
+                    paddingLeft: "10px",
+                    paddingTop: "10px",
+                    paddingBottom: "10px"
                 }}>
-                    <SearchBoxComponent
-                        onClickSearch={onClickSearch}
-                        onPressEnter={onPressEnter}
-                        onSearchTextChange={onSearchTextChange}
-                        searchQuery={searchQuery}
-                    />
+                    <div style={{
+                        display: "flex",
+                        width: "95%"
+                    }}>
+                        <SearchBoxComponent
+                            onClickSearch={onClickSearch}
+                            onPressEnter={onPressEnter}
+                            onSearchTextChange={onSearchTextChange}
+                            searchQuery={searchQuery}
+                        />
+                    </div>
+                    <div style={{
+                        display: "flex",
+                        width: "5%",
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}>
+                        <IconButton
+                            onClick={() => setOpenHelp(true)}
+                            size={'small'}
+                        >
+                            <HelpOutlineIcon/>
+                        </IconButton>
+                        <HelpDrawerComponent
+                            helpType="SEARCH"
+                            open={openHelp}
+                            onClose={() => setOpenHelp(false)}
+                        />
+                    </div>
                 </div>
                 <div style={{
                     display: "flex",
