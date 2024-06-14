@@ -27,8 +27,6 @@ function BiomoleculeComponent() {
     const [showInteractions, setShowInteractions] = useState(false);
     const [showStrctures, setShowStructures] = useState(false);
     const [showKeywords, setShowKeywords] = useState(false);
-
-
     const [biomolecule, setBiomolecule] = useState<any>(null);
 
     useEffect(() => {
@@ -62,11 +60,6 @@ function BiomoleculeComponent() {
         setShowInteractions(true);
     }
 
-    const handleSearch = () => {
-        // handle search logic
-    };
-
-    const theme = useTheme();
 
     return(
         <>{

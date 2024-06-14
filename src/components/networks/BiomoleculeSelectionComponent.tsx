@@ -4,6 +4,7 @@ import BiomoleculeFilter from "./biomolecule-filter/BiomoleculeFilter";
 import React, {useEffect, useState} from "react";
 import NetworkParticipantBoard from "./NetworkParticipantBoardComponent";
 import BiomoleculeCard from "../commons/cards/BiomoleculeCards";
+import {getFromLocalStorage, saveToLocalStorage} from "../../commons/memory-manager";
 
 const BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
 
@@ -40,6 +41,9 @@ const BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
     const onBimoleculeAdd = (biomolecule: any) => {
         let newSelectedBiomolecules = [...selectedBiomolecules, biomolecule];
         setSelectedBiomolecules(newSelectedBiomolecules);
+
+        let biomolecules = getFromLocalStorage("selectedBiomolecules");
+        saveToLocalStorage("selectedBiomolecules", [...biomolecules, biomolecule.biomolecule_id]);
         props.onSelectionChange(newSelectedBiomolecules);
     }
 

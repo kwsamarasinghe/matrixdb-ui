@@ -16,8 +16,8 @@ function SearchComponent() {
     const [searchDone, setSearchDone] = useState(false);
     const [searchMode, setSearchMode] = useState<string>('0');
     const [searchResults, setSearchResults] = useState<any>({});
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const location = useLocation();
     const currentPath = location.pathname;
 
