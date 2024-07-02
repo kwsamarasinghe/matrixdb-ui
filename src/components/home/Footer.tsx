@@ -39,7 +39,7 @@ function Footer() {
                         <Grid item xs={12} sm={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <ul style={{ listStyleType: 'none', padding: 0, textAlign: 'right', fontSize: '14px', margin: 0 }}>
                                 <li style={{ margin: '5px 0' }}>
-                                    <a style={{ color: 'white', textDecoration: 'none' }} href="/networks">About MatrixDB</a>
+                                    <a style={{ color: 'white', textDecoration: 'none' }} href="/about">About MatrixDB</a>
                                 </li>
                                 <li style={{ margin: '5px 0' }}>
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/networks">Downloads</a>
