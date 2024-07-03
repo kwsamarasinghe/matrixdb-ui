@@ -1,9 +1,18 @@
-const saveToLocalStorage = (key: string, data: any) => {
-    try {
-        localStorage.setItem(key, JSON.stringify(data));
-    } catch (error) {
-        console.error('Error saving to local storage:', error);
-    }
+const arraysEqual = (arr1: any[], arr2: any[]) => {
+    if (arr1.length !== arr2.length) return false;
+
+    let isEqual = arr1.map((item: string) => arr2.includes(item))
+        .reduce((a: boolean, b: boolean) => a && b, true);
+    return isEqual;
+}
+
+const saveToLocalStorage = (key: string, newData: any) => {
+    let existingData = localStorage.getItem(key);
+    let dataArray = existingData ? JSON.parse(existingData) : [];
+
+    let existingSet = new Set(dataArray);
+    newData.forEach((biomoleculeId: string) => existingSet.add(biomoleculeId));
+    localStorage.setItem(key, JSON.stringify([...existingSet]));
 };
 
 const getFromLocalStorage = (key: string) => {
