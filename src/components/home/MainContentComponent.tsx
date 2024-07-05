@@ -100,7 +100,7 @@ function MainContentComponent() {
                     { row: 'PFRAG', column: 'Other', value: interactionData.pfrag_other ||  0},
                     { row: 'GAG', column: 'Other', value: interactionData.gag_other || 0},
                     { row: 'Multimer', column: 'Other', value: interactionData.multimer_other || 0 },
-                    { row: 'Other', column: 'Other', value: 0 },
+                    { row: 'Other', column: 'Other', value: interactionData.other_other || 0 },
                 ];
                 setInteractionStatistics(interactionStatistics);
                 setProteinProteinInteractionStatistics({
@@ -261,7 +261,7 @@ function MainContentComponent() {
                                     </Typography>
                                     <BiomoleculeCircularDisplayComponent
                                         biomoleculeStatistics={biomoleculeStatistics}
-                                        width={240}
+                                        width={400}
                                         height={240}
                                     />
                                 </Card>
