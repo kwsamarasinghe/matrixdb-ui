@@ -255,23 +255,15 @@ function AboutComponent() {
                                         fontWeight: 'bold'
                                     }}
                                 >
-                                    Interactions and experiments
+                                    Interactions
                                 </Typography>
                                 <Typography variant="body2">
                                     MatrixDB uses the following naming convention for interactions: identifiers of the biomolecules in alphanumerical order, separated by two underscores. Experiment identifiers begin the same way, and are followed by the PMID (PubMed Identifier), the name of the source database, and a counter (starts at 1, useful when a single source database documents several experiments curated from the same publication and supporting the same interaction). These three fields are underscore-separated.
                                 </Typography>
                                 <Typography variant="body2">Example interactions:</Typography>
                                 <ul>
-                                    <Typography variant="body2" component="li">CAT_1__P05067</Typography>
-                                    <Typography variant="body2" component="li">A0AVK6__P05067</Typography>
-                                    <Typography variant="body2" component="li">A4JYD4__A8BBG3</Typography>
-                                </ul>
-                                <Typography variant="body2">Example experiments:</Typography>
-                                <ul>
-                                    <Typography variant="body2" component="li">CAT_1__P05067_7929392_MatrixDB_1</Typography>
-                                    <Typography variant="body2" component="li">A0AVK6__P05067_21832049_InnateDB_1</Typography>
-                                    <Typography variant="body2" component="li">A4JYD4__A8BBG3_19765300_IntAct_1</Typography>
-                                    <Typography variant="body2" component="li">A4JYD4__A8BBG3_19765300_IntAct_2</Typography>
+                                    <Typography variant="body2" component="li">CAT_1__O54943</Typography>
+                                    <Typography variant="body2" component="li">O15496__P12109</Typography>
                                 </ul>
                             </div>
                         </div>
