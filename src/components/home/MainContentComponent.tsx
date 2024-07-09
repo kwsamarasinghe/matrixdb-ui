@@ -12,6 +12,7 @@ import cytoscapeLogo from "../../assets/images/cytoscape.png";
 import ProteinProteinInteractionComponent from "../statistics/ProteinProteinInteractionComponent";
 import LogoIcon from "../commons/icons/LogoIcon";
 import BiomoleculeBySpeciesComponent from "../statistics/BiomoleculeBySpecies";
+import CirclePacking from "../statistics/BiomoleculeBySpeciesCirclePacking";
 
 
 function MainContentComponent() {
@@ -161,12 +162,12 @@ function MainContentComponent() {
                     }}>
                     MatrixDB Content
                 </Typography>
-                <div style={{
+                {/*<div style={{
                     display: 'flex',
                     width: '70%'
-                }}>
+                }}>*/}
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12} md={6}>
                             {
                                 interactionStatistics && interactionStatistics.length > 0 &&
                                 <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
@@ -191,7 +192,7 @@ function MainContentComponent() {
                                 </Card>
                             }
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12} md={6}>
                             {proteinProteinInteractionStatistics && <Card
                                 style={{
                                     flex: '1',
@@ -230,15 +231,15 @@ function MainContentComponent() {
                             </Card>}
                         </Grid>
                     </Grid>
-                </div>
-                <div
+                {/*</div>*/}
+                {/*<div
                     style={{
                         display: 'flex',
                         width: '70%'
                     }}
-                >
+                >*/}
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12} md={6}>
                             {statistics.biomolecules &&
                                 <Card
                                     style={{
@@ -267,7 +268,7 @@ function MainContentComponent() {
                                 </Card>
                             }
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12} md={6}>
                             {statistics.biomolecules && <Card style={{ flex: '1', margin: '10px', ...cardStyle }}>
                                 <Typography
                                     component="div"
@@ -281,13 +282,13 @@ function MainContentComponent() {
                                     }}>
                                     Protein, Multimer & Protein Fragments by Species
                                 </Typography>
-                                <BiomoleculeBySpeciesComponent
+                                <CirclePacking
                                     biomoleculeStatistics={biomoleculeStatistics}
                                 />
                             </Card>}
                         </Grid>
                     </Grid>
-                </div>
+                {/*}</div>*/}
             </div>
 
             <div style={{
