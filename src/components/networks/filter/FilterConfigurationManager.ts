@@ -45,7 +45,7 @@ export class FilterConfigurationManager {
             },
             {
                 id: 'ecm',
-                label: 'ECM Protein',
+                label: 'ECM Biomolecule',
                 options: {
                     type: FilterOptionType.list,
                     range: []
