@@ -11,6 +11,7 @@ import StatisticsComponent from "./components/statistics/StatisticsComponent";
 import NetworkExplorer from "./components/networks/NetworkExplorerComponent";
 import PublicationComponent from "./components/publications/PublicationComponent";
 import AboutComponent from "./components/about/AboutComponent";
+import DownloadComponent from "./components/download/DownloadComponent";
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/publication/:publicationId" element={<PublicationComponent/>} />
                 <Route path="/statistics/" element={<StatisticsComponent/>} />
                 <Route path="/networks/" element={<NetworkExplorer/>} />
+                <Route path="/downloads/" element={<DownloadComponent/>} />
             </Routes>
         </div>
       );

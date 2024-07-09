@@ -131,7 +131,7 @@ function ResultDetailsComponent(props: any) {
                                                     <div style={{
                                                         display: 'flex',
                                                         flexDirection: 'row',
-                                                        width: '500px'
+                                                        width: '800px'
                                                     }}>
                                                         {result.species && <div style={{ flex: '10%',paddingRight: '10px' }}>
                                                             <SpeciesIcon
@@ -155,11 +155,9 @@ function ResultDetailsComponent(props: any) {
                                                             justifyContent: 'left',
                                                             alignItems: 'left'
                                                         }}>
-                                                            <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                                                                <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/" + result.biomolecule_id}>
-                                                                    {displayName(result)}
-                                                                </a>
-                                                            </Typography>
+                                                            <a href={process.env.REACT_APP_PUBLIC_URL + "biomolecule/" + result.biomolecule_id}>
+                                                                {displayName(result)}
+                                                            </a>
                                                         </div>
                                                         <div style={{
                                                             width: '20%'

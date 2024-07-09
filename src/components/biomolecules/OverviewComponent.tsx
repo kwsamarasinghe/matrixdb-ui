@@ -366,7 +366,7 @@ function OverviewComponent(props: any) {
                                 <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Sequence Length</h4></TableCell>
                                 <TableCell style={cellStyles}>
                                     {
-                                        biomoleculeToDisplay?.molecularDetails.sequence_length
+                                        biomoleculeToDisplay?.molecularDetails?.sequence_length
                                     }
                                 </TableCell>
                             </Grid>}
@@ -375,7 +375,7 @@ function OverviewComponent(props: any) {
                                 {
                                     <TableCell style={cellStyles}>
                                         {
-                                            biomoleculeToDisplay.molecularDetails.stochiometry
+                                            biomoleculeToDisplay.molecularDetails?.stochiometry
                                                     .map((stochiometry: any, index: number) => (
                                                         <span key={index}>
                                                             {`${stochiometry.min} `}
@@ -417,31 +417,39 @@ function OverviewComponent(props: any) {
                         isExpanded && biomoleculeToDisplay && biomoleculeToDisplay.type === 'gag' &&
                         <>
                             <Tabs value={molecularDetailTabValue} onChange={handleMDTabChange}>
-                                <Tab key={0} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
-                                    Symbol Nomenclature For Glycans
-                                </Typography>} />
-                                <Tab key={1} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
-                                    GlycoCT
-                                </Typography>} />
+                                {biomoleculeToDisplay.molecularDetails?.snfg &&
+                                    <Tab key={0} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
+                                        Symbol Nomenclature For Glycans
+                                    </Typography>} />
+                                }
+                                {biomoleculeToDisplay.molecularDetails?.glycoCT &&
+                                    <Tab key={1} label={<Typography variant="h6" style={{ textTransform: 'none', fontSize: '1rem' }}>
+                                        GlycoCT
+                                    </Typography>} />
+                                }
                             </Tabs>
-                            <TabPanel key={0} value={molecularDetailTabValue} index={0}>
-                                <div style={{paddingTop: '10px'}}>
-                                    <Paper style={{ width: '400px'}}>
-                                        <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.molecularDetails.snfg} style={{ width: '400px'}}/>
-                                    </Paper>
-                                </div>
-                            </TabPanel>
-                            <TabPanel key={1} value={molecularDetailTabValue} index={1}>
-                                <div style={{paddingTop: '10px'}}>
-                                    <Paper style={{ width: '400px', maxHeight: '200px', overflow: 'auto'}}>
-                                        {
-                                            biomoleculeToDisplay.molecularDetails.glycoCT.split('@').map((line: string, index: number) => (
-                                                <Typography key={index}>{line}</Typography>
-                                            ))
-                                        }
-                                    </Paper>
-                                </div>
-                            </TabPanel>
+                            {biomoleculeToDisplay.molecularDetails?.snfg &&
+                                <TabPanel key={0} value={molecularDetailTabValue} index={0}>
+                                    <div style={{paddingTop: '10px'}}>
+                                        <Paper style={{ width: '400px'}}>
+                                            <img src={process.env.REACT_APP_PUBLIC_URL + "img/snfg_img/"+biomoleculeToDisplay.molecularDetails?.snfg} style={{ width: '400px'}}/>
+                                        </Paper>
+                                    </div>
+                                </TabPanel>
+                            }
+                            {biomoleculeToDisplay.molecularDetails?.glycoCT &&
+                                <TabPanel key={1} value={molecularDetailTabValue} index={1}>
+                                    <div style={{paddingTop: '10px'}}>
+                                        <Paper style={{ width: '400px', maxHeight: '200px', overflow: 'auto'}}>
+                                            {
+                                                biomoleculeToDisplay.molecularDetails?.glycoCT.split('@').map((line: string, index: number) => (
+                                                    <Typography key={index}>{line}</Typography>
+                                                ))
+                                            }
+                                        </Paper>
+                                    </div>
+                                </TabPanel>
+                            }
                         </>
                     }
             </Paper>

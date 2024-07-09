@@ -202,7 +202,9 @@ function ComplexSearchBoxComponents(props: any) {
     }
 
     const onPressEnter = (e: React.KeyboardEvent, searchQuery: string) =>{
-        props.onLaunchSearch(searchQuery, searchMode);
+        if(!searchQuery) return;
+        let clearedSearchQuery = searchQuery.replace(/:\s+/g, ':');
+        props.onLaunchSearch(clearedSearchQuery, searchMode);
     }
 
     const onClickSearch = (query: string) => {
