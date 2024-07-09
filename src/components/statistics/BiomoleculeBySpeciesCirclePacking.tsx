@@ -115,12 +115,11 @@ const CirclePacking: React.FC<any> = (props: any) => {
 
         const tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
-            .style("position", "absolute")
-            .style("padding", "6px")
-            .style("background", "rgba(0, 0, 0, 0.6)")
-            .style("color", "white")
-            .style("border-radius", "4px")
-            .style("pointer-events", "none")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "2px")
+            .style("border-radius", "5px")
+            .style("padding", "5px")
             .style("visibility", "hidden");
 
         const node = svg.append("g")
