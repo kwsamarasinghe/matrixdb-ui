@@ -42,7 +42,7 @@ function Footer() {
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/about">About MatrixDB</a>
                                 </li>
                                 <li style={{ margin: '5px 0' }}>
-                                    <a style={{ color: 'white', textDecoration: 'none' }} href="/networks">Downloads</a>
+                                    <a style={{ color: 'white', textDecoration: 'none' }} href="/downloads">Downloads</a>
                                 </li>
                                 <li style={{ margin: '5px 0' }}>
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/networks">Network Explorer</a>
