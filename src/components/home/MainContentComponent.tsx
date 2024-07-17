@@ -258,7 +258,7 @@ function MainContentComponent() {
                                             marginBottom: '10px',
                                             fontWeight: 'bold'
                                         }}>
-                                        Biomolecules {statistics.biomolecules.all }
+                                        <a href={"/about"}>Biomolecules </a> ({statistics.biomolecules.all })
                                     </Typography>
                                     <BiomoleculeCircularDisplayComponent
                                         biomoleculeStatistics={biomoleculeStatistics}

@@ -1,9 +1,10 @@
-import {Card, CardContent, Typography} from "@mui/material";
+import {Card, CardContent, IconButton, Tooltip, Typography} from "@mui/material";
 import SpeciesIcon from "../icons/SpeciesIcon";
 import LogoIcon from "../icons/LogoIcon";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import React from "react";
+import DoneIcon from '@mui/icons-material/Done';
 
 const getSpeciesNCBI = (biomolecule: any) => {
     if(biomolecule.species) {
@@ -171,11 +172,25 @@ const BiomoleculeCard: React.FC<any> = (props: any) => {
                                 {
                                     !selected &&
                                     <div style={{display: "flex"}}>
-                                        <AddCircleIcon
-                                            fontSize="small"
-                                            style={{ cursor: 'pointer', color: 'green' }}
-                                            onClick={onBiomoleculeAdd}>
-                                        </AddCircleIcon>
+                                        <Tooltip title="Remove from biomolecules">
+                                            <IconButton
+                                                onClick={() => props.onBiomoleculeRemove(props.biomolecule)}
+                                                style={{color: 'red'}}
+                                                aria-label="Remove"
+                                            >
+                                                <DeleteIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Select as participants">
+                                            <IconButton
+                                                onClick={() => props.onParticipantAdd(props.biomolecule)}
+                                                size="small"
+                                                style={{color: 'green'}}
+                                                aria-label="Add"
+                                            >
+                                                <DoneIcon/>
+                                            </IconButton>
+                                        </Tooltip>
                                     </div>
                                 }
                             </>
