@@ -165,11 +165,11 @@ function CytoscapeComponent(props: any) {
         minTemp: 1.0
     }
 
-    let cy : any = null;
+    const cy = useRef(cytoscape());
 
     const generateDownloadLink = () => {
-        if(cy) {
-            const base64URI = cy.png();
+        if(cy.current) {
+            const base64URI = cy.current.png();
             const link = document.createElement('a');
             link.href = base64URI;
             link.download = `${biomoleculeId}-interactions-cytoscape-graph.png`;
@@ -178,8 +178,8 @@ function CytoscapeComponent(props: any) {
     };
 
     const generateCytoscapeLink = () => {
-        if(cy) {
-            const jsonGraph = JSON.stringify(cy.json());
+        if(cy.current) {
+            const jsonGraph = JSON.stringify(cy.current.json());
             const base64URI = `data:application/json;base64,${btoa(jsonGraph)}`;
             const link = document.createElement('a');
             link.href = base64URI;
@@ -353,134 +353,132 @@ function CytoscapeComponent(props: any) {
             elements.push(...participantsToDraw);
             elements.push(...associationsToDraw);
 
-            if (!cy) {
-                let layout;
-                if (filteredParticipants.size < 20) {
-                    layout = circularLayout;
-                } else {
-                    layout = coseLayout;
-                }
-                console.log("cytoscape initializting")
-                cy = cytoscape({
-                    container: cyRef.current,
-                    elements: elements,
-                    layout: layout,
-                    style: [
-                        {
-                            selector: 'node[id="' + biomoleculeId + '"]',
-                            style: {
-                                label: 'data(label)',
-                                width: "20px",
-                                height: "20px",
-                                'background-color': "green !important",
-                                'text-valign': 'center',
-                                'text-halign': 'center',
-                                'font-size': '10px',
-                                'font-family': 'Arial',
-                                'text-outline-color': '#000',
-                            }
-                        },
-                        {
-                            selector: 'node[type="interactor"]',
-                            style: {
-                                width: "10px",
-                                height: "10px",
-                                'background-color': "green",
-                            },
-                        },
-                        {
-                            selector: 'node[type="protein"]',
-                            style: {
-                                'background-color': "#f89406",
-                            },
-                        },
-                        {
-                            selector: 'node[type="gag"]',
-                            style: {
-                                'background-color': "#018FD5",
-                            },
-                        },
-                        {
-                            selector: 'node[type="multimer"]',
-                            style: {
-                                'background-color': "#6a09c5",
-                            },
-                        },
-                        {
-                            selector: 'node[type="pfrag"]',
-                            style: {
-                                'background-color': "#f5e214",
-                            },
-                        },
-                        {
-                            selector: 'edge',
-                            style: {
-                                width: "1px",
-                                'line-color': '#313030'
-                            },
-                        },
-                        {
-                            selector: 'edge[type="predicted"]',
-                            style: {
-                                width: "1px",
-                                'line-color': 'red'
-                            },
-                        },
-                    ],
-                    userZoomingEnabled: false,
-                });
-                console.log("cytoscape done")
-                // Calculate node size based on degree
-                const nodes = cy.nodes();
-                let maxDegree = 0;
-
-                console.log("Starting to calculate")
-                nodes.forEach((node: any) => {
-                    const degree = node.degree(true);
-                    if (degree > maxDegree) {
-                        maxDegree = degree;
-                    }
-                });
-                console.log("Calculate the max degree " + maxDegree);
-
-                nodes.forEach((node: any) => {
-                    const degree = node.degree(true);
-                    const nodeSize = 20 + (20 * (degree / maxDegree));
-
-                    node.style('width', nodeSize).style('height', nodeSize);
-                });
-                console.log("Calculated the node size")
-                cy.zoom(1.5);
-
-                cy.on('click', 'node', function (event: any) {
-                    const node = event.target;
-                    let nodeId = parseInt(node.id());
-                    let selectedPartner = participants.filter((p: any) => p.id === nodeId)[0];
-                    let sortedIds = [props.biomoleculeId, context.interactors.interactor_mapping[selectedPartner.id]].sort();
-                    let selectedInteraction = associations.find((association: any) => association.id === sortedIds[0] + '__' + sortedIds[1]);
-                    if (selectedInteraction) {
-                        setSelectedInteraction(selectedInteraction);
-                        setSelectedPartner(null);
-                    }
-                });
-
-                cy.on('mouseover', 'node', function (event: any) {
-                    const node = event.target;
-                    let nodeId = parseInt(node.id());
-                    let selectedPartner = participants.filter((p: any) => p.id === nodeId)[0];
-                    let newSelectedPartner = JSON.parse(JSON.stringify(selectedPartner))
-                    if (selectedPartner) {
-                        newSelectedPartner.biomoleculeId = context.interactors.interactor_mapping[nodeId];
-                        setSelectedPartner(newSelectedPartner);
-                        setSelectedInteraction(null);
-                    }
-                });
-
-                cy.on('mouseout', 'node', function (event: any) {
-                    const node = event.target;
-                    //alert(`Mouseout on node: ${node.id()}`);
-                });
+            let layout;
+            if (filteredParticipants.size < 20) {
+                layout = circularLayout;
+            } else {
+                layout = coseLayout;
             }
+            console.log("cytoscape initializting")
+            cy.current = cytoscape({
+                container: cyRef.current,
+                elements: elements,
+                layout: layout,
+                style: [
+                    {
+                        selector: 'node[id="' + biomoleculeId + '"]',
+                        style: {
+                            label: 'data(label)',
+                            width: "20px",
+                            height: "20px",
+                            'background-color': "green !important",
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                            'font-size': '10px',
+                            'font-family': 'Arial',
+                            'text-outline-color': '#000',
+                        }
+                    },
+                    {
+                        selector: 'node[type="interactor"]',
+                        style: {
+                            width: "10px",
+                            height: "10px",
+                            'background-color': "green",
+                        },
+                    },
+                    {
+                        selector: 'node[type="protein"]',
+                        style: {
+                            'background-color': "#f89406",
+                        },
+                    },
+                    {
+                        selector: 'node[type="gag"]',
+                        style: {
+                            'background-color': "#018FD5",
+                        },
+                    },
+                    {
+                        selector: 'node[type="multimer"]',
+                        style: {
+                            'background-color': "#6a09c5",
+                        },
+                    },
+                    {
+                        selector: 'node[type="pfrag"]',
+                        style: {
+                            'background-color': "#f5e214",
+                        },
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            width: "1px",
+                            'line-color': '#313030'
+                        },
+                    },
+                    {
+                        selector: 'edge[type="predicted"]',
+                        style: {
+                            width: "1px",
+                            'line-color': 'red'
+                        },
+                    },
+                ],
+                userZoomingEnabled: false,
+            });
+            console.log("cytoscape done")
+            // Calculate node size based on degree
+            const nodes = cy.current.nodes();
+            let maxDegree = 0;
+
+            console.log("Starting to calculate")
+            nodes.forEach((node: any) => {
+                const degree = node.degree(true);
+                if (degree > maxDegree) {
+                    maxDegree = degree;
+                }
+            });
+            console.log("Calculate the max degree " + maxDegree);
+
+            nodes.forEach((node: any) => {
+                const degree = node.degree(true);
+                const nodeSize = 20 + (20 * (degree / maxDegree));
+
+                node.style('width', nodeSize).style('height', nodeSize);
+            });
+            console.log("Calculated the node size")
+            cy.current.zoom(1.5);
+
+            cy.current.on('click', 'node', function (event: any) {
+                const node = event.target;
+                let nodeId = parseInt(node.id());
+                let selectedPartner = participants.filter((p: any) => p.id === nodeId)[0];
+                let sortedIds = [props.biomoleculeId, context.interactors.interactor_mapping[selectedPartner.id]].sort();
+                let selectedInteraction = associations.find((association: any) => association.id === sortedIds[0] + '__' + sortedIds[1]);
+                if (selectedInteraction) {
+                    setSelectedInteraction(selectedInteraction);
+                    setSelectedPartner(null);
+                }
+            });
+
+            cy.current.on('mouseover', 'node', function (event: any) {
+                const node = event.target;
+                let nodeId = parseInt(node.id());
+                let selectedPartner = participants.filter((p: any) => p.id === nodeId)[0];
+                let newSelectedPartner = JSON.parse(JSON.stringify(selectedPartner))
+                if (selectedPartner) {
+                    newSelectedPartner.biomoleculeId = context.interactors.interactor_mapping[nodeId];
+                    setSelectedPartner(newSelectedPartner);
+                    setSelectedInteraction(null);
+                }
+            });
+
+            cy.current.on('mouseout', 'node', function (event: any) {
+                const node = event.target;
+                //alert(`Mouseout on node: ${node.id()}`);
+            });
 
             return () => {
                 /*if(cy) {

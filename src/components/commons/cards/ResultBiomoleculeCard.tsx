@@ -1,8 +1,7 @@
 import {Card, CardContent, IconButton, Tooltip, Typography} from "@mui/material";
 import SpeciesIcon from "../icons/SpeciesIcon";
 import LogoIcon from "../icons/LogoIcon";
-import DeleteIcon from '@mui/icons-material/Delete';
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
 import DoneIcon from '@mui/icons-material/Done';
 
@@ -18,15 +17,12 @@ const getSpeciesNCBI = (biomolecule: any) => {
     }
 }
 
-const BiomoleculeCard: React.FC<any> = (props: any) => {
+const ResultBiomoleculeCard: React.FC<any> = (props: any) => {
 
     const {biomolecule, cardType, selected} = props;
 
     const onBiomoleculeAdd = () => {
         props.onBiomoleculeAdd(biomolecule);
-    }
-    const onBiomoleculeRemove = () => {
-        props.onBiomoleculeRemove(biomolecule);
     }
 
     return(
@@ -172,38 +168,19 @@ const BiomoleculeCard: React.FC<any> = (props: any) => {
                                 {
                                     !selected &&
                                     <div style={{display: "flex"}}>
-                                        <Tooltip title="Remove from biomolecules">
+                                        <Tooltip title="Add to biomolecules">
                                             <IconButton
-                                                onClick={() => props.onBiomoleculeRemove(props.biomolecule)}
-                                                style={{color: 'red'}}
-                                                aria-label="Remove"
-                                            >
-                                                <DeleteIcon/>
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Select as participants">
-                                            <IconButton
-                                                onClick={() => props.onParticipantAdd(props.biomolecule)}
+                                                onClick={props.onBiomoleculeAdd}
                                                 size="small"
                                                 style={{color: 'green'}}
                                                 aria-label="Add"
                                             >
-                                                <DoneIcon/>
+                                                <AddCircleIcon/>
                                             </IconButton>
                                         </Tooltip>
                                     </div>
                                 }
                             </>
-                        }
-                        {
-                            cardType === 'selected' &&
-                            <div style={{display: "flex"}}>
-                                <RemoveCircleIcon
-                                    fontSize="small"
-                                    style={{ cursor: 'pointer', color: 'red' }}
-                                    onClick={onBiomoleculeRemove}>
-                                </RemoveCircleIcon>
-                            </div>
                         }
                     </div>
                 </div>
@@ -212,4 +189,4 @@ const BiomoleculeCard: React.FC<any> = (props: any) => {
     );
 }
 
-export default BiomoleculeCard;
+export default ResultBiomoleculeCard;
