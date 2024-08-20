@@ -22,7 +22,7 @@ function Footer() {
                 }}>
                     <Grid container spacing={2}>
                         {/* First Row with Images */}
-                        <Grid item xs={12} sm={6} style={{ display: 'flex', alignItems: 'center' }}>
+                        <Grid item xs={12} sm={10} style={{ display: 'flex', alignItems: 'center' }}>
                             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
                                 <a href="https://www.sib.swiss" target="_blank" rel="noopener noreferrer">
                                     <img src={siblogo} style={{ width: '80px', height: 'auto', marginRight: '10px' }} className={"App-logo"} alt="SIB Logo" />
@@ -36,8 +36,8 @@ function Footer() {
                         </Grid>
 
                         {/* Second Column with Links */}
-                        <Grid item xs={12} sm={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <ul style={{ listStyleType: 'none', padding: 0, textAlign: 'right', fontSize: '14px', margin: 0 }}>
+                        <Grid item xs={12} sm={2} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <ul style={{ listStyleType: 'none', padding: 0, textAlign: 'right', fontSize: '16px', margin: 0 }}>
                                 <li style={{ margin: '5px 0' }}>
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/about">About MatrixDB</a>
                                 </li>
@@ -59,7 +59,7 @@ function Footer() {
                                     paddingLeft: '20px',
                                     paddingRight: '5px'
                                 }} className={"App-logo"}/>
-                                <span style={{ fontSize: '10px' }}>
+                                <span style={{ fontSize: '14px' }}>
                                     MatrixDB is distributed under the terms of the Creative Commons Attribution Licence CC BY 4.0
                                 </span>
                             </div>

@@ -30,7 +30,7 @@ function MainComponent() {
             <main style={{ flex: 1}}>
                 <div style={{
                     paddingTop: '30px',
-                    marginBottom: '20px'
+                    marginBottom: '5px'
                 }}>
                     <SearchComponent/>
                 </div>

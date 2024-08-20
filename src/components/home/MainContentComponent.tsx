@@ -1,17 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-import {Grid, List, ListItemText, Tooltip} from "@mui/material";
+import {Grid, Tooltip} from "@mui/material";
 import http from "../../commons/http-commons";
-import {faCircleNodes, faScrewdriverWrench} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNodes} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import BiomoleculeCircularDisplayComponent from "../statistics/BiomoleculeCircularDisplayCompotnent";
-import ExperimentPieChartComponent from "../statistics/ExperimentPieChartComponent";
 import InteractionHeatMapComponent from "../statistics/InteractionHeatMapComponent";
 import cytoscapeLogo from "../../assets/images/cytoscape.png";
 import ProteinProteinInteractionComponent from "../statistics/ProteinProteinInteractionComponent";
 import LogoIcon from "../commons/icons/LogoIcon";
-import BiomoleculeBySpeciesComponent from "../statistics/BiomoleculeBySpecies";
 import CirclePacking from "../statistics/BiomoleculeBySpeciesCirclePacking";
 
 
@@ -311,7 +309,7 @@ function MainContentComponent() {
                     Build Interaction Networks
                 </Typography>
                 <Typography
-                    variant={'body2'}
+                    variant={'body1'}
                     style={{
                         marginBottom: '5px',
                         marginTop: '5px',
@@ -328,7 +326,7 @@ function MainContentComponent() {
                     Interaction networks can be built and filtered using <a href="/networks" target="_blank">Network explorer</a>
                 </Typography>
                 <Typography
-                    variant={'body2'}
+                    variant={'body1'}
                     style={{
                         marginBottom: '5px',
                         marginTop: '5px',

@@ -480,11 +480,6 @@ function CytoscapeComponent(props: any) {
                 //alert(`Mouseout on node: ${node.id()}`);
             });
 
-            return () => {
-                /*if(cy) {
-                    cy.destroy();
-                }*/
-            };
         }
     }
 
@@ -494,102 +489,104 @@ function CytoscapeComponent(props: any) {
 
     return (
         <>
-            <Box display="flex">
-                <Box
-                    flex={0.65}
-                    bgcolor="lightgray"
-                    display="flex"
-                    flexDirection="column"
-                    position="relative"
-                >
-                    <Box width="220px" p={1}>
-                        {selectedPartner && <PartnerOverview partner={selectedPartner} />}
-                        {selectedInteraction && <AssociationOverview interaction={selectedInteraction} />}
-                    </Box>
-                    <Box mt="auto" p={1}>
-                        <Legend />
-                    </Box>
-                </Box>
-                <Box display="flex" flexDirection="column">
-                    <Tooltip title="Download an image" arrow>
-                        <IconButton size="small" style={{ color: 'green' }} onClick={generateDownloadLink} aria-label="download">
-                            <PhotoCameraIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Export to cytoscape" arrow>
-                        <IconButton size="small" style={{ color: 'green' }} onClick={generateCytoscapeLink} aria-label="download">
-                            <img src={cytoscapeLogo} style={{ width: '25px', height: 'auto' }} />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-                <Box flex={3} position="relative">
+            {cyRef &&
+                <Box display="flex">
                     <Box
-                        ref={cyRef}
-                        sx={{ width: '100%', height: '800px', position: 'relative' }}
-                    />
-                        <Paper
-                            elevation={3}
-                            sx={{
-                                position: 'absolute',
-                                top: '10px',
-                                right: '10px',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                backgroundColor: '#fff',
-                            }}
-                        >
-                            <TextField
-                                id="outlined-textarea"
-                                label="Quick Search"
-                                placeholder="Search for participant(s)"
-                                onChange={onSeachText}
-                                onKeyDown={onQuickSearch}
-                                size="small"
-                            />
-                        </Paper>
-                        {
-                            (
-                                !quickSearchText && (originalNetwork.participants !== participants.length ||
-                                originalNetwork.associations !== associations.length
-                            )) &&
+                        flex={0.65}
+                        bgcolor="lightgray"
+                        display="flex"
+                        flexDirection="column"
+                        position="relative"
+                    >
+                        <Box width="220px" p={1}>
+                            {selectedPartner && <PartnerOverview partner={selectedPartner} />}
+                            {selectedInteraction && <AssociationOverview interaction={selectedInteraction} />}
+                        </Box>
+                        <Box mt="auto" p={1}>
+                            <Legend />
+                        </Box>
+                    </Box>
+                    <Box display="flex" flexDirection="column">
+                        <Tooltip title="Download an image" arrow>
+                            <IconButton size="small" style={{ color: 'green' }} onClick={generateDownloadLink} aria-label="download">
+                                <PhotoCameraIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Export to cytoscape" arrow>
+                            <IconButton size="small" style={{ color: 'green' }} onClick={generateCytoscapeLink} aria-label="download">
+                                <img src={cytoscapeLogo} style={{ width: '25px', height: 'auto' }} />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                    <Box flex={3} position="relative">
+                        <Box
+                            ref={cyRef}
+                            sx={{ width: '100%', height: '800px', position: 'relative' }}
+                        />
                             <Paper
                                 elevation={3}
                                 sx={{
                                     position: 'absolute',
-                                    bottom: '10px',
+                                    top: '10px',
                                     right: '10px',
-                                    width: '170px',
-                                    height: '100px',
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     backgroundColor: '#fff',
                                 }}
                             >
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'column'
-                                }}>
-                                    <div style={{
-                                        display: 'flex'
-                                    }}>
-                                        <Typography variant="body2">
-                                            Participants: {filteredParticipants} / {originalNetwork.participants}
-                                        </Typography>
-                                    </div>
-                                    <div style={{
-                                        display: 'flex'
-                                    }}>
-                                        <Typography variant="body2">
-                                            Associations: {filteredAssociations} / {originalNetwork.associations}
-                                        </Typography>
-                                    </div>
-                                </div>
+                                <TextField
+                                    id="outlined-textarea"
+                                    label="Quick Search"
+                                    placeholder="Search for participant(s)"
+                                    onChange={onSeachText}
+                                    onKeyDown={onQuickSearch}
+                                    size="small"
+                                />
                             </Paper>
-                        }
+                            {
+                                (
+                                    !quickSearchText && (originalNetwork.participants !== participants.length ||
+                                    originalNetwork.associations !== associations.length
+                                )) &&
+                                <Paper
+                                    elevation={3}
+                                    sx={{
+                                        position: 'absolute',
+                                        bottom: '10px',
+                                        right: '10px',
+                                        width: '170px',
+                                        height: '100px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        backgroundColor: '#fff',
+                                    }}
+                                >
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        <div style={{
+                                            display: 'flex'
+                                        }}>
+                                            <Typography variant="body2">
+                                                Participants: {filteredParticipants} / {originalNetwork.participants}
+                                            </Typography>
+                                        </div>
+                                        <div style={{
+                                            display: 'flex'
+                                        }}>
+                                            <Typography variant="body2">
+                                                Associations: {filteredAssociations} / {originalNetwork.associations}
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                </Paper>
+                            }
+                    </Box>
                 </Box>
-            </Box>
+            }
         </>
     );
 }
