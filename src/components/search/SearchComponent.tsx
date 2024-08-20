@@ -85,7 +85,10 @@ function SearchComponent() {
                         searchDone && Object.keys(searchResults).length > 0 &&
                         <>
                             <div className={"App App-search"}>
-                                <div style={{width: '70%'}}>
+                                <div style={{
+                                    paddingTop: '10px',
+                                    width: '70%'
+                                }}>
                                     <ComplexSearchBoxComponent
                                         searchMode={searchMode}
                                         onLaunchSearch={launchSearch}
@@ -94,6 +97,7 @@ function SearchComponent() {
                                 </div>
                                 <div style={{width: '70%'}}>
                                     <ResultComponent
+                                        searchQuery={searchQuery}
                                         searchResults={searchResults}
                                     />
                                 </div>
