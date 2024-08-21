@@ -323,7 +323,7 @@ function OverviewComponent(props: any) {
                                             color: 'green',
                                         }}
                                         size="small"
-                                        label={`Matrisome ${biomoleculeToDisplay.ecmness.matrisome.category}`}
+                                        label={`${biomoleculeToDisplay.ecmness.matrisome.division} : ${biomoleculeToDisplay.ecmness.matrisome.category}`}
                                         variant="outlined"
                                     />
                                 </div>
