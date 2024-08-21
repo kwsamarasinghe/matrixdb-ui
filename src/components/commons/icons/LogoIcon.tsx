@@ -7,12 +7,6 @@ import IntactIcon from '../../../assets/images/intact_logo.png';
 import BgeeIcon from '../../../assets/images/bgee_logo.png';
 import MatrisomeIcon from '../../../assets/images/matrisome_logo.png';
 
-
-import {faStarOfLife} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-
-
-
 interface LogoIconProps {
     logoName: string;
     width: string;
