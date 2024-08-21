@@ -111,6 +111,18 @@ function Legend(){
                     <span>PFRAG</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'black', marginRight: '10px' }}></div>
+                    <span>Cation</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'lightpink', marginRight: '10px' }}></div>
+                    <span>Lipid</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#d3b486', marginRight: '10px' }}></div>
+                    <span>SPEP</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <hr style={{ width: '20px', border: '2px solid black', marginRight: '10px' }} />
                     <span>Experimentally Supported</span>
                 </div>
