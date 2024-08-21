@@ -169,7 +169,7 @@ function BiomoleculeComponent() {
                                                                 fontSize: "14px",
                                                             }}
                                                         >
-                                                          {'Expressions'}
+                                                          {'Expression'}
                                                         </span>
                                                         </ListItemButton>
                                                     </ListItem>
