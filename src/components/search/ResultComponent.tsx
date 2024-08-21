@@ -346,11 +346,6 @@ function ResultComponent(props : any) {
                                         display: 'flex'
                                     }}>
                                         Biomolecules
-                                        <Tooltip title="Sorted by the associated partner counts">
-                                            <div style={{ cursor: 'pointer' }}>
-                                                <InfoOutlined style={{ color: 'gray' }} />
-                                            </div>
-                                        </Tooltip>
                                     </Typography>
                                     <div>
                                         <Tooltip title="Most Relevant">
@@ -615,11 +610,6 @@ function ResultComponent(props : any) {
                                                 <Typography style={{fontWeight: 'bold', color: 'darkblue' }}>
                                                     Publications
                                                 </Typography>
-                                                <Tooltip title="Sorted by the associated partner counts">
-                                                    <div style={{ cursor: 'pointer' }}>
-                                                        <InfoOutlined style={{ color: 'gray' }} />
-                                                    </div>
-                                                </Tooltip>
                                             </div>
                                             <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                                                 <List>
