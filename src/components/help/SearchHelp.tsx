@@ -99,7 +99,20 @@ function SearchHelp() {
             }}>
                 <img src={searchAdvaned} width={"600px"} alt="search advanced"/>
             </span>
+            <Typography
+                variant="body2"
+                style={{
+                    paddingTop: "4px",
+                    paddingBottom: "60px"
+                }}
+            >
+                To search biomolecules with properties such as id or name,<br/>
+                <em>id:gag_1, id:P12109</em><br/>
+                <em>name:fibronectin</em>
 
+                <br/>To search proteins by the gene<br/>
+                <em>gene:fn1, gene:lox</em>
+            </Typography>
 
         </>
     );
