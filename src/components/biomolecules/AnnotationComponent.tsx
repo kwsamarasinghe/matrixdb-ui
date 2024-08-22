@@ -1,12 +1,14 @@
 import {
     Box,
-    Grid,
+    Grid, IconButton,
     Paper, Tab, Tabs, Tooltip,
     Typography
 } from "@mui/material";
 import React, {CSSProperties, useEffect, useState} from "react";
 import http from "../../commons/http-commons";
 import {DataGrid, GridColDef} from "@mui/x-data-grid";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import HelpDrawerComponent from "../help/HelpDrawerComponent";
 
 interface Keyword{
     id: string,
@@ -127,6 +129,8 @@ function AnnotationComponent(props: any) {
     };
 
     const [tabValue, setTabValue] = useState(0);
+    const [openHelp, setOpenHelp] = useState(false);
+
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
@@ -140,6 +144,25 @@ function AnnotationComponent(props: any) {
                             <span style={{paddingLeft: '10px'}}>
                                 <h3>Annotations</h3>
                             </span>
+                            <div style={{
+                                display: "flex",
+                                width: "5%",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginLeft: "auto"
+                            }}>
+                                <IconButton
+                                    onClick={() => setOpenHelp(true)}
+                                    size={'small'}
+                                >
+                                    <HelpOutlineIcon/>
+                                </IconButton>
+                                <HelpDrawerComponent
+                                    helpType="BIOMOLECULE"
+                                    open={openHelp}
+                                    onClose={() => setOpenHelp(false)}
+                                />
+                            </div>
                     </div>
                     <Tabs value={tabValue} onChange={handleTabChange}>
                         {   goTerms && goTerms.length > 0 &&

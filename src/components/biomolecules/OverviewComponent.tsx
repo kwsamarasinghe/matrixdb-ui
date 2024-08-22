@@ -17,6 +17,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import XrefListComponent from "./overview/XrefListComponent";
 import SpeciesIcon from "../commons/icons/SpeciesIcon";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import HelpDrawerComponent from "../help/HelpDrawerComponent";
 
 interface BiomoleculeToDisplay {
     id: string,
@@ -48,6 +50,7 @@ function OverviewComponent(props: any) {
     const [biomoleculeToDisplay, setBiomoleculeToDisplay] = useState<BiomoleculeToDisplay>();
     const [tabConfig, setTabConfig] = useState<any[]>([]);
     const [isExpanded, setIsExpanded] = useState(true);
+    const [openHelp, setOpenHelp] = useState(false);
 
     useEffect(() => {
         if(!biomolecule) return;
@@ -328,6 +331,24 @@ function OverviewComponent(props: any) {
                                     />
                                 </div>
                             }
+                        </div>
+                        <div style={{
+                            display: "flex",
+                            width: "5%",
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}>
+                            <IconButton
+                                onClick={() => setOpenHelp(true)}
+                                size={'small'}
+                            >
+                                <HelpOutlineIcon/>
+                            </IconButton>
+                            <HelpDrawerComponent
+                                helpType="BIOMOLECULE"
+                                open={openHelp}
+                                onClose={() => setOpenHelp(false)}
+                            />
                         </div>
 
                     </div>

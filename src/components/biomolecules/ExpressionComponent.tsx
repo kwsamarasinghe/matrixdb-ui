@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {
-    Box, CircularProgress,
+    Box, CircularProgress, IconButton,
     Paper,
     Popover,
     Tab,
@@ -13,6 +13,8 @@ import Anatomogram from "@ebi-gene-expression-group/anatomogram";
 import * as d3 from 'd3';
 import http from "../../commons/http-commons";
 import SelectableList from "../commons/lists/SelectableList";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import HelpDrawerComponent from "../help/HelpDrawerComponent";
 
 interface BarChartData {
     group: string,
@@ -137,6 +139,7 @@ function ExpressionComponent(props: any) {
     const [expressionTypes, setExpressionTypes] = useState<string[]>([]);
     const [loaded, setLoaded] = useState(false);
     const [selectedProtemicsSampleIndex, setSelectedProteomicsSampleIndex] = useState<number | null>(null);
+    const [openHelp, setOpenHelp] = useState(false);
 
     const paperStyle = {
         background: 'rgba(255, 255, 255, 0.9)',
@@ -744,6 +747,25 @@ function ExpressionComponent(props: any) {
                                     <span style={{paddingLeft: '10px'}}>
                                         <h3>Transcriptomic & Proteomic Data</h3>
                                     </span>
+                                    <div style={{
+                                        display: "flex",
+                                        width: "5%",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        marginLeft: 'auto'
+                                    }}>
+                                        <IconButton
+                                            onClick={() => setOpenHelp(true)}
+                                            size={'small'}
+                                        >
+                                            <HelpOutlineIcon/>
+                                        </IconButton>
+                                        <HelpDrawerComponent
+                                            helpType="BIOMOLECULE"
+                                            open={openHelp}
+                                            onClose={() => setOpenHelp(false)}
+                                        />
+                                    </div>
                                 </div>
 
                                 <Tabs value={tabValue} onChange={handleTabChange} centered>
