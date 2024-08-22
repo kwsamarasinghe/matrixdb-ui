@@ -251,8 +251,7 @@ function OverviewComponent(props: any) {
 
     const cellStyles = {
         padding: '0px',
-        borderBottom: 'none',
-        width: '250px'
+        borderBottom: 'none'
     };
 
     return (
@@ -371,7 +370,11 @@ function OverviewComponent(props: any) {
                                 <TableCell style={{...cellStyles, textAlign: 'right', paddingRight: '10px'}}><h4>Other Names</h4></TableCell>
                                 <TableCell style={cellStyles}>
                                     {
-                                        biomoleculeToDisplay?.otherNames
+                                        biomoleculeToDisplay?.otherNames?.map((name, index) => (
+                                            <div key={index}>
+                                                {name}
+                                            </div>
+                                        ))
                                     }
                                 </TableCell>
                             </Grid>}
