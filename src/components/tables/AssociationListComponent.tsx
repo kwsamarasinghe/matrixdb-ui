@@ -41,7 +41,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 width: 600,
                 renderCell: (params: any) =>  (
                     <>
-                        <a href={`${process.env.REACT_APP_PUBLIC_URL}/biomolecules/${params.value}`}>{interactor_name_mapping[params.value]}</a>
+                        <a href={process.env.REACT_APP_PUBLIC_URL+"biomolecule/"+params.value}>{interactor_name_mapping[params.value]}</a>
                     </>)
             },
             {
@@ -50,7 +50,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 width: 350,
                 renderCell: (params: any) =>  (
                     <>
-                        <a href={`${process.env.REACT_APP_PUBLIC_URL}/association/${params.value}`}>{params.value}</a>
+                        <a href={process.env.REACT_APP_PUBLIC_URL+"association/"+params.value}>{params.value}</a>
                     </>)
             },
             {
