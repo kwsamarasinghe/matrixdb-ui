@@ -207,7 +207,8 @@ function ComplexSearchBoxComponents(props: any) {
         props.onLaunchSearch(clearedSearchQuery, searchMode);
     }
 
-    const onClickSearch = (query: string) => {
+    const onClickSearch = (query: string | null) => {
+        if(!query) query = searchQuery;
         props.onLaunchSearch(query, searchMode);
     }
 
