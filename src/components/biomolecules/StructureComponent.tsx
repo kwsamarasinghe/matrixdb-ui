@@ -6,7 +6,7 @@ import { PluginConfig } from 'molstar/lib/mol-plugin/config';
 import { PluginSpec } from 'molstar/lib/mol-plugin/spec';
 import { DefaultPluginUISpec, PluginUISpec } from 'molstar/lib/mol-plugin-ui/spec';
 import { PluginBehaviors } from 'molstar/lib/mol-plugin/behavior';
-import {CircularProgress, Paper} from "@mui/material";
+import {Button, CircularProgress, Paper} from "@mui/material";
 import {
     PresetStructureRepresentations,
     StructureRepresentationPresetProvider
@@ -21,6 +21,14 @@ import {SbNcbrPartialChargesPreset, SbNcbrPartialChargesPropertyProvider} from "
 import "molstar/build/viewer/molstar.css";
 import pdblogo from "../../assets/images/pdb.png";
 import SelectableList from "../commons/lists/SelectableList";
+import {StructureSelectionQueries} from "molstar/lib/mol-plugin-state/helpers/structure-selection-query";
+import {QueryContext} from "molstar/lib/mol-model/structure/query/context";
+import {Color} from "molstar/lib/mol-util/color";
+import {setStructureOverpaint} from "molstar/lib/commonjs/mol-plugin-state/helpers/structure-overpaint";
+import {StructureSelection} from "molstar/lib/mol-model/structure/query";
+import {Loci} from "molstar/lib/mol-model/loci";
+import {Script} from "molstar/lib/mol-script/script";
+import getStructureSelection = Script.getStructureSelection;
 
 
 const DefaultViewerOptions = {
@@ -189,8 +197,33 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                             plugin.builders.structure.parseTrajectory(data, "mmcif")
                                 .then((trajectory: any) => {
                                     plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
+
+                                    /*
+                                    plugin.builders.structure.hierarchy.applyPreset(trajectory, "default")
+                                        .then((presetStateObjects: any) => {
+                                            if (!presetStateObjects) {
+                                                throw new Error("Structure not loaded");
+                                            }
+
+                                            const data = plugin.managers.structure.hierarchy.current.structures[0]?.cell.obj?.data;
+                                            if (!data) return;
+
+                                            const seq_id_start = 72;  // Start of range
+                                            const seq_id_end = 77;   // End of range
+                                            const sel = Script.getStructureSelection(Q => Q.struct.generator.atomGroups({
+                                                'residue-test': Q.core.rel.inRange([Q.struct.atomProperty.macromolecular.label_seq_id(), seq_id_start, seq_id_end]),
+                                                'group-by': Q.struct.atomProperty.macromolecular.residueKey()
+                                            }), data);
+
+                                            const loci = StructureSelection.toLociWithSourceUnits(sel);
+                                            plugin.managers.interactivity.lociHighlights.highlight({ loci });
+                                        })*/
                                 });
-                            
+
+                            plugin.canvas3d?.events?.hover.subscribe((e: any) => {
+                                // Prevent hover events from affecting persistent highlights
+                                e.preventDefault();  // Or handle it based on your specific use case
+                            });
                         }
                     });
             } catch(e: any) {
@@ -207,6 +240,21 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
         width: '100%',
         borderRadius: 0
     };
+
+    const showMapping = () =>  {
+        const data = plugin.managers.structure.hierarchy.current.structures[0]?.cell.obj?.data;
+        if (!data) return;
+
+        const seq_id_start = 25;  // Start of range
+        const seq_id_end = 54;   // End of range
+        const sel = Script.getStructureSelection(Q => Q.struct.generator.atomGroups({
+            'residue-test': Q.core.rel.inRange([Q.struct.atomProperty.macromolecular.label_seq_id(), seq_id_start, seq_id_end]),
+            'group-by': Q.struct.atomProperty.macromolecular.residueKey()
+        }), data);
+
+        const loci = StructureSelection.toLociWithSourceUnits(sel);
+        plugin.managers.interactivity.lociHighlights.highlight({ loci });
+    }
 
     return (
        <>
@@ -251,6 +299,9 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                                 >
                                 </div>
                             </div>
+                            <Button onClick={() => showMapping()}>
+                                Mapping region
+                            </Button>
                         </div>
                     </Paper>
                 </div>
