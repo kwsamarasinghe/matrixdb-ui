@@ -13,12 +13,12 @@ import SpeciesIcon from "../commons/icons/SpeciesIcon";
 import LogoIcon from "../commons/icons/LogoIcon";
 import {InfoOutlined} from "@mui/icons-material";
 import FilterOverlay from "./FilterOverlay";
+import speciesMapping from "../../commons/constants";
 
 function ResultDetailsComponent(props: any) {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [tabValue, setTabValue] = useState(0);
-
 
     interface TabPanelProps {
         children?: React.ReactNode;
@@ -92,7 +92,7 @@ function ResultDetailsComponent(props: any) {
                                                 }}>
                                                     {result.species && <div style={{ flex: '10%',paddingRight: '10px' }}>
                                                         <SpeciesIcon
-                                                            speciesId={result.species.toString()}
+                                                            speciesId={speciesMapping[result.species.toString()]}
                                                             width={'20px'}
                                                             height={'20px'}
                                                         />
@@ -409,7 +409,7 @@ function ResultComponent(props : any) {
                                                             {result.species && (
                                                                 <div style={{ flex: '10%', paddingRight: '10px' }}>
                                                                     <SpeciesIcon
-                                                                        speciesId={result.species}
+                                                                        speciesId={speciesMapping[result.species.toString()]}
                                                                         width={'20px'}
                                                                         height={'20px'}
                                                                     />
@@ -495,7 +495,7 @@ function ResultComponent(props : any) {
                                                                 {result.species && (
                                                                     <div style={{ flex: '10%', paddingRight: '10px' }}>
                                                                         <SpeciesIcon
-                                                                            speciesId={result.species}
+                                                                            speciesId={speciesMapping[result.species]}
                                                                             width={'20px'}
                                                                             height={'20px'}
                                                                         />

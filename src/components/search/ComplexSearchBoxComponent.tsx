@@ -150,7 +150,7 @@ function AdvancedSearchInstructions() {
                     Go Terms, Uniprot Keywords: <a href="/search?query=go:cytosol&mode=1">go:cytosol</a>
                 </Typography>
             </Grid>
-            {/*<Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
                 <Typography
                     variant="body2"
                     style={{
@@ -161,7 +161,8 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Expressions : <a href="/search?query=expression:liver">Liver</a>
+                    Matrisome category and division : <a href="/search?query=matrisome_category:ecm regulators">matrisome_category:ecm regulators</a>
+                    {/*<a href="/search?query=matrisome_division:matrisome-associated">matrisome:matrisome_associated</a>*/}
                 </Typography>
                 <Typography
                     variant="body2"
@@ -173,9 +174,9 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Disease: <a href="/search?query=cpx-1650">cpx-1650</a>
+                    Go term and Species: <a href="/search?query=go:cytosol and species:homo sapiens&mode=1">go:cytosol and species:homo sapiens</a>
                 </Typography>
-            </Grid>*/}
+            </Grid>
         </Grid>
     )
 }
