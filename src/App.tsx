@@ -12,6 +12,7 @@ import NetworkExplorer from "./components/networks/NetworkExplorerComponent";
 import PublicationComponent from "./components/publications/PublicationComponent";
 import AboutComponent from "./components/about/AboutComponent";
 import DownloadComponent from "./components/download/DownloadComponent";
+import NamingComponent from "./components/about/NamingComponent";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<MainComponent/>}/>
                 <Route path="/about" element={<AboutComponent/>}/>
+                <Route path="/naming" element={<NamingComponent/>}/>
                 <Route path="/search" element={<MainComponent/>}/>
                 <Route path="/biomolecule/:biomoleculeId" element={<BiomoleculeComponent/>} />
                 <Route path="/association/:associationId" element={<AssociationComponent/>} />
