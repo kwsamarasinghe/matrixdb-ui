@@ -66,8 +66,15 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                     setInteractors(networkData.interactors);
                 }
 
+                // Partner count considering self interactions
+                let partnerCount = networkData.interactors.length;
+                let filtered = networkData.interactions.filter((interaction:any) => interaction.id === `${biomoleculeId}__${biomoleculeId}`)
+                if(filtered.length !== 1) {
+                    partnerCount -= 1;
+                }
+
                 let interactorStats = {
-                    partners: networkData.interactors.length,
+                    partners: partnerCount,
                     supportingEvidence : 0,
                     predictedInteractions: 0,
                     experimentalInteractions: 0
@@ -206,7 +213,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                 {
                                     interactorStats &&
                                     <div style={{clear: 'left', textAlign: 'left'}}>
-                                        <h4 >Participants: {interactorStats.partners - 1}</h4>
+                                        <h4 >Participants: {interactorStats.partners}</h4>
                                         {interactorStats.supportingEvidence > 0 &&
                                             <div style={{ display: 'flex' }}>
                                                 <h4 style={{ display: 'inline-block', margin: '0' }}>Experimentally Supported Interactions: {interactorStats.experimentalInteractions}</h4>

@@ -95,7 +95,13 @@ function Header(props: HeaderProps) {
                         </a>
                         <span style={{color: 'white', padding: '0 4px'}}>|</span>
                     </span>
-                                        <span style={{paddingRight: '4px'}}>
+                    <span style={{ paddingRight: '4px' }}>
+                        <a style={{color: 'white', textDecoration: 'none', position: 'relative'}} href="/naming">
+                            Naming Conventions
+                        </a>
+                        <span style={{color: 'white', padding: '0 4px'}}>|</span>
+                    </span>
+                    <span style={{paddingRight: '4px'}}>
                         <a style={{color: 'white', textDecoration: 'none', position: 'relative'}} href="/downloads">
                             Downloads
                         </a>

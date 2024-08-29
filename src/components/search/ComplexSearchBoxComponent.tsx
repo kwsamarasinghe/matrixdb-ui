@@ -150,7 +150,7 @@ function AdvancedSearchInstructions() {
                     Go Terms, Uniprot Keywords: <a href="/search?query=go:cytosol&mode=1">go:cytosol</a>
                 </Typography>
             </Grid>
-            {/*<Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
                 <Typography
                     variant="body2"
                     style={{
@@ -161,7 +161,8 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Expressions : <a href="/search?query=expression:liver">Liver</a>
+                    Matrisome category: <a href="/search?query=matrisome_category:ecm regulators&mode=1">matrisome_category:ecm regulators</a>
+                    {/*<a href="/search?query=matrisome_division:matrisome-associated">matrisome:matrisome_associated</a>*/}
                 </Typography>
                 <Typography
                     variant="body2"
@@ -173,9 +174,22 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Disease: <a href="/search?query=cpx-1650">cpx-1650</a>
+                    Matrisome division: <a href="/search?query=matrisome_division:matrisome-associated&mode=1">matrisome_division:matrisome-associated</a>
+                    {/*<a href="/search?query=matrisome_division:matrisome-associated">matrisome:matrisome_associated</a>*/}
                 </Typography>
-            </Grid>*/}
+                <Typography
+                    variant="body2"
+                    style={{
+                        paddingTop: "8px"
+                    }}
+                >
+                    <CircleIcon style={{
+                        fontSize: "0.6em",
+                        paddingRight: "4px"
+                    }}/>
+                    Go term and Species: <a href="/search?query=go:cytosol and species:homo sapiens&mode=1">go:cytosol and species:homo sapiens</a>
+                </Typography>
+            </Grid>
         </Grid>
     )
 }
