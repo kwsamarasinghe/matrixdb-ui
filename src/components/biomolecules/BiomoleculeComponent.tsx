@@ -299,6 +299,7 @@ function BiomoleculeComponent() {
                                         style={{marginBottom: '10px'}}>
                                         <StructureComponent
                                             biomolecule={biomoleculeId}
+                                            biomoleculeType={biomolecule.type}
                                             pdb={biomolecule.molecular_details.pdb}
                                         />
                                     </div>

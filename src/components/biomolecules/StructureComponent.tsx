@@ -65,68 +65,78 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     };
 
     useEffect(() => {
-        let pdb = props.pdb;
-        let pdbRegionMap: { [key: string]: any[] } = {};
-        pdb.forEach((pdb: any) => {
-            pdb.properties.forEach((pdbProperty: any) => {
-                if(pdbProperty.type === "chains") {
-                    let chains = [];
-                    if(pdbProperty.value.split(',').length > 0) {
-                        chains = pdbProperty.value.split(',');
-                    } else {
-                        chains = [pdbProperty.value];
+        if(props.biomoleculeType === 'gag') {
+            if(Array.isArray(props.pdb)) {
+                setPDBIds(props.pdb);
+                setSelectedPDB(props.pdb[0].id);
+            } else {
+                setPDBIds([props.pdb]);
+                setSelectedPDB(props.pdb);
+            }
+        } else {
+            let pdb = props.pdb;
+            let pdbRegionMap: { [key: string]: any[] } = {};
+            pdb.forEach((pdb: any) => {
+                pdb.properties.forEach((pdbProperty: any) => {
+                    if(pdbProperty.type === "chains") {
+                        let chains = [];
+                        if(pdbProperty.value.split(',').length > 0) {
+                            chains = pdbProperty.value.split(',');
+                        } else {
+                            chains = [pdbProperty.value];
+                        }
+                        chains.forEach((chain:any) => {
+                            let value = chain.match('[0-9].*')[0];
+                            let start = parseInt(value.split('-')[0]);
+                            let end = parseInt(value.split('-')[1]);
+                            let region = `${start}-${end}`;
+                            if(!(region in pdbRegionMap)) {
+                                pdbRegionMap[region] = [];
+                            }
+                            pdb.chain = chain.split("=")[0];
+                            pdbRegionMap[region].push(pdb);
+                        });
                     }
-                    chains.forEach((chain:any) => {
-                        let value = chain.match('[0-9].*')[0];
-                        let start = parseInt(value.split('-')[0]);
-                        let end = parseInt(value.split('-')[1]);
-                        let region = `${start}-${end}`;
-                        if(!(region in pdbRegionMap)) {
-                            pdbRegionMap[region] = [];
-                        }
-                        pdb.chain = chain.split("=")[0];
-                        pdbRegionMap[region].push(pdb);
+                })
+            });
+
+            // Check for relevant binding regions
+            http.get(`/biomolecules/${props.biomolecule}/binding-regions`)
+                .then((response: any) => {
+
+                    response.data.forEach((bindingRegion: any) => {
+                        let region = bindingRegion.featur_value;
+                        let regionStart = parseInt(region.split('-')[0]);
+                        let regionEnd = parseInt(region.split('-')[1]);
+
+                        Object.keys(pdbRegionMap).forEach((region: string) => {
+                            let start = parseInt(region.split('-')[0]);
+                            let end = parseInt(region.split('-')[1]);
+                            if(regionStart >= start && regionEnd <= end) {
+                                pdbRegionMap[`${start}-${end}`].forEach((pdb: any) => {
+                                    if(!pdb.bindingRegions) pdb.bindingRegions = [];
+                                    let existing = pdb.bindingRegions.filter((region:any) => region.start === regionStart && region.end === regionEnd);
+                                    if(existing.length === 0) {
+                                        pdb.bindingRegions.push({
+                                            start: regionStart,
+                                            end: regionEnd,
+                                            chain: pdb.chain.toUpperCase()
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     });
-                }
-            })
-        });
 
-        // Check for relevant binding regions
-        http.get(`/biomolecules/${props.biomolecule}/binding-regions`)
-            .then((response: any) => {
-
-                response.data.forEach((bindingRegion: any) => {
-                    let region = bindingRegion.featur_value;
-                    let regionStart = parseInt(region.split('-')[0]);
-                    let regionEnd = parseInt(region.split('-')[1]);
-
-                    Object.keys(pdbRegionMap).forEach((region: string) => {
-                        let start = parseInt(region.split('-')[0]);
-                        let end = parseInt(region.split('-')[1]);
-                        if(regionStart >= start && regionEnd <= end) {
-                            pdbRegionMap[`${start}-${end}`].forEach((pdb: any) => {
-                                if(!pdb.bindingRegions) pdb.bindingRegions = [];
-                                let existing = pdb.bindingRegions.filter((region:any) => region.start === regionStart && region.end === regionEnd);
-                                if(existing.length === 0) {
-                                    pdb.bindingRegions.push({
-                                        start: regionStart,
-                                        end: regionEnd,
-                                        chain: pdb.chain.toUpperCase()
-                                    });
-                                }
-                            });
-                        }
-                    });
+                    if(Array.isArray(pdb)) {
+                        setPDBIds(pdb);
+                        setSelectedPDB(pdb[0].id);
+                    } else {
+                        setPDBIds([pdb]);
+                        setSelectedPDB(pdb);
+                    }
                 });
-
-                if(Array.isArray(pdb)) {
-                    setPDBIds(pdb);
-                    setSelectedPDB(pdb[0].id);
-                } else {
-                    setPDBIds([pdb]);
-                    setSelectedPDB(pdb);
-                }}
-            );
+        }
     }, []);
 
     useEffect(() => {
