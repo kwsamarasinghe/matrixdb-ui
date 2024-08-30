@@ -178,7 +178,7 @@ function MainContentComponent() {
                                             marginTop: '15px',
                                             fontWeight: 'bold'
                                         }}>
-                                        Experimentally Supported Binary Interactions
+                                        <a href="/naming">Experimentally Supported Binary Interactions</a>
                                         <br/>
                                         ({statistics.interactions.all - statistics.interactions.protein_protein.predicted})
                                     </Typography>
@@ -256,7 +256,7 @@ function MainContentComponent() {
                                             marginBottom: '10px',
                                             fontWeight: 'bold'
                                         }}>
-                                        <a href={"/about"}>Biomolecules </a> ({statistics.biomolecules.all })
+                                        <a href={"/naming"}>Biomolecules </a> ({statistics.biomolecules.all })
                                     </Typography>
                                     <BiomoleculeCircularDisplayComponent
                                         biomoleculeStatistics={biomoleculeStatistics}

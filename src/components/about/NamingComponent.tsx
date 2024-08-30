@@ -68,7 +68,7 @@ function NamingComponent() {
                                     fontWeight: 'bold'
                                 }}
                             >
-                                Proteins
+                                Protein
                             </Typography>
                         </div>
                         <Typography variant="body2">
@@ -87,7 +87,7 @@ function NamingComponent() {
                             }}></div>
                             <Typography variant="body2" style={{
                                 fontWeight: 'bold'
-                            }}>Multimers</Typography>
+                            }}>Multimer (MULT)</Typography>
                         </div>
                         <Typography variant="body2">
                             They are identified by a MatrixDB-specific identifier "MULT_x_species" or "MULT_x_VARy_species" for molecular isoforms where x and y are numbers. A cross-reference to the EBI Complex Portal is provided when available.
@@ -105,7 +105,7 @@ function NamingComponent() {
                             }}></div>
                             <Typography variant="body2" style={{
                                 fontWeight: 'bold'
-                            }}>Glycosaminoglycans</Typography>
+                            }}>Glycosaminoglycan (GAG)</Typography>
                         </div>
                         <Typography variant="body2">
                             They are identified by a MatrixDB-specific identifier "GAG_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available.
@@ -123,7 +123,7 @@ function NamingComponent() {
                             }}></div>
                             <Typography variant="body2" style={{
                                 fontWeight: 'bold'
-                            }}>Protein fragments</Typography>
+                            }}>Protein fragment (PFRAG)</Typography>
                         </div>
                         <Typography variant="body2">
                             PFRAG in short-form, they are identified by a MatrixDB-specific identifier "PFRAG_x_species" where x is a number. A cross-reference to the PRO feature of UniProtKB is provided when available.
@@ -141,7 +141,7 @@ function NamingComponent() {
                             }}></div>
                             <Typography variant="body2" style={{
                                 fontWeight: 'bold'
-                            }}>Cations</Typography>
+                            }}>Cation (CAT)</Typography>
                         </div>
                         <Typography variant="body2">
                             They are identified by a MatrixDB-specific identifier "CAT_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available.
@@ -159,7 +159,7 @@ function NamingComponent() {
                             }}></div>
                             <Typography variant="body2" style={{
                                 fontWeight: 'bold'
-                            }}>Lipidic molecules</Typography>
+                            }}>Lipidic molecule (LIP)</Typography>
                         </div>
                         <Typography variant="body2">
                             Fatty-acid related biomolecules are identified by a MatrixDB-specific identifier "LIP_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available.
@@ -177,7 +177,7 @@ function NamingComponent() {
                             }}></div>
                             <Typography variant="body2" style={{
                                 fontWeight: 'bold'
-                            }}>Synthetic peptides</Typography>
+                            }}>Synthetic peptides (SPEP)</Typography>
                         </div>
                         <Typography variant="body2">
                             Engineered peptides are identified by a MatrixDB-specific identifier "SPEP_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) or an EBI identifier is provided when available.
