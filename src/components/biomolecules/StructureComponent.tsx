@@ -29,17 +29,18 @@ import {StructureSelection} from "molstar/lib/mol-model/structure/query";
 import {Loci} from "molstar/lib/mol-model/loci";
 import {Script} from "molstar/lib/mol-script/script";
 import getStructureSelection = Script.getStructureSelection;
+import http from "../../commons/http-commons";
 
 
 const DefaultViewerOptions = {
     extensions: ObjectKeys({}),
     layoutIsExpanded: true,
-    layoutShowControls: false,
+    layoutShowControls: true,
     layoutShowRemoteState: true,
     layoutControlsDisplay: 'reactive' as PluginLayoutControlsDisplay,
-    layoutShowSequence: false,
+    layoutShowSequence: true,
     layoutShowLog: false,
-    layoutShowLeftPanel: false,
+    layoutShowLeftPanel: true,
 
     viewportShowExpand: PluginConfig.Viewport.ShowExpand.defaultValue,
     viewportShowControls: PluginConfig.Viewport.ShowControls.defaultValue,
@@ -62,6 +63,71 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     const handleOptionChange = (pdb : any) => {
         setSelectedPDB(pdb);
     };
+
+    useEffect(() => {
+        let pdb = props.pdb;
+        let pdbRegionMap: { [key: string]: any[] } = {};
+        pdb.forEach((pdb: any) => {
+            pdb.properties.forEach((pdbProperty: any) => {
+                if(pdbProperty.type === "chains") {
+                    let chains = [];
+                    if(pdbProperty.value.split(',').length > 0) {
+                        chains = pdbProperty.value.split(',');
+                    } else {
+                        chains = [pdbProperty.value];
+                    }
+                    chains.forEach((chain:any) => {
+                        let value = chain.match('[0-9].*')[0];
+                        let start = parseInt(value.split('-')[0]);
+                        let end = parseInt(value.split('-')[1]);
+                        let region = `${start}-${end}`;
+                        if(!(region in pdbRegionMap)) {
+                            pdbRegionMap[region] = [];
+                        }
+                        pdb.chain = chain.split("=")[0];
+                        pdbRegionMap[region].push(pdb);
+                    });
+                }
+            })
+        });
+
+        // Check for relevant binding regions
+        http.get(`/biomolecules/${props.biomolecule}/binding-regions`)
+            .then((response: any) => {
+
+                response.data.forEach((bindingRegion: any) => {
+                    let region = bindingRegion.featur_value;
+                    let regionStart = parseInt(region.split('-')[0]);
+                    let regionEnd = parseInt(region.split('-')[1]);
+
+                    Object.keys(pdbRegionMap).forEach((region: string) => {
+                        let start = parseInt(region.split('-')[0]);
+                        let end = parseInt(region.split('-')[1]);
+                        if(regionStart >= start && regionEnd <= end) {
+                            pdbRegionMap[`${start}-${end}`].forEach((pdb: any) => {
+                                if(!pdb.bindingRegions) pdb.bindingRegions = [];
+                                let existing = pdb.bindingRegions.filter((region:any) => region.start === regionStart && region.end === regionEnd);
+                                if(existing.length === 0) {
+                                    pdb.bindingRegions.push({
+                                        start: regionStart,
+                                        end: regionEnd,
+                                        chain: pdb.chain.toUpperCase()
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+
+                if(Array.isArray(pdb)) {
+                    setPDBIds(pdb);
+                    setSelectedPDB(pdb[0].id);
+                } else {
+                    setPDBIds([pdb]);
+                    setSelectedPDB(pdb);
+                }}
+            );
+    }, []);
 
     useEffect(() => {
         if (viewerContainer.current) {
@@ -127,49 +193,40 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                 ]
             };
 
-            let pdb = props.pdb;
-            if(Array.isArray(pdb)) {
-                setPDBIds(pdb);
-                setSelectedPDB(pdb[0]);
-            } else {
-                setPDBIds([pdb]);
-                setSelectedPDB(pdb);
-            }
-
             //if(selectedPDB) {
-                createPluginUI(viewerContainer.current, spec, {
-                    onBeforeUIRender: plugin => {
-                        plugin.builders.structure.representation.registerPreset(StructureRepresentationPresetProvider({
-                            id: 'preset-structure-representation-viewer-auto',
-                            display: {
-                                name: 'Automatic (w/ Annotation)', group: 'Annotation',
-                                description: 'Show standard automatic representation but colored by quality assessment (if available in the model).'
-                            },
-                            isApplicable(a) {
-                                return (a.data.models.some(m => QualityAssessment.isApplicable(m, 'pLDDT')) || a.data.models.some(m => QualityAssessment.isApplicable(m, 'qmean')));
-                            },
-                            params: () => StructureRepresentationPresetProvider.CommonParams,
-                            async apply(ref, params, plugin) {
-                                const structureCell = StateObjectRef.resolveAndCheck(plugin.state.data, ref);
-                                const structure = structureCell?.obj?.data;
-                                if (!structureCell || !structure) return {};
+            createPluginUI(viewerContainer.current, spec, {
+                onBeforeUIRender: plugin => {
+                    plugin.builders.structure.representation.registerPreset(StructureRepresentationPresetProvider({
+                        id: 'preset-structure-representation-viewer-auto',
+                        display: {
+                            name: 'Automatic (w/ Annotation)', group: 'Annotation',
+                            description: 'Show standard automatic representation but colored by quality assessment (if available in the model).'
+                        },
+                        isApplicable(a) {
+                            return (a.data.models.some(m => QualityAssessment.isApplicable(m, 'pLDDT')) || a.data.models.some(m => QualityAssessment.isApplicable(m, 'qmean')));
+                        },
+                        params: () => StructureRepresentationPresetProvider.CommonParams,
+                        async apply(ref, params, plugin) {
+                            const structureCell = StateObjectRef.resolveAndCheck(plugin.state.data, ref);
+                            const structure = structureCell?.obj?.data;
+                            if (!structureCell || !structure) return {};
 
-                                if (!!structure.models.some(m => QualityAssessment.isApplicable(m, 'pLDDT'))) {
-                                    return QualityAssessmentPLDDTPreset.apply(ref, params, plugin);
-                                } else if (!!structure.models.some(m => QualityAssessment.isApplicable(m, 'qmean'))) {
-                                    return QualityAssessmentQmeanPreset.apply(ref, params, plugin);
-                                } else if (!!structure.models.some(m => SbNcbrPartialChargesPropertyProvider.isApplicable(m))) {
-                                    return SbNcbrPartialChargesPreset.apply(ref, params, plugin);
-                                } else {
-                                    return PresetStructureRepresentations.auto.apply(ref, params, plugin);
-                                }
+                            if (!!structure.models.some(m => QualityAssessment.isApplicable(m, 'pLDDT'))) {
+                                return QualityAssessmentPLDDTPreset.apply(ref, params, plugin);
+                            } else if (!!structure.models.some(m => QualityAssessment.isApplicable(m, 'qmean'))) {
+                                return QualityAssessmentQmeanPreset.apply(ref, params, plugin);
+                            } else if (!!structure.models.some(m => SbNcbrPartialChargesPropertyProvider.isApplicable(m))) {
+                                return SbNcbrPartialChargesPreset.apply(ref, params, plugin);
+                            } else {
+                                return PresetStructureRepresentations.auto.apply(ref, params, plugin);
                             }
-                        }));
+                        }
+                    }));
 
-                    }
-                }).then((plugin) => {
-                    setPlugin(plugin);
-                });
+                }
+            }).then((plugin) => {
+                setPlugin(plugin);
+            });
             //}
 
         }
@@ -196,34 +253,29 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                             setLoaded(true);
                             plugin.builders.structure.parseTrajectory(data, "mmcif")
                                 .then((trajectory: any) => {
-                                    plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
+                                    //plugin.builders.structure.hierarchy.applyPreset(trajectory, 'all-models', {useDefaultIfSingleModel: true});
 
-                                    /*
-                                    plugin.builders.structure.hierarchy.applyPreset(trajectory, "default")
-                                        .then((presetStateObjects: any) => {
-                                            if (!presetStateObjects) {
-                                                throw new Error("Structure not loaded");
-                                            }
+                                    // Specify the model index you want to load, e.g., 0 for the first model
+                                    const modelIndex = 0;
 
-                                            const data = plugin.managers.structure.hierarchy.current.structures[0]?.cell.obj?.data;
-                                            if (!data) return;
-
-                                            const seq_id_start = 72;  // Start of range
-                                            const seq_id_end = 77;   // End of range
-                                            const sel = Script.getStructureSelection(Q => Q.struct.generator.atomGroups({
-                                                'residue-test': Q.core.rel.inRange([Q.struct.atomProperty.macromolecular.label_seq_id(), seq_id_start, seq_id_end]),
-                                                'group-by': Q.struct.atomProperty.macromolecular.residueKey()
-                                            }), data);
-
-                                            const loci = StructureSelection.toLociWithSourceUnits(sel);
-                                            plugin.managers.interactivity.lociHighlights.highlight({ loci });
-                                        })*/
+                                    // Create a model from the trajectory using the specified model index
+                                    plugin.builders.structure.createModel(trajectory, { modelIndex })
+                                        .then((model: any) => {
+                                            // Create a structure from the selected model
+                                            plugin.builders.structure.createStructure(model)
+                                                .then((structure: any) => {
+                                                    // Apply the desired representation to the structure
+                                                    plugin.builders.structure.representation.applyPreset(structure, 'auto');
+                                                });
+                                        });
                                 });
 
                             plugin.canvas3d?.events?.hover.subscribe((e: any) => {
                                 // Prevent hover events from affecting persistent highlights
                                 e.preventDefault();  // Or handle it based on your specific use case
                             });
+
+                            plugin.managers.interactivity.lociHighlights.clearHighlights();
                         }
                     });
             } catch(e: any) {
@@ -241,12 +293,12 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
         borderRadius: 0
     };
 
-    const showMapping = () =>  {
+    const highlightRegion = (start: number, end: number) =>  {
         const data = plugin.managers.structure.hierarchy.current.structures[0]?.cell.obj?.data;
         if (!data) return;
 
-        const seq_id_start = 25;  // Start of range
-        const seq_id_end = 54;   // End of range
+        const seq_id_start = start;  // Start of range
+        const seq_id_end = end;   // End of range
         const sel = Script.getStructureSelection(Q => Q.struct.generator.atomGroups({
             'residue-test': Q.core.rel.inRange([Q.struct.atomProperty.macromolecular.label_seq_id(), seq_id_start, seq_id_end]),
             'group-by': Q.struct.atomProperty.macromolecular.residueKey()
@@ -281,10 +333,11 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                                     <div style={{padding: '10px' }}>
                                         <SelectableList
                                             selectedItem={selectedPDB}
-                                            itemIds={pdbIds}
+                                            items={pdbIds}
                                             onItemChange={handleOptionChange}
                                             itemLogo={pdblogo}
                                             itemURL={'https://www.ebi.ac.uk/pdbe/entry/pdb/'}
+                                            onHighlight={highlightRegion}
                                         />
                                     </div>
                                 </div>
@@ -299,9 +352,6 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                                 >
                                 </div>
                             </div>
-                            <Button onClick={() => showMapping()}>
-                                Mapping region
-                            </Button>
                         </div>
                     </Paper>
                 </div>

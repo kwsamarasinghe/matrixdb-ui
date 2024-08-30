@@ -3,12 +3,8 @@ import {useParams} from "react-router";
 import http from "../../commons/http-commons";
 
 import {
-    AppBar,
-    Toolbar,
     List,
     ListItem,
-    ListItemText,
-    useTheme,
     ListItemButton,
     Box,
 } from '@mui/material';
@@ -302,6 +298,7 @@ function BiomoleculeComponent() {
                                         id='structures'
                                         style={{marginBottom: '10px'}}>
                                         <StructureComponent
+                                            biomolecule={biomoleculeId}
                                             pdb={biomolecule.molecular_details.pdb}
                                         />
                                     </div>
