@@ -1,4 +1,4 @@
-import {Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import React from "react";
 
@@ -10,110 +10,82 @@ import searchAdvaned from "../../assets/images/help/search-advanced.png";
 function SearchHelp() {
     return(
         <>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                MatrixDB Provides a search facility to search for biomolecules and publications, with free texts (Basic Search) and more specific queries (Advanced Search)
-            </Typography>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "10px"
-                }}
-            >
-                <CircleIcon style={{
-                    fontSize: "0.6em",
-                    paddingRight: "4px"
-                }}/>
-                Basic Search
-            </Typography>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                Basic search is a free text search, which intends to perform a flexible search on the entire database.<br/>
-                By default, most relevant results deemed by the matrixdb search engine is displayed. Relevance of a resulting biomolecule is computed by matrixdb search system, based on specific weights given to different properties of the biomolecule, followed by an filtering criteria <br/>
-            </Typography>
-            <span style={{
-                paddingLeft: "10px"
-            }}>
-                <img src={searchResult} width="600px" alt="search results"/>
-            </span>
+            <Box sx={{ my: 4 }}>
+                <Typography variant="body1" paragraph>
+                    <strong>MatrixDB</strong> can be searched by inputting biomolecule names, identifiers, acronyms, or related publications either as free text (Basic Search) or with more specific queries (Advanced Search).
+                </Typography>
 
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                Results beyond the most relevant results can be viewed in the see more view, where all the results are displayed sorted by the corresponding interaction partner counts for each biomolecule.<br/>
-            </Typography>
-            <span style={{
-                paddingLeft: "10px"
-            }}>
-                <img src={searchSeeMore} width="600px" alt="search results"/>
-            </span>
+                <Typography variant="h5" component="h2" gutterBottom color="secondary">
+                    Basic Search
+                </Typography>
+                <Typography variant="body1" paragraph>
+                    Basic search is a free text flexible search on the entire database. It outputs a list of biomolecules and/or publications matching partly or fully the searched term. The results are ranked by interaction partner counts (highest to lowest). If the searched term is common (e.g., 'membrane'), items of the list are displayed according to a measure of relevance. Relevance is computed based on weights assigned to the localization of the searched term. For example, if the term is in the name of a biomolecule, it will be considered more relevant than if it is found in annotations. The complete list of criteria is available here.
+                </Typography>
 
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                Results can be further filtered according to the type of biomolecules or biomolecule properties such as the species and associated go terms. A demonstration of the use of filter can be found below.
-            </Typography>
-            <span style={{
-                paddingLeft: "10px"
-            }}>
-                <img src={searchHelp} width={"600px"} alt="search help"/>
-            </span>
+                <Typography variant="body1" paragraph>
+                    Examples of search terms in the different categories are suggested under the input window. They can be tested on the spot.
+                </Typography>
 
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                <CircleIcon style={{
-                    fontSize: "0.6em",
-                    paddingRight: "10px"
-                }}/>
-                Advanced Search
-            </Typography>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                Advanced search provides a more targeted search feature, where database can be search with particular properties of biomolecules.
-            </Typography>
-            <span style={{
-                paddingLeft: "10px",
-                paddingBottom: "30px"
-            }}>
-                <img src={searchAdvaned} width={"600px"} alt="search advanced"/>
-            </span>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px",
-                    paddingBottom: "60px"
-                }}
-            >
-                To search biomolecules with properties such as id or name,<br/>
-                <em>id:gag_1, id:P12109</em><br/>
-                <em>name:fibronectin</em>
+                <Typography variant="body1" paragraph>
+                    The screenshot below shows an example of searching 'thrombospondin'. The default output is a list of ten biomolecules ordered by relevance ('thrombospondin' is always part of biomolecule names) and ranked from the highest to the lowest number of interaction partners (in this case, counts of interaction partners are larger in humans). Note that the reward icon representing relevance is circled on the right side of the banner.
+                </Typography>
 
-                <br/>To search proteins by the gene<br/>
-                <em>gene:fn1, gene:lox</em>
-            </Typography>
+                <Typography variant="caption" display="block" gutterBottom>
+                    <span style={{
+                        paddingLeft: "10px"
+                    }}>
+                        <img src={searchResult} width="600px" alt="search results"/>
+                    </span>
+                </Typography>
 
+                <Typography variant="body1" paragraph>
+                    Results beyond the most relevant results can be viewed by clicking on the eye icon ('see more' view), in which the exhaustive list of results is displayed by blocks of ten and sorted by the corresponding interaction partner counts for each biomolecule.
+                </Typography>
+
+                <Typography variant="caption" display="block" gutterBottom>
+                    <span style={{
+                        paddingLeft: "10px"
+                    }}>
+                        <img src={searchSeeMore} width="600px" alt="search results"/>
+                    </span>
+                </Typography>
+
+                <Typography variant="body1" paragraph>
+                    Results can be further filtered via clicking on the filter icon. Filters encompass the selection of biomolecule types or properties, including species or associated GO terms. A short demo of the use of filters with the search for 'thrombospondin' is shown below.
+                </Typography>
+
+                <Typography variant="caption" display="block" gutterBottom>
+                    <span style={{
+                        paddingLeft: "10px"
+                    }}>
+                        <img src={searchHelp} width={"600px"} alt="search help"/>
+                    </span>
+                </Typography>
+
+                <Typography variant="h5" component="h2" gutterBottom color="secondary">
+                    Advanced Search
+                </Typography>
+                <Typography variant="body1" paragraph>
+                    Advanced search is more targeted and designed to search the database with specific properties of biomolecules. Examples of search terms in the different categories are suggested under the input window. They can be tested on the spot.
+                </Typography>
+
+                <Typography variant="body1" paragraph>
+                    The example below shows how to retrieve the ADAM1 gene entry from the database.
+                </Typography>
+
+                <Typography variant="caption" display="block" gutterBottom>
+                    <span style={{
+                        paddingLeft: "10px",
+                        paddingBottom: "30px"
+                    }}>
+                        <img src={searchAdvaned} width={"600px"} alt="search advanced"/>
+                    </span>
+                </Typography>
+
+                <Typography variant="body1" paragraph>
+                    More generally, biomolecules can be searched with properties such as identifier or name (see naming convention page), but also annotations such as GO terms or matrisome categories.
+                </Typography>
+            </Box>
         </>
     );
 }

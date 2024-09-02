@@ -1,4 +1,4 @@
-import {Typography} from "@mui/material";
+import {Box, List, ListItem, ListItemText, Typography} from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import React from "react";
 
@@ -14,75 +14,53 @@ function NetworkExplorerHelp() {
             height: '100vh',
             overflowY: 'auto'
         }}>
-            <h4>Network Explorer</h4>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                <CircleIcon style={{
-                    fontSize: "0.6em",
-                    paddingRight: "4px"
-                }}/>
-                Network explorer lets the users explore interaction networks of the biomolecules of their choice
-            </Typography>
-
-            <h5>Biomolecule selection</h5>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                Biomolecules of the user's choice can be added to the network explorer and can be maintained in the browser session. It can be considered as a list of favorite biomolecules, where you can build the interaction networks.
-                There are two ways to add biomolecules to the network explorer.
-                <ul>
-                    <li>
-                        From the biomolecule page.
-                    </li>
-                </ul>
-                    <ul>
-                        Add the biomolecule to the explorer from the biomolecule page itself. Click on the network explorer icon on the header.
-                        <br/><img src={biomoleculeAdd} alt="biomolecule add"/>
-                    </ul>
-                    <ul>
-                        Once the biomolecule is added to the explorer, icon turn white and you can click on the icon to navigate to the explorer.
-                        <br/><img src={biomoleculeAdded} alt="biomolecule added"/>
-                    </ul>
-                <ul>
-                    <li>
-                        From the network explorer
-                    </li>
-                </ul>
-                <ul>
-                    From the network explorer, using the matrixdb search interface, you can
-                    - search for biomolecules,
-                    <br/><img src={biomoleculeSearch} width="600px" alt="biomolecule search"/>
-                </ul>
-                <ul>
-                    Filter them according to their properties (e.g species, go terms).
-                    <br/><img src={resultsWithFilters} width="600px" alt="biomolecule filter"/>
-                </ul>
-                <ul>
-                    Add the either one by one, or all together to the biomolecule collection. Note that on the left tab, it displays existing biomolecules, you may have already added.
-                </ul>
-            </Typography>
-            <Typography
-                variant="body2"
-                style={{
-                    paddingTop: "4px"
-                }}
-            >
-                <h5>Network generation</h5>
-                From the biomolecules list, you can select the participants for the network generation, either one by one or all together.
-                <ul>
-                    <li>
-                        Once the participants are selected click on the network generation icon, which will generate the resulting network in the network tab.
-                        <br/><img src={participants} width="300px" alt="participants"/>
-                    </li>
-                </ul>
-            </Typography>
+            <Box sx={{ my: 4 }}>
+                <Typography variant="body1" paragraph>
+                    <strong>Network Explorer</strong> is a graphic and interactive tool providing an interface to explore interaction networks of a selectable biomolecule set. It proceeds in three steps:
+                </Typography>
+                <List>
+                    <ListItem>
+                        <ListItemText primary="1. Search for biomolecules with free text queries" />
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText primary="2. Select the biomolecules to be added to the network" />
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText primary="3. Generate an interaction network that can be exported as an image or a Cytoscape format file" />
+                    </ListItem>
+                </List>
+                <Typography variant="h5" component="h2" gutterBottom color="secondary">
+                    Biomolecule Search and Selection
+                </Typography>
+                <Typography variant="body1" paragraph>
+                    Biomolecules can be searched and added to Network Explorer. The selection can be maintained in the browser session, useful when a user wishes the tool to remember a list of favorite biomolecules from which to build interaction networks.
+                </Typography>
+                <Typography variant="h6" component="h3" gutterBottom color="textSecondary">
+                    There are two ways to add biomolecules to the Network Explorer:
+                </Typography>
+                <List>
+                    <ListItem>
+                        <ListItemText
+                            primary="From the biomolecule page:"
+                            secondary={
+                                <Typography variant="body2">
+                                    In each biomolecule page, the Network Explorer icon is shown in green on the right end side of the top banner (black). When mousing over the icon, a tooltip specifies the identifier/accession number of the biomolecule described in the page and suggests adding it to Network Explorer. Clicking on the icon updates the number (+1) and makes the biomolecule an input of Network Explorer. To go to the Network Explorer page, click on the name itself (Network Explorer).
+                                </Typography>
+                            }
+                        />
+                    </ListItem>
+                    <ListItem>
+                        <ListItemText
+                            primary="From the Network Explorer page:"
+                            secondary={
+                                <Typography variant="body2">
+                                    Depending on the precision of the term input in the search window, the list of results can vary. For example, entering an accession number might limit results to one, while a generic term like 'metalloproteinase' could yield many results. A 'Biomolecule Selection' header is displayed, with sections including 'Selected participants' (initially empty) and 'Search results,' which lists biomolecules matching the search term. Selected items are added by clicking a green plus sign, populating the 'Selected participants' section. Filters are available based on biomolecule types and species, as shown in a demonstration limited to human proteins.
+                                </Typography>
+                            }
+                        />
+                    </ListItem>
+                </List>
+            </Box>
 
         </div>
     );
