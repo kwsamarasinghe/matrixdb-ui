@@ -350,6 +350,19 @@ function CytoscapeComponent(props: any) {
                     } else {
                         secondParticipant = association.participants[1];
                     }
+
+                    if(firstParticipant === biomoleculeId) {
+                        if('-' in firstParticipant) {
+                            firstParticipant = firstParticipant.split('-')[0];
+                        }
+                    }
+
+                    if(secondParticipant === biomoleculeId) {
+                        if('-' in secondParticipant) {
+                            secondParticipant = secondParticipant.split('-')[0];
+                        }
+                    }
+
                     associationsToDraw.push({
                         data: {
                             source: firstParticipant,

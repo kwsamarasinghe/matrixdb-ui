@@ -213,7 +213,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                 {
                                     interactorStats &&
                                     <div style={{clear: 'left', textAlign: 'left'}}>
-                                        <h4 >Participants: {interactorStats.experimentalInteractions + interactorStats.predictedInteractions}</h4>
+                                        <h4 >Participants: {interactorStats.partners}</h4>
                                         {interactorStats.supportingEvidence > 0 &&
                                             <div style={{ display: 'flex' }}>
                                                 <h4 style={{ display: 'inline-block', margin: '0' }}>Experimentally Supported Interactions: {interactorStats.experimentalInteractions}</h4>
