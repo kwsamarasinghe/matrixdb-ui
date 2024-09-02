@@ -51,7 +51,7 @@ function AboutComponent() {
                                     MatrixDB is one of the services of the French node of <a href="https://www.france-bioinformatique.fr/en/elixir-fr/">ELIXIR (IFB/ELIXIR-FR)</a>, and an active member of the <a href="https://www.imexconsortium.org/">IMEx consortium</a>, which is one of the Global Core Biodata Global Resources since 2023.
                                 </Typography><br/>
                                 <Typography variant={"body1"}>
-                                    The current version of MatrixDB also includes predicted ECM protein-protein interactions to increase the coverage of the ECM interaction networks generated using the network explorer tool available on this website.
+                                    Release MatrixDB 4.0 (2024-09-01) is based on release 2024-02 of IntAct, release 2024-01 of uniprot, release 2024-01 of BGee, release 2.0 of MatrisomeDB. This release also includes for the first time predicted ECM protein-protein interactions stringently selected (high quality) and extracted from IID (2024-01)
                                 </Typography>
                             </div>
                             <br/>

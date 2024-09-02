@@ -13,6 +13,7 @@ import PublicationComponent from "./components/publications/PublicationComponent
 import AboutComponent from "./components/about/AboutComponent";
 import DownloadComponent from "./components/download/DownloadComponent";
 import NamingComponent from "./components/about/NamingComponent";
+import MainHelp from "./components/help/MainHelp";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/about" element={<AboutComponent/>}/>
                 <Route path="/naming" element={<NamingComponent/>}/>
                 <Route path="/search" element={<MainComponent/>}/>
+                <Route path="/help" element={<MainHelp/>}/>
                 <Route path="/biomolecule/:biomoleculeId" element={<BiomoleculeComponent/>} />
                 <Route path="/association/:associationId" element={<AssociationComponent/>} />
                 <Route path="/experiment/:experimentId" element={<ExperimentComponent/>} />
