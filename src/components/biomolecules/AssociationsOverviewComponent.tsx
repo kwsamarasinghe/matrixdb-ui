@@ -67,7 +67,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                 }
 
                 // Partner count considering self interactions
-                let partnerCount = networkData.interactors.length;
+                let partnerCount = networkData.partnerCount;
                 let filtered = networkData.interactions.filter((interaction:any) => interaction.id === `${biomoleculeId}__${biomoleculeId}`)
                 if(filtered.length !== 1) {
                     partnerCount -= 1;

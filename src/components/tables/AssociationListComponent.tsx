@@ -45,10 +45,10 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 })[0];
 
             if(!partner) {
-                partner = 0;
+                partner = 1;
             } else {
                 if(biomoleculeIds[0] && network.context.interactors.interactor_mapping[partner].includes(biomoleculeIds[0])) {
-                    partner = 0;
+                    partner = 1;
                 }
             }
 
@@ -236,9 +236,19 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 headerName: 'MI Score',
                 width: 100,
                 renderCell: (params: any) =>  (
-                    <>
-                        {params.value}
-                    </>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {
+                            params.value.map((score: number) => {
+                                if(score && score !== 0) {
+                                    return(
+                                        <div style={{ display: 'flex' }}>
+                                            {score}
+                                        </div>
+                                    )
+                                }
+                            })
+                        }
+                    </div>
                 ),
                 sortComparator: (v1, v2) =>  parseInt(v2) - parseInt(v1)
             },
@@ -247,14 +257,19 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 headerName: 'Type',
                 width: 120,
                 renderCell: (params: any) =>  (
-                    <span
-                        style={{
-                            color: params.value === 'Experimental' ? "black" : "red",
-                            fontWeight: 'bold'
-                        }}
-                    >
-                    {params.value}
-                </span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {
+                            params.value.map((type: string) => (
+                                <div style={{
+                                    display: 'flex',
+                                    color: type === 'Experimental' ? "black" : "red",
+                                    fontWeight: 'bold'
+                                }}>
+                                    {type}
+                                </div>
+                            ))
+                        }
+                    </div>
                 ),
                 sortComparator: (v1, v2) =>  v2.localeCompare(v1)
             }
