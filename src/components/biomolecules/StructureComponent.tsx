@@ -6,7 +6,6 @@ import { PluginConfig } from 'molstar/lib/mol-plugin/config';
 import { PluginSpec } from 'molstar/lib/mol-plugin/spec';
 import { DefaultPluginUISpec, PluginUISpec } from 'molstar/lib/mol-plugin-ui/spec';
 import { PluginBehaviors } from 'molstar/lib/mol-plugin/behavior';
-import {Button, CircularProgress, Paper} from "@mui/material";
 import {
     PresetStructureRepresentations,
     StructureRepresentationPresetProvider
@@ -20,16 +19,12 @@ import {
 import {SbNcbrPartialChargesPreset, SbNcbrPartialChargesPropertyProvider} from "molstar/lib/extensions/sb-ncbr";
 import "molstar/build/viewer/molstar.css";
 import pdblogo from "../../assets/images/pdb.png";
-import SelectableList from "../commons/lists/SelectableList";
-import {StructureSelectionQueries} from "molstar/lib/mol-plugin-state/helpers/structure-selection-query";
-import {QueryContext} from "molstar/lib/mol-model/structure/query/context";
-import {Color} from "molstar/lib/mol-util/color";
-import {setStructureOverpaint} from "molstar/lib/commonjs/mol-plugin-state/helpers/structure-overpaint";
 import {StructureSelection} from "molstar/lib/mol-model/structure/query";
-import {Loci} from "molstar/lib/mol-model/loci";
 import {Script} from "molstar/lib/mol-script/script";
-import getStructureSelection = Script.getStructureSelection;
 import http from "../../commons/http-commons";
+import {IconButton, List, ListItem, Paper, Typography, CircularProgress} from "@mui/material";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 const DefaultViewerOptions = {
@@ -51,6 +46,114 @@ const DefaultViewerOptions = {
     volumeStreamingServer: PluginConfig.VolumeStreaming.DefaultServer.defaultValue,
     pdbProvider: PluginConfig.Download.DefaultPdbProvider.defaultValue,
     emdbProvider: PluginConfig.Download.DefaultEmdbProvider.defaultValue,
+};
+
+const PDBList: React.FC<any> = (props: any) => {
+
+    const {selectedItem, items, onItemChange, itemLogo, itemURL} = props;
+
+    const rowColor = (itemId: string, index: number) => {
+        if(selectedItem === itemId) {
+            return {border: '1px solid #3498db'};
+        } else {
+            if(index % 2 === 0) {
+                return {background: 'white'}
+            } else {
+                return {background: 'rgb(223,236,243)'};
+            }
+        }
+    }
+
+    const [expandedItems, setExpandedItems] = useState({});
+
+    // Function to toggle expansion state
+    const toggleExpand = (itemId: string) => {
+        setExpandedItems((prevState : any)=> ({
+            ...prevState,
+            [itemId]: !prevState[itemId] // Toggle the current state of the clicked item
+        }));
+    };
+
+    const onHighlight = (start: number, end: number) => {
+        props.onHighlight(start, end);
+    }
+
+
+    return (
+        <List style={{
+            height: '500px',
+            overflowY: 'auto'
+        }}>
+            {items.map((item: any, index: number) => (
+                <div key={index}>
+                    <ListItem key={index}
+                              style={rowColor(item.id, index)}
+                              onClick={() => onItemChange(item.id)}
+                    >
+                        <img
+                            src={itemLogo}
+                            style={{
+                                width: '20px',
+                                paddingRight: '10px'
+                            }}/>
+                        <Typography variant={'body2'}>
+                            <a
+                                href={`${itemURL}${item.id}`}
+                                target='_blank'
+                                rel="noreferrer"
+                            >
+                                {item.id}
+                            </a>
+                        </Typography>
+                    </ListItem>
+                    {
+                        item.bindingRegions && item.bindingRegions.length > 0 &&
+                        <div style={{
+                            paddingLeft: '30px',
+                            paddingTop: '10px',
+                            background: 'lightgray'
+                        }}>
+                            <Typography variant="body2">
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                    <div style={{ flex: 1, fontWeight: 'bold' }}>Chains</div>
+                                    <div style={{ flex: 2, fontWeight: 'bold' }}>Binding Regions</div>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    {
+                                        item.bindingRegions.map((bindingRegion: any, index: number) => (
+                                            <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                                <div style={{ flex: 1 }}>
+                                                    <span>{item.chain}</span>
+                                                </div>
+                                                <div style={{ flex: 2, display: 'flex', alignItems: 'center' }}>
+                                                    <span>
+                                                        {bindingRegion.start} - {bindingRegion.end}
+                                                    </span>
+                                                    <IconButton
+                                                        onClick={() => onHighlight(bindingRegion.start, bindingRegion.end)}
+                                                        size='small'
+                                                        style={{ marginLeft: '10px' }}
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faEye}
+                                                            style={{
+                                                                marginRight: '10px',
+                                                                fontSize: '0.5em'
+                                                            }}
+                                                        />
+                                                    </IconButton>
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </Typography>
+                        </div>
+                    }
+                </div>
+            ))}
+        </List>
+    );
 };
 
 const StructureViewerComponent: React.FC<any> = (props: any) => {
@@ -341,7 +444,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                             <div style={{ display: 'flex' }}>
                                 <div style={{ flex: 0.5 }}>
                                     <div style={{padding: '10px' }}>
-                                        <SelectableList
+                                        <PDBList
                                             selectedItem={selectedPDB}
                                             items={pdbIds}
                                             onItemChange={handleOptionChange}

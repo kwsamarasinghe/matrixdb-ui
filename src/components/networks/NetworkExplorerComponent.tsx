@@ -68,7 +68,8 @@ const NetworkExplorer: React.FC<any> = ({
 
     const onParticipantAdd = (biomolecule: any[]) => {
         let newSelectedBiomolecules = [...selectedParticipants, ...biomolecule];
-        setSelectedParticipants(newSelectedBiomolecules);
+        let uniqueBiomolecules = new Map(newSelectedBiomolecules.map(item => [item.biomolecule_id, item]));
+        setSelectedParticipants([...uniqueBiomolecules.values()]);
 
         //let biomolecules = getFromLocalStorage("selectedBiomolecules");
         //saveToLocalStorage("selectedBiomolecules", [...biomolecules, biomolecule.biomolecule_id]);
@@ -173,8 +174,7 @@ const NetworkExplorer: React.FC<any> = ({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
-                paddingTop: "20px"
+                justifyContent: "center"
             }}>
                 <div style={{
                     display: 'flex',
@@ -185,7 +185,8 @@ const NetworkExplorer: React.FC<any> = ({
                 }}>
                     <div style={{
                         width: '70%',
-                        paddingBottom: '10px'
+                        paddingBottom: '10px',
+                        paddingTop: '20pxnpm '
                     }}>
                         <Box sx={{
                             backgroundColor: 'lightcoral'

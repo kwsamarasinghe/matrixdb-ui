@@ -50,6 +50,9 @@ function Footer() {
                                 <li style={{ margin: '5px 0' }}>
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/networks">Network Explorer</a>
                                 </li>
+                                <li style={{ margin: '5px 0' }}>
+                                    <a style={{ color: 'white', textDecoration: 'none' }} href="/help">Help</a>
+                                </li>
                             </ul>
                         </Grid>
 
