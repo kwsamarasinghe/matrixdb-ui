@@ -5,17 +5,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import React from "react";
 import DoneIcon from '@mui/icons-material/Done';
+import speciesMapping from "../../../commons/constants";
 
 const getSpeciesNCBI = (biomolecule: any) => {
-    if(biomolecule.species) {
-        return biomolecule.species;
-    } else {
-        let biomoleculeId = biomolecule.biomolecule_id;
-        let biomolTokens = biomoleculeId.split('_');
-        if(biomolTokens.length > 1) {
-            return biomolTokens[biomolTokens.length - 1].toLowerCase();
-        }
-    }
+    return speciesMapping[biomolecule.species];
 }
 
 const BiomoleculeCard: React.FC<any> = (props: any) => {

@@ -23,6 +23,7 @@ const   BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
 
     useEffect(() => {
         setSelectedParticipants(props.selectedParticipants);
+        if(props.selectedParticipants && props.selectedParticipants.length > 0) setSelectedTab(0);
     }, [props.selectedParticipants]);
 
     useEffect(() => {
@@ -44,7 +45,6 @@ const   BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
     }, [filterCriteria]);
 
     useEffect(() => {
-        console.log(props.searchQuery)
         let query = props.searchQuery;
         if(!query || query === '') return;
 
@@ -94,9 +94,10 @@ const   BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
         if(selectedParticipants) {
             currentSelectedParticipants = selectedParticipants;
         }
-        let newSelectedParticipants = [...currentSelectedParticipants, ...biomolecules];
-        setSelectedParticipants(newSelectedParticipants);
-        props.onParticipantAdd(newSelectedParticipants);
+        let newSelectedParticipants = new Set([...currentSelectedParticipants, ...biomolecules]);
+
+        setSelectedParticipants([...newSelectedParticipants]);
+        props.onParticipantAdd([...newSelectedParticipants]);
     }
 
     const handleTabChange = (event : any, newValue : number) => {

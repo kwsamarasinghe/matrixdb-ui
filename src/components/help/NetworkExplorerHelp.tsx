@@ -45,6 +45,7 @@ function NetworkExplorerHelp() {
                             secondary={
                                 <Typography variant="body2">
                                     In each biomolecule page, the Network Explorer icon is shown in green on the right end side of the top banner (black). When mousing over the icon, a tooltip specifies the identifier/accession number of the biomolecule described in the page and suggests adding it to Network Explorer. Clicking on the icon updates the number (+1) and makes the biomolecule an input of Network Explorer. To go to the Network Explorer page, click on the name itself (Network Explorer).
+                                    <img src={biomoleculeAdd} width="200px" alt="ecmness"/>
                                 </Typography>
                             }
                         />

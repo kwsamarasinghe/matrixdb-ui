@@ -4,17 +4,10 @@ import LogoIcon from "../icons/LogoIcon";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
 import DoneIcon from '@mui/icons-material/Done';
+import speciesMapping from "../../../commons/constants";
 
 const getSpeciesNCBI = (biomolecule: any) => {
-    if(biomolecule.species) {
-        return biomolecule.species;
-    } else {
-        let biomoleculeId = biomolecule.biomolecule_id;
-        let biomolTokens = biomoleculeId.split('_');
-        if(biomolTokens.length > 1) {
-            return biomolTokens[biomolTokens.length - 1].toLowerCase();
-        }
-    }
+    return speciesMapping[biomolecule.species];
 }
 
 const ResultBiomoleculeCard: React.FC<any> = (props: any) => {
