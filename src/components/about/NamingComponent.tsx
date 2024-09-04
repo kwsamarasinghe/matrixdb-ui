@@ -34,7 +34,7 @@ function NamingComponent() {
                             marginBottom: '5px',
                             marginTop: '5px'
                         }}>
-                        MatrixDB Naming Convention
+                        MatrixDB Nomenclature
                     </Typography>
                     <div style={{
                         paddingLeft: '20px',

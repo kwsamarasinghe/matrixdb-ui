@@ -168,7 +168,7 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     };
 
     useEffect(() => {
-        if(props.biomoleculeType === 'gag') {
+        if(props.biomoleculeType === 'gag' || props.biomoleculeType === 'pfrag') {
             if(Array.isArray(props.pdb)) {
                 setPDBIds(props.pdb);
                 setSelectedPDB(props.pdb[0].id);

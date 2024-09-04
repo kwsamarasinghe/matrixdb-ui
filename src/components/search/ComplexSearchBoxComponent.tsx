@@ -161,7 +161,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Matrisome category: <a href="/search?query=matrisome_category:ecm regulators&mode=1">matrisome_category:ecm regulators</a>
+                    Matrisome sub-category: <a href="/search?query=matrisome_category:ecm regulators&mode=1">matrisome_category:ecm regulators</a>
                     {/*<a href="/search?query=matrisome_division:matrisome-associated">matrisome:matrisome_associated</a>*/}
                 </Typography>
                 <Typography
@@ -174,7 +174,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Matrisome division: <a href="/search?query=matrisome_division:matrisome-associated&mode=1">matrisome_division:matrisome-associated</a>
+                    Matrisome category: <a href="/search?query=matrisome_division:matrisome-associated&mode=1">matrisome_division:matrisome-associated</a>
                     {/*<a href="/search?query=matrisome_division:matrisome-associated">matrisome:matrisome_associated</a>*/}
                 </Typography>
                 <Typography
