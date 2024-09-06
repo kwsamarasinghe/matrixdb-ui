@@ -160,7 +160,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Reactome: <a href="/search?query=reactome:ECM proteoglycanscytosol&mode=1">reactome:ECM proteoglycans</a>
+                    Reactome: <a href="/search?query=reactome:ECM proteoglycans&mode=1">reactome:ECM proteoglycans</a>
                 </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
