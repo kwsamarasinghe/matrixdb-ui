@@ -35,7 +35,7 @@ function DownloadComponent() {
                                     marginTop: '5px'
                                 }}
                             >
-                                Downloads
+                                Download
                             </Typography>
                             <div style={{
                                 paddingRight: '20px',
@@ -45,7 +45,7 @@ function DownloadComponent() {
                                     MatrixDB Core Interactions
                                 </Typography>
                                 <Typography variant={"body2"}>
-                                    All interactions
+                                    All interactions : <a href={"/download/test.txt"}> mytext</a>
                                 </Typography>
                             </div>
                     </div>
