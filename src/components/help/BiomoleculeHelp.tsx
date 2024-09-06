@@ -12,7 +12,7 @@ function BiomoleculeHelp() {
                     Overview of Sections
                 </Typography>
                 <Typography variant="body1" paragraph>
-                    A biomolecule page is organized into five sections, each directly accessible via a menu on the top left. If no information is available for a section, the name of that section will not appear in the top left menu. The sections are:
+                    A biomolecule page is organised in four sections:
                 </Typography>
                 <List>
                     <ListItem>
@@ -31,6 +31,9 @@ function BiomoleculeHelp() {
                         <ListItemText primary="5. Annotations" />
                     </ListItem>
                 </List>
+                <Typography variant="body1" paragraph>
+                    Each is directly accessible via a menu on the top left. If no information can be shown in a section, the name of this section will not feature in the top left menu.
+                </Typography>
 
                 <Divider />
 
@@ -76,11 +79,28 @@ function BiomoleculeHelp() {
                     If the biomolecule is a cation, a small molecule, or a synthetic peptide:
                 </Typography>
                 <ul>
-                    <li>Cross-references to ChEBI</li>
+                    <li>Cross-references to <a href="https://www.ebi.ac.uk/chebi/">ChEBI</a></li>
                 </ul>
 
                 <Typography variant="body1" paragraph>
-                    ECMness label is displayed in the top right banner for proteins, based on the ECMness criterion of MatrixDB ('MatrixDB ECM' blue capsule) and MatrisomeDB categories and subcategories.
+                    ECMness label is displayed in the top right banner for proteins, based on the ECMness criterion of MatrixDB ('MatrixDB ECM' blue capsule) and MatrisomeDB categories and subcategories, defined as:
+                    <div className="category">
+                        <h5 className="category-title">Core Matrisome</h5>
+                        <ul className="subcategory-list">
+                            <li className="subcategory-item">ECM Glycoproteins</li>
+                            <li className="subcategory-item">Proteoglycans</li>
+                            <li className="subcategory-item">Collagens</li>
+                        </ul>
+                    </div>
+
+                    <div className="category">
+                        <h5 className="category-title">Matrisome-Associated</h5>
+                        <ul className="subcategory-list">
+                            <li className="subcategory-item">ECM Regulators</li>
+                            <li className="subcategory-item">Secreted Factors</li>
+                            <li className="subcategory-item">ECM-Affiliated Proteins</li>
+                        </ul>
+                    </div>
                 </Typography>
 
                 <Divider />
@@ -89,39 +109,116 @@ function BiomoleculeHelp() {
                     Interactions Section
                 </Typography>
                 <Typography variant="body1" paragraph>
-                    The 'Interactions' section shows the full set of biomolecules interacting with the biomolecule described above. Information is summarized with three figures:
-                </Typography>
-                <ul>
-                    <li>Number of Participants: counts biomolecules interacting with the subject biomolecule (including self-interactions)</li>
-                    <li>Number of Experimentally Supported Interactions: counts interactions with experimental evidence</li>
-                    <li>Number of Predicted Interactions: counts predicted interactions</li>
-                </ul>
-
-                <Typography variant="body1" paragraph>
-                    Two views are available: Interaction list view and Network view. In the Interaction list view, binary interactions are displayed in a list. In the Network view, a network is visualized using <a href="https://cytoscape.org" target="_blank">Cytoscape</a>.
+                    The 'Interactions' section shows the full set of biomolecules interacting with the biomolecule described above (subject of the page). Information is first summarised with three figures:
                 </Typography>
 
-                <Typography variant="subtitle1" gutterBottom>
-                    Interaction List View
-                </Typography>
-                <Typography variant="body1" paragraph>
-                    Binary interactions are shown in an interactive table with six columns: Participant, Interactions, Non-expanded, Spoke Expanded, MI score, and Type. The table can be exported as a .csv file.
-                </Typography>
+                <Box component="ul" sx={{ pl: 2, mb: 2 }}>
+                    <Typography component="li" variant="body2">
+                        <strong>Number of Participants:</strong> counts the number of biomolecules interacting with the subject biomolecule (including self-interactions).
+                    </Typography>
+                    <Typography component="li" variant="body2">
+                        <strong>Number of Experimentally Supported Interactions:</strong> counts the number of interactions with experimental evidence.
+                    </Typography>
+                    <Typography component="li" variant="body2">
+                        <strong>Number of Predicted Interactions:</strong> counts the number of predicted interactions.
+                    </Typography>
+                </Box>
 
                 <Typography variant="body1" paragraph>
-                    Direct interactions, physical associations, and associations are defined according to the <a href="https://www.ebi.ac.uk/intact/documentation/user-guide" target="_blank">IntAct user guide</a>.
+                    Below, two alternative views are available. In the <strong>Interaction list view</strong>, binary interactions are displayed in a list. In the <strong>Network view</strong>, a network is visualised using the Cytoscape software.
+                    Visit <a href="https://cytoscape.org" target="_blank" rel="noopener noreferrer">Cytoscape</a> for more details.
                 </Typography>
 
-                <Typography variant="subtitle1" gutterBottom>
-                    Network View
-                </Typography>
-                <Typography variant="body1" paragraph>
-                    All listed binary interactions are mapped to an interactive graph with nodes as biomolecules and edges as interactions. Nodes can be moved and edges adjusted interactively. For more details, refer to the <a href="https://cytoscape.org/documentation_users.html" target="_blank">Cytoscape documentation</a>.
-                </Typography>
+                <Box sx={{ marginBottom: 2 }}>
+                    <Typography variant="body2" gutterBottom>
+                        Interaction List View
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                        The list of binary interactions with the subject biomolecule is shown by series of ten in an interactive six-column table:
+                    </Typography>
+                    <Box component="ul" sx={{ pl: 2 }}>
+                        <Typography component="li" variant="body2">
+                            <strong>Participant:</strong> provides the full name of each biomolecule participating in the interaction.
+                        </Typography>
+                        <Typography component="li" variant="body2">
+                            <strong>Interactions:</strong> describes the interaction with biomolecule identifiers.
+                        </Typography>
+                        <Typography component="li" variant="body2">
+                            <strong>Non-expanded*:</strong> counts the number of direct interactions, as provided in the source database. Mousing over a number triggers a tooltip with link(s) to experimental evidence.
+                        </Typography>
+                        <Typography component="li" variant="body2">
+                            <strong>Spoke Expanded*:</strong> counts the number of associations, as provided in the source database. Mousing over a number triggers a tooltip with link(s) to experimental evidence.
+                        </Typography>
+                        <Typography component="li" variant="body2">
+                            <strong>MI score:</strong> specifies the molecular interaction score when provided by the source database.
+                        </Typography>
+                        <Typography component="li" variant="body2">
+                            <strong>Type:</strong> specifies whether the interaction is experimentally supported or predicted.
+                        </Typography>
+                    </Box>
+                    <Typography variant="caption" display="block" paragraph>
+                        The table can be exported as a .csv file.
+                    </Typography>
+                </Box>
 
-                <Typography variant="body1" paragraph>
-                    The graph can be exported as a Cytoscape file or as an image.
-                </Typography>
+                <Box sx={{ marginBottom: 2 }}>
+                    <Typography variant="body2" gutterBottom>
+                        Network View
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                        All listed binary interactions of the previous view are mapped to an interactive graph, where each node is a biomolecule and an edge is an interaction. Mousing over a node prompts the display of its name in the upper left side banner.
+                        The color code for the nodes and the edges is summarised in a legend featured in the lower left side banner. The graph is interactive so nodes can be moved around and edges can be lengthened or shortened simply by holding the mouse on a node.
+                        For users unfamiliar with Cytoscape, it may be helpful to consider the corresponding
+                        <a href="https://cytoscape.org/documentation_users.html" target="_blank" rel="noopener noreferrer">documentation</a>.
+                    </Typography>
+                    <Typography variant="body2" paragraph>
+                        The graph can be exported as a Cytoscape file (Cytoscape icon, top left) or as an image (camera icon, top left). The video below highlights the display of the Network view of the human Toll-like receptor 4 and the use of the Quick search window to focus on a selection of participants (all protein names including 'factor' in this example).
+                    </Typography>
+                    <Typography variant="body2" paragraph>
+                        Interactions can be filtered with parameters displayed on the right side of the graph. The video below shows an example of use.
+                    </Typography>
+                    <Typography variant="body2" paragraph>
+                        Source databases may provide refined information on a precise protein isoform involved in the interaction.
+                    </Typography>
+                </Box>
+
+                <Divider />
+
+                <Box sx={{ marginBottom: 2 }}>
+                    <Typography variant="h6" gutterBottom>
+                        Expression Section (for proteins only)
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                        This section shows in the first tab (Transcriptomics data) the RNA expression associated with the subject protein based on the Genotype-Tissue Expression (GTEx) project data processed by the BGee pipeline. The anatomogram is borrowed from the
+                        <a href="https://www.ebi.ac.uk/gxa/home" target="_blank" rel="noopener noreferrer">Expression Atlas</a>. The heat map reflects expression measured in TPM.
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                        The second tab (Proteomics data) also displays in a heat map the subject protein expression data extracted from MatrisomeDB datasets.
+                    </Typography>
+                </Box>
+
+                <Divider />
+
+                <Box sx={{ marginBottom: 2 }}>
+                    <Typography variant="h6" gutterBottom>
+                        3D Structure Section
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                        The 3-dimensional structure of biomolecules is shown when available and extracted from the Protein Data Bank (PDB). Structures are displayed in 3D with the Mol-* visualization library.
+                        For more details, visit <a href="https://molstar.org" target="_blank" rel="noopener noreferrer">Molstar</a>. When binding regions are specified in the source databases, it is possible to highlight them by clicking on the eye icon next to amino acid coordinates, as shown in the screenshot below:
+                    </Typography>
+                </Box>
+
+                <Divider />
+
+                <Box>
+                    <Typography variant="h6" gutterBottom>
+                        Annotations Section
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                        This section consists of three tabs encompassing GO terms, UniProt keywords, and Reactome pathways associated with the subject protein or multimer. These annotations are listed with corresponding cross references in their respective tab.
+                    </Typography>
+                </Box>
             </Box>
     );
 }
