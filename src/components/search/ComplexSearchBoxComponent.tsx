@@ -134,7 +134,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Gene name (for proteins): <a href="/search?query=gene:LOX&mode=1">gene:LOX</a>
+                    Gene name: <a href="/search?query=gene:LOX&mode=1">gene:LOX</a>
                 </Typography>
                 <Typography
                     variant="body2"

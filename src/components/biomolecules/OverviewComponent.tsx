@@ -139,7 +139,7 @@ function OverviewComponent(props: any) {
         }
 
         if(biomoleculeToDisplay && biomoleculeToDisplay.description) {
-            tabConfig.push({label: 'Comment', renderContent: () => biomoleculeToDisplay.description })
+            tabConfig.push({label: 'Description', renderContent: () => biomoleculeToDisplay.description })
         }
 
         if(biomoleculeToDisplay && biomoleculeToDisplay.structure) {
