@@ -40,8 +40,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
             let rowData : {[key: string]: any};
             let partner = interaction.participants
                 .filter((biomolecule: string) => {
-                    let partnerId = network.context.interactors.interactor_mapping[biomolecule];
-                    return partnerId !== biomoleculeIds[0];
+                    return !network.biomolecules.includes(biomolecule);
                 })[0];
 
             if(!partner) {

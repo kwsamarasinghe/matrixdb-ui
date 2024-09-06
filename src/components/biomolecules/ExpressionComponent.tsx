@@ -745,7 +745,7 @@ function ExpressionComponent(props: any) {
                             <>
                                 <div style={{ display: 'flex', alignItems: 'center', background: '#e1ebfc' }}>
                                     <span style={{paddingLeft: '10px'}}>
-                                        <h3>Transcriptomic & Proteomic Data</h3>
+                                        <h3>Expression Data</h3>
                                     </span>
                                     <div style={{
                                         display: "flex",

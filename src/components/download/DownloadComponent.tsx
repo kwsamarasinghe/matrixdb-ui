@@ -1,8 +1,23 @@
 import Header from "../home/HeaderComponent";
 import Footer from "../home/Footer";
 import imexlogo from "../../assets/images/imexlogo.png";
-import {Typography} from "@mui/material";
+import {Box, TableContainer, Typography} from "@mui/material";
 import React from "react";
+import {faFileDownload} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
+const uniProtKBData = [
+    { term: 'Basement membrane', code: 'KW-0084' },
+    { term: 'Extracellular matrix', code: 'KW-0272' },
+    { term: 'Extracellular space/secreted', code: 'KW-0964' },
+];
+
+const goTermsData = [
+    { term: 'Extracellular matrix', code: 'GO:0031012' },
+    { term: 'Basement membrane', code: 'GO:0005604' },
+    { term: 'Extracellular space', code: 'GO:0005615' },
+    { term: 'Extracellular region', code: 'GO:0005576' },
+];
 function DownloadComponent() {
     return(
         <div
@@ -41,12 +56,72 @@ function DownloadComponent() {
                                 paddingRight: '20px',
                                 paddingLeft: '20px'
                             }}>
-                                <Typography variant={"body2"}>
-                                    MatrixDB Core Interactions
+                                <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
+                                    MatrixDB Core Interactions : <br/>
+                                    <FontAwesomeIcon
+                                        icon={faFileDownload}
+                                        style={{
+                                            marginRight: '10px',
+                                            fontSize: '1.5em'
+                                        }}
+                                        color={'darkgreen'}
+                                    /> <a href={"/download/test.txt"}> mytext</a>
                                 </Typography>
-                                <Typography variant={"body2"}>
-                                    All interactions : <a href={"/download/test.txt"}> mytext</a>
+                                <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
+                                    All interactions : <br/>
+                                    <FontAwesomeIcon
+                                        icon={faFileDownload}
+                                        style={{
+                                            marginRight: '10px',
+                                            fontSize: '1.5em'
+                                        }}
+                                        color={'darkgreen'}
+                                    /><a href={"/download/test.txt"}> mytext</a>
                                 </Typography>
+                                <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
+                                    ECM Proteins : <br/>
+                                    <FontAwesomeIcon
+                                        icon={faFileDownload}
+                                        style={{
+                                            marginRight: '10px',
+                                            fontSize: '1.5em'
+                                        }}
+                                        color={'darkgreen'}
+                                    /><a href={"/download/test.txt"}> mytext</a>
+                                </Typography>
+                                <Box sx={{ padding: 3 }}>
+                                    <Typography variant="body2" gutterBottom>
+                                        MatrixDB selects extra cellular matrix (ECM) proteins according to the following criteria and according to the classification from matrisome project.
+                                    </Typography>
+                                    <Typography variant="body2" gutterBottom>
+                                        UniProtKB Keywords
+                                    </Typography>
+                                    {uniProtKBData.map((item, index) => (
+                                        <Box key={index} sx={{ display: 'flex', mb: 1 }}>
+                                            <Typography variant="body2" sx={{ width: '300px', fontWeight: 'bold' }}>
+                                                {item.term}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ width: '100px' }}>
+                                                {item.code}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+
+                                    <Typography variant="body2" gutterBottom sx={{ marginTop: 4 }}>
+                                        GO Term Cellular Component
+                                    </Typography>
+
+                                    {goTermsData.map((item, index) => (
+                                        <Box key={index} sx={{ display: 'flex', mb: 1 }}>
+                                            <Typography variant="body2" sx={{ width: '300px', fontWeight: 'bold' }}>
+                                                {item.term}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ width: '100px' }}>
+                                                {item.code}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
                             </div>
                     </div>
                 </div>

@@ -199,7 +199,7 @@ function BiomoleculeComponent() {
                                                                 fontSize: "14px",
                                                             }}
                                                         >
-                                                          {'Structures'}
+                                                          {'3D Structures'}
                                                         </span>
                                                         </ListItemButton>
                                                     </ListItem>

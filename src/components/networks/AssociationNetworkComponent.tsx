@@ -502,7 +502,6 @@ function CytoscapeComponent(props: any) {
 
             cy.current.on('mouseout', 'node', function (event: any) {
                 const node = event.target;
-                //alert(`Mouseout on node: ${node.id()}`);
             });
 
         }
