@@ -186,7 +186,7 @@ const NetworkExplorer: React.FC<any> = ({
                     <div style={{
                         width: '70%',
                         paddingBottom: '10px',
-                        paddingTop: '20pxnpm '
+                        paddingTop: '20px'
                     }}>
                         <Box sx={{
                             backgroundColor: 'lightcoral'
@@ -298,7 +298,7 @@ const NetworkExplorer: React.FC<any> = ({
                                 alignItems: 'center'
                             }}>
                                 <div style={{
-                                    width: '70%'
+                                    width: '90%'
                                 }}>
                                     <Grid
                                         container
