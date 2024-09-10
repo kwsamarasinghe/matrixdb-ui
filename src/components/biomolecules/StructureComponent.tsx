@@ -74,8 +74,10 @@ const PDBList: React.FC<any> = (props: any) => {
         }));
     };
 
-    const onHighlight = (start: number, end: number) => {
-        props.onHighlight(start, end);
+    const onHighlight = (item: any, bindingRegion: any) => {
+        let pdbStart = item.pdb_start;
+        let unpStart = item.unp_start;
+        props.onHighlight(bindingRegion.region_start - (unpStart - pdbStart), bindingRegion.region_end - (unpStart - pdbStart));
     }
 
 
@@ -107,7 +109,7 @@ const PDBList: React.FC<any> = (props: any) => {
                         </Typography>
                     </ListItem>
                     {
-                        item.bindingRegions && item.bindingRegions.length > 0 &&
+                        item.binding_regions && item.binding_regions.length > 0 &&
                         <div style={{
                             paddingLeft: '30px',
                             paddingTop: '10px',
@@ -120,17 +122,17 @@ const PDBList: React.FC<any> = (props: any) => {
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                     {
-                                        item.bindingRegions.map((bindingRegion: any, index: number) => (
+                                        item.binding_regions.map((bindingRegion: any, index: number) => (
                                             <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                                                 <div style={{ flex: 1 }}>
                                                     <span>{item.chain}</span>
                                                 </div>
                                                 <div style={{ flex: 2, display: 'flex', alignItems: 'center' }}>
                                                     <span>
-                                                        {bindingRegion.start} - {bindingRegion.end}
+                                                        {bindingRegion.region_start} - {bindingRegion.region_end}
                                                     </span>
                                                     <IconButton
-                                                        onClick={() => onHighlight(bindingRegion.start, bindingRegion.end)}
+                                                        onClick={() => onHighlight(item, bindingRegion)}
                                                         size='small'
                                                         style={{ marginLeft: '10px' }}
                                                     >
@@ -178,9 +180,9 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                 setSelectedPDB(props.pdb);
             }
         } else {
-            let pdb = props.pdb;
-            let pdbRegionMap: { [key: string]: any[] } = {};
-            pdb.forEach((pdb: any) => {
+            //let pdb = props.pdb;
+            //let pdbRegionMap: { [key: string]: any[] } = {};
+            /*pdb.forEach((pdb: any) => {
                 pdb.properties.forEach((pdbProperty: any) => {
                     if(pdbProperty.type === "chains") {
                         let chains = [];
@@ -202,13 +204,13 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                         });
                     }
                 })
-            });
+            });*/
 
             // Check for relevant binding regions
             http.get(`/biomolecules/${props.biomolecule}/binding-regions`)
                 .then((response: any) => {
 
-                    response.data.forEach((bindingRegion: any) => {
+                    /*response.data.forEach((bindingRegion: any) => {
                         let region = bindingRegion.featur_value;
                         let regionStart = parseInt(region.split('-')[0]);
                         let regionEnd = parseInt(region.split('-')[1]);
@@ -230,15 +232,21 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
                                 });
                             }
                         });
+                    });*/
+
+                    let pdbList: any[] = [];
+                    Object.keys(response.data).forEach((pdb: string) => {
+                        let pdbEntry = response.data[pdb];
+                        let chains = pdbEntry.map((pdbEntry: any) => pdbEntry.chain).join('/');
+                        let fullEntry = pdbEntry[0];
+                        fullEntry['id'] = pdb;
+                        fullEntry['chain'] = chains;
+                        pdbList.push(fullEntry);
                     });
 
-                    if(Array.isArray(pdb)) {
-                        setPDBIds(pdb);
-                        setSelectedPDB(pdb[0].id);
-                    } else {
-                        setPDBIds([pdb]);
-                        setSelectedPDB(pdb);
-                    }
+                    setPDBIds(pdbList);
+                    setSelectedPDB(pdbList[0].id);
+
                 });
         }
     }, []);
