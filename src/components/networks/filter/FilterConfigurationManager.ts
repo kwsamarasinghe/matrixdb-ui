@@ -70,7 +70,7 @@ export class FilterConfigurationManager {
                         },
                     },
                     {   id: 'tpm',
-                        label: 'Expression Score (TPM)',
+                        label: 'Expression Value (TPM)',
                         options: {
                             type: FilterOptionType.numeric,
                             range: []

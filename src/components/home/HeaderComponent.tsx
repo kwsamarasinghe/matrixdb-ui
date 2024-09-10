@@ -97,7 +97,7 @@ function Header(props: HeaderProps) {
                     </span>
                     <span style={{ paddingRight: '4px' }}>
                         <a style={{color: 'white', textDecoration: 'none', position: 'relative'}} href="/naming">
-                            Naming Convention
+                            MatrixDB Nomenclature
                         </a>
                         <span style={{color: 'white', padding: '0 4px'}}>|</span>
                     </span>

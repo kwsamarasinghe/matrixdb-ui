@@ -42,7 +42,7 @@ function Footer() {
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/about">About MatrixDB</a>
                                 </li>
                                 <li style={{ margin: '5px 0' }}>
-                                    <a style={{ color: 'white', textDecoration: 'none' }} href="/naming">Naming Conventions</a>
+                                    <a style={{ color: 'white', textDecoration: 'none' }} href="/naming">MatrixDB Nomenclature</a>
                                 </li>
                                 <li style={{ margin: '5px 0' }}>
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/downloads">Downloads</a>

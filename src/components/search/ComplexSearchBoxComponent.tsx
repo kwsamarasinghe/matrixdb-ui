@@ -48,7 +48,7 @@ function BasicSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Gene name (for proteins): <a href="/search?query=LOX">LOX</a>
+                    Gene name: <a href="/search?query=LOX">LOX</a>
                 </Typography>
                 <Typography
                     variant="body2"
@@ -75,7 +75,7 @@ function BasicSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Uniprot accession : (uniprot) <a href="/search?query=P12109">P12109</a>
+                    UniProt accession : <a href="/search?query=P12109">P12109</a>
                 </Typography>
                 <Typography
                     variant="body2"
@@ -99,7 +99,7 @@ function BasicSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Pubmed identifiers (for publications): <a href="/search?query=28106549">28106549</a>
+                    PubMed identifiers: <a href="/search?query=28106549">28106549</a>
                 </Typography>
             </Grid>
         </Grid>
@@ -134,7 +134,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Gene name (for proteins): <a href="/search?query=gene:LOX&mode=1">gene:LOX</a>
+                    Gene name: <a href="/search?query=gene:LOX&mode=1">gene:LOX</a>
                 </Typography>
                 <Typography
                     variant="body2"
@@ -147,7 +147,20 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Go Terms, Uniprot Keywords: <a href="/search?query=go:cytosol&mode=1">go:cytosol</a>
+                    GO Terms, UniProt Keywords: <a href="/search?query=go:cytosol&mode=1">go:cytosol</a> <a href="/search?query=keywords:Metal-binding&mode=1">keywords:Metal-binding</a>
+                </Typography>
+                <Typography
+                    variant="body2"
+                    style={{
+                        paddingTop: "8px",
+                        paddingLeft: "5px",
+                    }}
+                >
+                    <CircleIcon style={{
+                        fontSize: "0.6em",
+                        paddingRight: "4px"
+                    }}/>
+                    Reactome: <a href="/search?query=reactome:ECM proteoglycans&mode=1">reactome:ECM proteoglycans</a>
                 </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -161,7 +174,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Matrisome category: <a href="/search?query=matrisome_category:ecm regulators&mode=1">matrisome_category:ecm regulators</a>
+                    Matrisome category: <a href="/search?query=matrisome_category:matrisome-associated&mode=1">matrisome_category:matrisome-associated</a>
                     {/*<a href="/search?query=matrisome_division:matrisome-associated">matrisome:matrisome_associated</a>*/}
                 </Typography>
                 <Typography
@@ -174,8 +187,21 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Matrisome division: <a href="/search?query=matrisome_division:matrisome-associated&mode=1">matrisome_division:matrisome-associated</a>
+                    Matrisome sub-category: <a href="/search?query=matrisome_category:ecm regulators&mode=1">matrisome_subcategory:ecm regulators</a>
                     {/*<a href="/search?query=matrisome_division:matrisome-associated">matrisome:matrisome_associated</a>*/}
+                </Typography>
+
+                <Typography
+                    variant="body2"
+                    style={{
+                        paddingTop: "8px"
+                    }}
+                >
+                    <CircleIcon style={{
+                        fontSize: "0.6em",
+                        paddingRight: "4px"
+                    }}/>
+                    GO term AND Species: <a href="/search?query=go:cytosol and species:homo sapiens&mode=1">go:cytosol and species:homo sapiens</a>
                 </Typography>
                 <Typography
                     variant="body2"
@@ -187,7 +213,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Go term and Species: <a href="/search?query=go:cytosol and species:homo sapiens&mode=1">go:cytosol and species:homo sapiens</a>
+                    Matrisome subcategory AND Species: <a href="/search?query=matrisome_subcategory:ecm regulators and species:homo sapiens&mode=1">matrisome_subcategory:ecm regulators and species:homo sapiens</a>
                 </Typography>
             </Grid>
         </Grid>

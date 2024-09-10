@@ -70,7 +70,7 @@ const CirclePacking: React.FC<any> = (props: any) => {
                     let statistic = statisticBySpecies.bySpecies[speciesId];
                     let speciesName = statistic.name;
                     let count = statistic.count;
-                    if(count > 2) {
+                    if(count > 2 && speciesName !== 'Dictyostelium discoideum') {
                         statisticData.children?.push({
                             name: speciesName,
                             value: Math.log10((count/value) * 100),

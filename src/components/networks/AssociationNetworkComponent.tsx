@@ -350,6 +350,19 @@ function CytoscapeComponent(props: any) {
                     } else {
                         secondParticipant = association.participants[1];
                     }
+
+                    if(firstParticipant === biomoleculeId) {
+                        if('-' in firstParticipant) {
+                            firstParticipant = firstParticipant.split('-')[0];
+                        }
+                    }
+
+                    if(secondParticipant === biomoleculeId) {
+                        if('-' in secondParticipant) {
+                            secondParticipant = secondParticipant.split('-')[0];
+                        }
+                    }
+
                     associationsToDraw.push({
                         data: {
                             source: firstParticipant,
@@ -489,7 +502,6 @@ function CytoscapeComponent(props: any) {
 
             cy.current.on('mouseout', 'node', function (event: any) {
                 const node = event.target;
-                //alert(`Mouseout on node: ${node.id()}`);
             });
 
         }

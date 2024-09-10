@@ -23,6 +23,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                                                                        biomoleculeIds
                                                                     }) => {
     const [columns, setColumns] = useState<any>(null);
+    const [rows, setRows] = useState<any>(null);
 
     useEffect(() => {
         // name id mapping for partners
@@ -31,9 +32,68 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
         let interactor_name_mapping : { [key: number]: string} = {};
         network.interactors.forEach((interactor: any) => {
             let interactorId = network.context.interactors.interactor_mapping[interactor.id];
-            interactor_name_mapping[interactorId] = interactor.name;
+            interactor_name_mapping[interactor.id] = interactor.name;
         });
 
+        let participants: {[key: string]: any} = {};
+        network.interactions.forEach((interaction: any) => {
+            let rowData : {[key: string]: any};
+            let partner = interaction.participants
+                .filter((biomolecule: string) => {
+                    return !network.biomolecules.includes(biomolecule);
+                })[0];
+
+            if(!partner) {
+                partner = 1;
+            } else {
+                if(biomoleculeIds[0] && network.context.interactors.interactor_mapping[partner].includes(biomoleculeIds[0])) {
+                    partner = 1;
+                }
+            }
+
+            if(participants[partner]) {
+                rowData = participants[partner];
+            } else {
+                rowData = {}
+            }
+
+            rowData.id = partner;
+            if(!rowData.interactions) rowData.interactions = [];
+            rowData.interactions.push(interaction.id);
+
+            let spokeExpandedFrom : string[] = [];
+            let directlySupported : string[] = [];
+            if(interaction.experiments && interaction.experiments.direct && interaction.experiments.direct.binary) {
+                directlySupported = interaction.experiments.direct.binary.map(
+                    (experimentId: number) => network.context.experiment_mapping[experimentId]
+                );
+            }
+
+            if(interaction.experiments && interaction.experiments.direct && interaction.experiments.direct.spoke_expanded_from) {
+                spokeExpandedFrom = interaction.experiments.direct.spoke_expanded_from.map(
+                    (experimentId: number) => network.context.experiment_mapping[experimentId]
+                );
+            }
+
+            if(!rowData.score) rowData.score = [];
+            rowData.score.push(interaction.score);
+
+            if(!rowData.type) rowData.type = [];
+            rowData.type.push(interaction.type === 1 ? "Experimental" : "Predicted")
+
+            if(!rowData.directlySupportedBy) rowData.directlySupportedBy = [];
+            rowData.directlySupportedBy.push(...directlySupported);
+
+            if(!rowData.spokeExpandedFrom) rowData.spokeExpandedFrom = [];
+            rowData.spokeExpandedFrom.push(...spokeExpandedFrom);
+
+            participants[partner] = rowData;
+        });
+
+        let rows = Object.keys(participants).map((participant: any) => {
+            return participants[participant];
+        })
+        setRows(rows);
         const columns: GridColDef[] = [
             {
                 field: 'id',
@@ -41,17 +101,30 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 width: 600,
                 renderCell: (params: any) =>  (
                     <>
-                        <a href={process.env.REACT_APP_PUBLIC_URL+"biomolecule/"+params.value}>{interactor_name_mapping[params.value]}</a>
+                        <a href={process.env.REACT_APP_PUBLIC_URL+"biomolecule/"+network.context.interactors.interactor_mapping[params.value]}>
+                            {interactor_name_mapping[params.value]}</a>
                     </>)
             },
             {
-                field: 'association',
+                field: 'interactions',
                 headerName: 'Interactions',
                 width: 350,
                 renderCell: (params: any) =>  (
-                    <>
-                        <a href={process.env.REACT_APP_PUBLIC_URL+"association/"+params.value}>{params.value}</a>
-                    </>)
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            {
+                                params.value.map((assoc: string) => (
+                                    <div style={{ display: 'flex' }}>
+                                        <a
+                                            key={assoc}
+                                            href={`${process.env.REACT_APP_PUBLIC_URL}association/${assoc}`}
+                                        >
+                                            {assoc}
+                                        </a>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                )
             },
             {
                 field: 'directlySupportedBy',
@@ -64,7 +137,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                                 <Tooltip
                                     title={
                                         <ul style={{ backgroundColor: '#ffffff', margin: 0, padding: 0, listStyleType: 'none' }}>
-                                            {params.value.map((ex: any) => (
+                                            {params.value?.map((ex: any) => (
                                                 <li key={ex}>
                                                     <a href={process.env.REACT_APP_PUBLIC_URL + "experiment/" + ex}>
                                                         {ex}
@@ -99,7 +172,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                             )
                         }
                         {
-                            params.value.length === 0 && <span className="table-cell-trucate">{params.value.length}</span>
+                            params.value?.length === 0 && <span className="table-cell-trucate">{params.value?.length}</span>
                         }
                     </>
                 ),
@@ -116,7 +189,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                                 <Tooltip
                                     title={
                                         <ul style={{ backgroundColor: '#ffffff', margin: 0, padding: 0, listStyleType: 'none' }}>
-                                            {params.value.map((ex: any) => (
+                                            {params.value?.map((ex: any) => (
                                                 <li key={ex}>
                                                     <a href={process.env.REACT_APP_PUBLIC_URL + "experiment/" + ex}>
                                                         {ex}
@@ -145,7 +218,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                                     }}
                                 >
                                   <span className="table-cell-truncate">
-                                    {params.value.length}
+                                    {params.value?.length}
                                   </span>
                                 </Tooltip>
                             )
@@ -162,9 +235,19 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 headerName: 'MI Score',
                 width: 100,
                 renderCell: (params: any) =>  (
-                    <>
-                        {params.value}
-                    </>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {
+                            params.value.map((score: number) => {
+                                if(score && score !== 0) {
+                                    return(
+                                        <div style={{ display: 'flex' }}>
+                                            {score}
+                                        </div>
+                                    )
+                                }
+                            })
+                        }
+                    </div>
                 ),
                 sortComparator: (v1, v2) =>  parseInt(v2) - parseInt(v1)
             },
@@ -173,14 +256,19 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                 headerName: 'Type',
                 width: 120,
                 renderCell: (params: any) =>  (
-                    <span
-                        style={{
-                            color: params.value === 'Experimental' ? "black" : "red",
-                            fontWeight: 'bold'
-                        }}
-                    >
-                    {params.value}
-                </span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {
+                            params.value.map((type: string) => (
+                                <div style={{
+                                    display: 'flex',
+                                    color: type === 'Experimental' ? "black" : "red",
+                                    fontWeight: 'bold'
+                                }}>
+                                    {type}
+                                </div>
+                            ))
+                        }
+                    </div>
                 ),
                 sortComparator: (v1, v2) =>  v2.localeCompare(v1)
             }
@@ -188,13 +276,14 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
         setColumns(columns);
     }, []);
 
+    /*
     const rows = network.interactions.map((interaction: any) => {
         let partner = interaction.participants
             .filter((biomolecule: string) => {
                 let partnerId = network.context.interactors.interactor_mapping[biomolecule];
-                return partnerId !== biomoleculeIds[0];
+                return !partnerId.includes(biomoleculeIds[0]);
             })[0];
-        partner = network.context.interactors.interactor_mapping[partner];
+        //partner = network.context.interactors.interactor_mapping[partner];
         if(!partner) partner = biomoleculeIds[0];
 
         let directlySupported = [];
@@ -212,14 +301,14 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
         }
 
         return {
-            id: partner,
+            id: interaction.id,
             association: interaction.id,
             directlySupportedBy: directlySupported,
             spokeExpandedFrom: spokeExpandedFrom,
             score: interaction.score,
             type:  interaction.type === 1 ? "Experimental" : "Predicted"
         }
-    });
+    });*/
 
     return(
         <>

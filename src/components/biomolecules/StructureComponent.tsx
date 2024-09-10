@@ -158,7 +158,7 @@ const PDBList: React.FC<any> = (props: any) => {
 
 const StructureViewerComponent: React.FC<any> = (props: any) => {
     const viewerContainer = useRef<HTMLDivElement>(null);
-    const [pdbIds, setPDBIds] = useState<Array<string>>([]);
+    const [pdbIds, setPDBIds] = useState<Array<any>>([]);
     const [plugin, setPlugin] = useState<any>(null);
     const [selectedPDB, setSelectedPDB] = useState<string>();
     const [loaded, setLoaded] = useState(false);
@@ -168,12 +168,13 @@ const StructureViewerComponent: React.FC<any> = (props: any) => {
     };
 
     useEffect(() => {
-        if(props.biomoleculeType === 'gag') {
+        if(props.biomoleculeType === 'gag' || props.biomoleculeType === 'pfrag') {
             if(Array.isArray(props.pdb)) {
-                setPDBIds(props.pdb);
-                setSelectedPDB(props.pdb[0].id);
+                let pdbs = props.pdb.map((pdb: string) => {return { id: pdb }});
+                setPDBIds(pdbs);
+                setSelectedPDB(pdbs[0].id);
             } else {
-                setPDBIds([props.pdb]);
+                setPDBIds([{id: props.pdb}]);
                 setSelectedPDB(props.pdb);
             }
         } else {

@@ -75,7 +75,13 @@ function OverviewComponent(props: any) {
         biomoleculeToDisplay.id = biomolecule.id;
         biomoleculeToDisplay.type = biomolecule.type;
         biomoleculeToDisplay.name = biomolecule.names?.name;
-        biomoleculeToDisplay.otherNames = biomolecule.names?.other_name;
+        if(biomolecule.names && Array.isArray(biomolecule.names.other_name)) {
+            biomoleculeToDisplay.otherNames = biomolecule.names?.other_name;
+        } else {
+            if(biomolecule.names?.other_name) {
+                biomoleculeToDisplay.otherNames = [biomolecule.names?.other_name];
+            }
+        }
         biomoleculeToDisplay.recommendedName = biomolecule.names?.recommended_name;
         biomoleculeToDisplay.species = biomolecule?.species?.id;
         if(biomolecule.relations) {
@@ -133,7 +139,7 @@ function OverviewComponent(props: any) {
         }
 
         if(biomoleculeToDisplay && biomoleculeToDisplay.description) {
-            tabConfig.push({label: 'Comment', renderContent: () => biomoleculeToDisplay.description })
+            tabConfig.push({label: 'Description', renderContent: () => biomoleculeToDisplay.description })
         }
 
         if(biomoleculeToDisplay && biomoleculeToDisplay.structure) {
