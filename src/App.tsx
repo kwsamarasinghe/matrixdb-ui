@@ -31,7 +31,7 @@ function App() {
                 <Route path="/publication/:publicationId" element={<PublicationComponent/>} />
                 <Route path="/statistics/" element={<StatisticsComponent/>} />
                 <Route path="/networks/" element={<NetworkExplorer/>} />
-                <Route path="/downloads/" element={<DownloadComponent/>} />
+                <Route path="/download/" element={<DownloadComponent/>} />
             </Routes>
         </div>
       );
