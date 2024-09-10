@@ -65,7 +65,7 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /> <a href={"/download/test.txt"}> mytext</a>
+                                    /> <a href={"/download/matrixdb_CORE.tab.zip"}> matrixdb_CORE.tab.zip</a>
                                 </Typography>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
                                     All interactions : <br/>
@@ -76,7 +76,7 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /><a href={"/download/test.txt"}> mytext</a>
+                                    /><a href={"/download/matrixdb_all.tab.zip"}> matrixdb_all.tab.zip</a>
                                 </Typography>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
                                     ECM Proteins : <br/>
@@ -87,7 +87,7 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /><a href={"/download/test.txt"}> mytext</a>
+                                    /><a href={"/downloads/ecm_proteins.csv"}> ecm_proteins.csv</a>
                                 </Typography>
                                 <Box sx={{ padding: 3 }}>
                                     <Typography variant="body2" gutterBottom>
