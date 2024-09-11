@@ -65,7 +65,7 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /> <a href={"/download/matrixdb_CORE.tab.zip"}> matrixdb_CORE.tab.zip</a>
+                                    /> <a href={"/downloads/matrixdb_CORE.tab.zip"}> matrixdb_CORE.tab.zip</a>
                                 </Typography>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
                                     All interactions : <br/>
@@ -76,7 +76,18 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /><a href={"/download/matrixdb_all.tab.zip"}> matrixdb_all.tab.zip</a>
+                                    /><a href={"/downloads/matrixdb_all.tab.zip"}> matrixdb_all.tab.zip</a>
+                                </Typography>
+                                <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
+                                    Biomolecules : <br/>
+                                    <FontAwesomeIcon
+                                        icon={faFileDownload}
+                                        style={{
+                                            marginRight: '10px',
+                                            fontSize: '1.5em'
+                                        }}
+                                        color={'darkgreen'}
+                                    /><a href={"/downloads/biomolecules.csv"}> biomolecules.csv</a>
                                 </Typography>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
                                     ECM Proteins : <br/>
