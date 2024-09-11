@@ -180,7 +180,7 @@ function OverviewComponent(props: any) {
                         {renderCrossRefContent('Complex Portal', 'https://www.ebi.ac.uk/complexportal/complex/', biomoleculeToDisplay.crossRefs.complex_portal)}
                         {renderCrossRefContent('CheBI', 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=', biomoleculeToDisplay.crossRefs.chebi)}
                         {renderCrossRefContent('EBI', 'https://www.ebi.ac.uk/intact/query/', biomoleculeToDisplay.crossRefs.EBI_xref)}
-
+                        {renderCrossRefContent('GlyTouCan', 'https://glytoucan.org/Structures/Glycans/', biomoleculeToDisplay.crossRefs.glytoucan)}
                     </>
                 )
             })

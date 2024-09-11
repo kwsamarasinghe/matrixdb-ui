@@ -15,6 +15,9 @@ import {RootState} from "../../stateManagement/store";
 import {connect, ConnectedProps} from "react-redux";
 import FilterManager from "./filter/FilterManager";
 import cytoscapeLogo from "../../assets/images/cytoscape.png";
+import {faFileDownload} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {CSVLink} from "react-csv";
 
 function PartnerOverview(props: any) {
 
@@ -140,6 +143,7 @@ function CytoscapeComponent(props: any) {
     const { biomoleculeId, participants, associations, context, originalNetwork } = props;
     const [selectedPartner, setSelectedPartner] = useState(null);
     const [selectedInteraction, setSelectedInteraction] = useState(null);
+    const [associationsToDownload, setAssociationsToDownload] = useState<any[]|[]>([]);
     const cyRef = useRef(null);
 
     const [quickSearchText, setQuickSearchText] = useState<string | null>(null);
@@ -147,6 +151,32 @@ function CytoscapeComponent(props: any) {
 
     const [filteredParticipants, setFilteredParticipnats] = useState<number>(0);
     const [filteredAssociations, setFilteredAssociations] = useState<number>(0);
+
+    useEffect(() => {
+        if(context && associations) {
+            let associationsToDownlaod: any[] = [];
+            associations.forEach((assocation: any) => {
+                let particpantId = null;
+                let p1 = assocation.participants[0];
+                if(p1 !== 1) {
+                    particpantId = p1;
+                }
+                if(assocation.participants.length > 1) {
+                    let p2 = assocation.participants[1];
+                    if(p2 !== 1) {
+                        particpantId = p2;
+                    }
+                }
+                associationsToDownlaod.push({
+                    participant: context.interactors.interactor_mapping[particpantId],
+                    id: assocation.id,
+                    score: assocation.score,
+                    type: assocation.type === 1 ? 'Experimental' : 'Predicted'
+                });
+                setAssociationsToDownload(associationsToDownlaod);
+            });
+        }
+    }, []);
 
     const circularLayout = {
         name: 'circle',
@@ -541,6 +571,28 @@ function CytoscapeComponent(props: any) {
                                 <img src={cytoscapeLogo} style={{ width: '25px', height: 'auto' }} />
                             </IconButton>
                         </Tooltip>
+                        {
+                            associations &&
+                            <div style={{
+                                paddingLeft: '8px',
+                                paddingTop: '5px'
+                            }}>
+                                <CSVLink
+                                    data={associationsToDownload}
+                                    headers={['id','participant', 'score', 'type']}
+                                    filename={`interactions.csv`}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faFileDownload}
+                                        style={{
+                                            marginRight: '10px',
+                                            fontSize: '1.5em'
+                                        }}
+                                        color={'darkgreen'}
+                                    />
+                                </CSVLink>
+                            </div>
+                        }
                     </Box>
                     <Box flex={3} position="relative">
                         <Box

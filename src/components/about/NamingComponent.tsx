@@ -1,6 +1,6 @@
 import Header from "../home/HeaderComponent";
 import Footer from "../home/Footer";
-import {List, ListItem, Typography} from "@mui/material";
+import {Divider, List, ListItem, Typography} from "@mui/material";
 import React from "react";
 function NamingComponent() {
     return(
@@ -17,16 +17,18 @@ function NamingComponent() {
                 type: "about"
             }}/>
             <div>
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    margin: '0 auto',
-                    width: '70%',
-                    marginBottom: '5px',
-                    background: 'rgb(197,205,229)',
-                    paddingTop: '5px'
-                }}>
+                <div className="App"
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        margin: '0 auto',
+                        width: '70%',
+                        marginBottom: '5px',
+                        background: 'rgb(197,205,229)',
+                        paddingTop: '5px'
+                    }}
+                >
                     <Typography
                         variant={'body1'}
                         style={{
@@ -183,13 +185,10 @@ function NamingComponent() {
                             fontWeight: 'bold'
                         }}>Others</Typography>
                         <Typography variant="body2">
-                            Remaining molecules are identified by a MatrixDB-specific identifier "SMALLMOL_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available (e.g., CHEBI:76023 for thioflavin T).</Typography>
-                    </div>
-                    <div style={{
-                        paddingTop: '20px',
-                        paddingLeft: '20px',
-                        paddingRight: '20px'
-                    }}>
+                            Remaining molecules are identified by a MatrixDB-specific identifier "SMALLMOL_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available (e.g., CHEBI:76023 for thioflavin T).
+                        </Typography><br/><br/>
+
+                        <Divider/><br/>
                         <Typography
                             variant="body1"
                             style={{
@@ -205,13 +204,9 @@ function NamingComponent() {
                         <ul>
                             <Typography variant="body2" component="li">CAT_1__O54943</Typography>
                             <Typography variant="body2" component="li">O15496__P12109</Typography>
-                        </ul>
-                    </div>
-                    <div style={{
-                        paddingTop: '20px',
-                        paddingLeft: '20px',
-                        paddingRight: '20px'
-                    }}>
+                        </ul><br/><br/>
+
+                        <Divider/><br/>
                         <Typography
                             variant="body1"
                             style={{
@@ -225,34 +220,46 @@ function NamingComponent() {
                             An experiment identifier for a pairwise interaction is composed of four underscore-separated fields:
                         </Typography>
                         <Typography variant="body1" paragraph>
-                            (1) an interaction identifier (2) the supporting PubMed Identifier (PMID), (3) the source database name and (4) a counter that starts at 1, but is incremented each time a single source database refers to several experiments curated from the same publication and supporting the same interaction.
+                            <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                <Typography variant="body2" component="li">(1) an interaction identifier</Typography>
+                                <Typography variant="body2" component="li">(2) the supporting PubMed Identifier (PMID),</Typography>
+                                <Typography variant="body2" component="li">(3) the source database name and</Typography>
+                                <Typography variant="body2" component="li">(4) a counter that starts at 1, but is incremented each time a single source database refers to several experiments curated from the same publication and supporting the same interaction.</Typography>
+                            </ul>
                         </Typography>
 
                         <Typography variant="body2" color="textSecondary" paragraph>
                             Examples:
                         </Typography>
-                        <List>
-                            <ListItem> A2A3K4__P28482_32296183_intact_1 </ListItem>
-                            <ListItem> A2A3K4__P28482_32296183_intact_2 </ListItem>
-                            <ListItem> A2A3K4__P28482_32296183_intact_3 </ListItem>
-                            <ListItem> CAT_1__P05067_7929392_MatrixDB_1 </ListItem>
-                            <ListItem> A0AVK6__P05067_21832049_InnateDB_1 </ListItem>
-                        </List>
+                        <ul>
+                            <Typography variant="body2" component="li"> A2A3K4__P28482_32296183_intact_1 </Typography>
+                            <Typography variant="body2" component="li"> A2A3K4__P28482_32296183_intact_2 </Typography>
+                            <Typography variant="body2" component="li"> A2A3K4__P28482_32296183_intact_3 </Typography>
+                            <Typography variant="body2" component="li"> CAT_1__P05067_7929392_MatrixDB_1 </Typography>
+                            <Typography variant="body2" component="li"> A0AVK6__P05067_21832049_InnateDB_1 </Typography>
+                        </ul>
 
                         <Typography variant="body1" paragraph>
                             An experiment identifier for n-ary interactions is composed of six underscore-separated fields:
                         </Typography>
                         <Typography variant="body1" paragraph>
-                            (1) the interaction identifier of the first two biomolecules (2) three dots: ... (3) the identifier of the last biomolecule listed in the interaction (4) the supporting PubMed Identifier (PMID), (5) the source database name and (6) a counter that starts at 1, but is incremented each time a single source database refers to several experiments curated from the same publication and supporting the same interaction.
+                            <ul style={{ listStyleType: 'none', padding: 0 }}>
+                                <Typography variant="body2" component="li">(1) the interaction identifier of the first two biomolecules </Typography>
+                                <Typography variant="body2" component="li">(2) three dots: ... </Typography>
+                                <Typography variant="body2" component="li">(3) the identifier of the last biomolecule listed in the interaction </Typography>
+                                <Typography variant="body2" component="li">(4) the supporting PubMed Identifier (PMID), </Typography>
+                                <Typography variant="body2" component="li">(5) the source database name and </Typography>
+                                <Typography variant="body2" component="li">(6) a counter that starts at 1, but is incremented each time a single source database refers to several experiments curated from the same publication and supporting the same interaction.</Typography>
+                            </ul>
                         </Typography>
 
                         <Typography variant="body2" color="textSecondary" paragraph>
                             Examples:
                         </Typography>
-                        <List>
-                            <ListItem> A0AVF1__A2A3K4__...__Q9Y6Y8_26673895_intact_1 </ListItem>
-                            <ListItem> P12109__P48449__...__Q9UIH9_35016035_uniprot_1 </ListItem>
-                        </List>
+                        <ul>
+                            <Typography variant="body2" component="li"> A0AVF1__A2A3K4__...__Q9Y6Y8_26673895_intact_1 </Typography>
+                            <Typography variant="body2" component="li"> P12109__P48449__...__Q9UIH9_35016035_uniprot_1 </Typography>
+                        </ul>
                     </div>
                 </div>
             </div>

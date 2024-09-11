@@ -24,6 +24,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                                                                     }) => {
     const [columns, setColumns] = useState<any>(null);
     const [rows, setRows] = useState<any>(null);
+    const [interactionsToDownload, setInteractionsToDownload] = useState<any[] | []>([]);
 
     useEffect(() => {
         // name id mapping for partners
@@ -36,6 +37,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
         });
 
         let participants: {[key: string]: any} = {};
+        let interactionsToDownload : any[] = [];
         network.interactions.forEach((interaction: any) => {
             let rowData : {[key: string]: any};
             let partner = interaction.participants
@@ -88,7 +90,26 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
             rowData.spokeExpandedFrom.push(...spokeExpandedFrom);
 
             participants[partner] = rowData;
+
+            let particpantId = null;
+            let p1 = interaction.participants[0];
+            if(p1 !== 1) {
+                particpantId = p1;
+            }
+            if(interaction.participants.length > 1) {
+                let p2 = interaction.participants[1];
+                if(p2 !== 1) {
+                    particpantId = p2;
+                }
+            }
+            interactionsToDownload.push({
+                participant: network.context.interactors.interactor_mapping[particpantId],
+                id: interaction.id,
+                score: interaction.score,
+                type: interaction.type === 1 ? 'Experimental' : 'Predicted'
+            });
         });
+        setInteractionsToDownload(interactionsToDownload);
 
         let rows = Object.keys(participants).map((participant: any) => {
             return participants[participant];
@@ -331,8 +352,8 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                             alignItems: 'center',
                         }}>
                             <CSVLink
-                                data={rows}
-                                headers={['id','association', 'directlySupportedBy', 'spokeExpandedFrom']}
+                                data={interactionsToDownload}
+                                headers={['id','participant', 'score', 'type']}
                                 filename={`${biomoleculeIds[0]}-interactions.csv`}
                             >
                                 <Typography variant={"body2"}>
