@@ -169,7 +169,7 @@ function BiomoleculeHelp() {
                         All listed binary interactions of the previous view are mapped to an interactive graph, where each node is a biomolecule and an edge is an interaction. Mousing over a node prompts the display of its name in the upper left side banner.
                         The color code for the nodes and the edges is summarised in a legend featured in the lower left side banner. The graph is interactive so nodes can be moved around and edges can be lengthened or shortened simply by holding the mouse on a node.
                         For users unfamiliar with Cytoscape, it may be helpful to consider the corresponding
-                        <a href="https://cytoscape.org/documentation_users.html" target="_blank" rel="noopener noreferrer">documentation</a>.
+                        <a href="https://cytoscape.org/documentation_users.html" target="_blank" rel="noopener noreferrer"> documentation</a>.
                     </Typography>
                     <Typography variant="body2" paragraph>
                         The graph can be exported as a Cytoscape file (Cytoscape icon, top left) or as an image (camera icon, top left). The video below highlights the display of the Network view of the human Toll-like receptor 4 and the use of the Quick search window to focus on a selection of participants (all protein names including 'factor' in this example).
@@ -190,7 +190,7 @@ function BiomoleculeHelp() {
                     </Typography>
                     <Typography variant="body1" paragraph>
                         This section shows in the first tab (Transcriptomics data) the RNA expression associated with the subject protein based on the Genotype-Tissue Expression (GTEx) project data processed by the BGee pipeline. The anatomogram is borrowed from the
-                        <a href="https://www.ebi.ac.uk/gxa/home" target="_blank" rel="noopener noreferrer">Expression Atlas</a>. The heat map reflects expression measured in TPM.
+                        <a href="https://www.ebi.ac.uk/gxa/home" target="_blank" rel="noopener noreferrer"> Expression Atlas</a>. The heat map reflects expression measured in TPM.
                     </Typography>
                     <Typography variant="body1" paragraph>
                         The second tab (Proteomics data) also displays in a heat map the subject protein expression data extracted from MatrisomeDB datasets.

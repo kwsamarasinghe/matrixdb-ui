@@ -2,7 +2,7 @@ import {Box, Typography} from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import React from "react";
 
-import searchHelp from "../../assets/images/help/quicksearch.gif";
+import searchHelp from "../../assets/images/help/quick-search-network.mp4";
 import searchResult from "../../assets/images/help/search-results.png";
 import searchSeeMore from "../../assets/images/help/search-seemore.png";
 import searchAdvaned from "../../assets/images/help/search-advanced.png";
@@ -55,7 +55,12 @@ function SearchHelp() {
                     <span style={{
                         paddingLeft: "10px"
                     }}>
-                        <img src={searchHelp} width={"600px"} alt="search help"/>
+                        <video
+                            src={searchHelp}
+                            controls
+                            width="600px"
+                            style={{ paddingLeft: "10px" }}
+                        ></video>
                     </span>
                 </Typography>
 

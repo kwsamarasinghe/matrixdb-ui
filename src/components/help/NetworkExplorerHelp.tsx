@@ -8,9 +8,10 @@ import biomoleculeSearch from "../../assets/images/help/biomolecule-search.png";
 import participants from "../../assets/images/help/participants.png";
 import resultsWithFilters from "../../assets/images/help/results-with-filters.png";
 
-import networkGenerationExample from "../../assets/videos/networkparticipantselection.gif";
+import networkGenerationExample from "../../assets/videos/network-participant-selection.mp4";
 import network1 from "../../assets/images/help/network_1.png";
 import network2 from "../../assets/images/help/network_2.png";
+import searchHelp from "../../assets/images/help/quick-search-network.mp4";
 
 function NetworkExplorerHelp() {
     return(
@@ -66,7 +67,16 @@ function NetworkExplorerHelp() {
                         They can also be filtered using criteria listed on the right. The 'Selected participants' section can therefore be gradually populated. From the biomolecules list, you can select the participants for network generation, either one by one or all together (double tick sign).
                         The short video shows the selection process limited to multimers and proteins associated with the GO term 'platelet activating factor receptor activity'.
                     </Typography>
-                    <img src={networkGenerationExample} alt="Network Generation example"/>
+                    <span style={{
+                        paddingLeft: "10px"
+                    }}>
+                        <video
+                            src={networkGenerationExample}
+                            controls
+                            width="600px"
+                            style={{ paddingLeft: "10px" }}
+                        ></video>
+                    </span>
                 </Box>
 
                 <Typography variant="h6" gutterBottom>
