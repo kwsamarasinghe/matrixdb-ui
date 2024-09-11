@@ -92,21 +92,28 @@ const PDBList: React.FC<any> = (props: any) => {
                               style={rowColor(item.id, index)}
                               onClick={() => onItemChange(item.id)}
                     >
-                        <img
-                            src={itemLogo}
+                        <div
                             style={{
-                                width: '20px',
-                                paddingRight: '10px'
-                            }}/>
-                        <Typography variant={'body2'}>
-                            <a
-                                href={`${itemURL}${item.id}`}
-                                target='_blank'
-                                rel="noreferrer"
-                            >
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                width: "100%"
+                            }}
+                        >
+                            <Typography variant={'body2'}>
                                 {item.id}
+                            </Typography>
+                            <a
+                                href={`https://www.ebi.ac.uk/pdbe/entry/pdb/${item.id}`}
+                                target="_blank"
+                                style={{
+                                    marginLeft: "auto",
+                                    textDecoration: "none",
+                                }}
+                            >
+                                <img src={pdblogo} width="15px"/>
                             </a>
-                        </Typography>
+                        </div>
                     </ListItem>
                     {
                         item.binding_regions && item.binding_regions.length > 0 &&
