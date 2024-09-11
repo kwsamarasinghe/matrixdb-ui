@@ -77,6 +77,28 @@ function NamingComponent() {
                         <Typography variant="body2">
                             A protein is identified by a UniProtKB - Swiss-Prot/TrEMBL primary Accession Number (Example: P98160). This is the most stable identifier of UniProtKB - Swiss-Prot/TrEMBL. Note that when a protein entry is modified, the previous accession number is retained in a secondary accession number list.
                         </Typography>
+
+                        <Typography variant="body2" paragraph>
+                            ECMness label is displayed in the top right banner for proteins, based on the ECMness criterion of MatrixDB ('MatrixDB ECM' blue capsule) and MatrisomeDB categories and subcategories, defined as:
+                            <div className="category">
+                                <h5 className="category-title">Core Matrisome</h5>
+                                <ul className="subcategory-list">
+                                    <li className="subcategory-item">ECM Glycoproteins</li>
+                                    <li className="subcategory-item">Proteoglycans</li>
+                                    <li className="subcategory-item">Collagens</li>
+                                </ul>
+                            </div>
+
+                            <div className="category">
+                                <h5 className="category-title">Matrisome-Associated</h5>
+                                <ul className="subcategory-list">
+                                    <li className="subcategory-item">ECM Regulators</li>
+                                    <li className="subcategory-item">Secreted Factors</li>
+                                    <li className="subcategory-item">ECM-Affiliated Proteins</li>
+                                </ul>
+                            </div>
+                        </Typography>
+
                         <div style={{
                             display: 'flex',
                             flexDirection: 'row'
