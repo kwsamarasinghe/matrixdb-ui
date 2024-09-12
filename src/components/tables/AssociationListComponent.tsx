@@ -104,6 +104,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
             }
             interactionsToDownload.push({
                 participant: network.context.interactors.interactor_mapping[particpantId],
+                participantName: interactor_name_mapping[particpantId],
                 id: interaction.id,
                 score: interaction.score,
                 type: interaction.type === 1 ? 'Experimental' : 'Predicted'
@@ -353,7 +354,7 @@ const AssociationListComponent : React.FC<AssociationListProps> = ({
                         }}>
                             <CSVLink
                                 data={interactionsToDownload}
-                                headers={['id','participant', 'score', 'type']}
+                                headers={['id','participant', 'participantName', 'score', 'type']}
                                 filename={`${biomoleculeIds[0]}-interactions.csv`}
                             >
                                 <Typography variant={"body2"}>
