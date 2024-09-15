@@ -11,6 +11,8 @@ import cytoscapeLogo from "../../assets/images/cytoscape.png";
 import ProteinProteinInteractionComponent from "../statistics/ProteinProteinInteractionComponent";
 import LogoIcon from "../commons/icons/LogoIcon";
 import CirclePacking from "../statistics/BiomoleculeBySpeciesCirclePacking";
+import imexlogo from "../../assets/images/imexlogo.png";
+
 
 
 function MainContentComponent() {
@@ -313,7 +315,7 @@ function MainContentComponent() {
                     style={{
                         marginBottom: '5px',
                         marginTop: '5px',
-                        width: '50%'
+                        width: '70%'
                     }}>
                     <FontAwesomeIcon
                         icon={faCircleNodes}
@@ -330,10 +332,10 @@ function MainContentComponent() {
                     style={{
                         marginBottom: '5px',
                         marginTop: '5px',
-                        width: '50%'
+                        width: '70%'
                     }}>
                     <img src={cytoscapeLogo} style={{width: '25px', height: 'auto'}}/>
-                    Interaction network can be exported as an image or in cytoscape compatible format
+                    Interaction network can be exported as an image, tabular format (csv) or in cytoscape compatible format
                 </Typography>
             </div>
             <div style={{
@@ -377,6 +379,20 @@ function MainContentComponent() {
                             </Grid>
                         ))}
                     </Grid>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', width: '80%' }}>
+                    <img src={imexlogo} style={{ width: '80px', height: 'auto', paddingLeft: '20px' }} className={"App-logo"} alt="IMEx Logo" />
+                    <Typography
+                        variant={'body1'}
+                        style={{
+                            marginBottom: '5px',
+                            marginTop: '20px',
+                            marginLeft: '5px'
+                        }}>
+                                    MatrixDB is an active member of the International Molecular Exchange (IMEx) consortium. Experiments are reported according to the{' '}
+                        <a href="https://pubmed.ncbi.nlm.nih.gov/19670377/">Minimum Information required</a> for reporting a Molecular Interaction experiment or to the{' '}
+                        <a href="https://pubmed.ncbi.nlm.nih.gov/22453911/">International Molecular Exchange curation rules.</a>
+                    </Typography>
                 </div>
             </div>
         </>
