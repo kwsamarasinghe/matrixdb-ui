@@ -87,7 +87,7 @@ function BasicSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Complex portal: <a href="/search?query=cpx-1650">CPX-1650</a>
+                    Complex Portal: <a href="/search?query=cpx-1650">CPX-1650</a>
                 </Typography>
                 <Typography
                     variant="body2"

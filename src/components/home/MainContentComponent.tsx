@@ -256,6 +256,16 @@ function MainContentComponent() {
                                         width={400}
                                         height={240}
                                     />
+                                    <Typography
+                                        component="div"
+                                        style={{
+                                            color: 'darkblue',
+                                            textAlign: 'center',
+                                            marginLeft: '10px',
+                                            marginBottom: '10px'
+                                        }}>
+                                        <a href={"/naming"}>MatrixDB Nomenclature </a>
+                                    </Typography>
                                 </Card>
                             }
                         </Grid>
@@ -326,7 +336,7 @@ function MainContentComponent() {
                         width: '70%'
                     }}>
                     <img src={cytoscapeLogo} style={{width: '25px', height: 'auto'}}/>
-                    Interaction network export is available as image (svg), tabular format (csv) or Cytoscape compatible format
+                    Interaction network export is available as image (svg), tabular (.csv) or Cytoscape (.json) format
                 </Typography>
             </div>
             <div style={{
@@ -362,7 +372,7 @@ function MainContentComponent() {
                                 }}>
                                     Biomolecule Data
                                 </Typography>
-                                <LogoIcon logoName={'uniprot'} width="60" height="auto" />
+                                <LogoIcon logoName={'uniprot'} width="40" height="auto" />
                                 <Typography variant="body1">
                                     <a href={"https://www.uniprot.org/"} target="_blank">
                                         UniProt</a></Typography>
@@ -372,7 +382,7 @@ function MainContentComponent() {
                                         ChEBI
                                     </a>
                                 </Typography>
-                                <LogoIcon logoName={'complex-portal'} width="40" height="auto" />
+                                <LogoIcon logoName={'complex-portal'} width="30" height="auto" />
                                 <Typography variant="body1">
                                     <a href={"https://www.ebi.ac.uk/complexportal/"} target="_blank">Complex Portal</a></Typography>
                             </div>
@@ -416,7 +426,7 @@ function MainContentComponent() {
                                 }}>
                                     Expression Data
                                 </Typography>
-                                <LogoIcon logoName={'bgee'} width="auto" height="40" />
+                                <LogoIcon logoName={'bgee'} width="auto" height="30" />
                                 <Typography variant="body1">
                                     <a href={"https://www.bgee.org/"} target="_blank">Bgee</a></Typography>
                                 <LogoIcon logoName={'matrisome'} width="100" height="auto" />

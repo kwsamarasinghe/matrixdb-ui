@@ -102,6 +102,14 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
                     y: 0
                 }
             }
+            const getDisplayName = (name: string) => {
+                if(name !== 'LIPID') {
+                    return name;
+                } else {
+                    return 'Lipid';
+                }
+            }
+
             simulation.on("tick", () => {
                 if (!svgRef) return;
                 circles
@@ -125,7 +133,7 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
                     }
 
                     ToolTip
-                        .text(d => d.type + ` : ${d.value}`)
+                        .text(d => getDisplayName(d.type) + ` : ${d.value}`)
                             .attr("x", (d) => {
                                 if(d.type === "SPEP") {
                                     return (d.x || 0) + size(d.value) - 70;
