@@ -182,7 +182,7 @@ function NamingComponent() {
                             }}></div>
                             <Typography variant="body2" style={{
                                 fontWeight: 'bold'
-                            }}>Lipidic molecule (LIP)</Typography>
+                            }}>Lipid (LIP)</Typography>
                         </div>
                         <Typography variant="body2">
                             A lipid is identified by a MatrixDB-specific identifier "LIP_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available (e.g., CHEBI:18318 for glycolipid sulfatide).</Typography>

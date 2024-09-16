@@ -59,7 +59,7 @@ function SearchComponent() {
                 <div className={"App App-search"}>
                         <div style={{textAlign: 'center'}}>
                             <h2>The extracellular matrix interaction database</h2>
-                            <h4>Database focused on interactions established by extracellular matrix proteins, proteoglycans and polysaccharide</h4>
+                            <h4>Database focused on interactions established by extracellular matrix proteins, proteoglycans and glycosaminoglycans</h4>
                         </div>
                         <div style={{width: '70%'}}>
                             <ComplexSearchBoxComponent

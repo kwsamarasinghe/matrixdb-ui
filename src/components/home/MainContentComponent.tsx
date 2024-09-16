@@ -260,7 +260,7 @@ function MainContentComponent() {
                                         component="div"
                                         style={{
                                             color: 'darkblue',
-                                            textAlign: 'center',
+                                            textAlign: 'left',
                                             marginLeft: '10px',
                                             marginBottom: '10px'
                                         }}>
@@ -427,11 +427,13 @@ function MainContentComponent() {
                                     Expression Data
                                 </Typography>
                                 <LogoIcon logoName={'bgee'} width="auto" height="30" />
-                                <Typography variant="body1">
+                                <Typography variant="body1" style={{
+                                    paddingBottom: '10px'
+                                }}>
                                     <a href={"https://www.bgee.org/"} target="_blank">Bgee</a></Typography>
                                 <LogoIcon logoName={'matrisome'} width="100" height="auto" />
                                 <Typography variant="body1">
-                                    <a href={"https://matrisomedb.org/"} target="_blank">Matriome 2.0</a></Typography>
+                                    <a href={"https://matrisomedb.org/"} target="_blank">Matrisome 2.0</a></Typography>
                             </div>
                         </Grid>
                     </Grid>
