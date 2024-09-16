@@ -103,10 +103,12 @@ const BiomoleculeCircularDisplayComponent: React.FC<any> = (props) => {
                 }
             }
             const getDisplayName = (name: string) => {
-                if(name !== 'LIPID') {
-                    return name;
-                } else {
+                if(name === 'LIPID') {
                     return 'Lipid';
+                } else if(name === 'SmallMolecules') {
+                    return 'SmallMolecule'
+                } else {
+                    return name;
                 }
             }
 
