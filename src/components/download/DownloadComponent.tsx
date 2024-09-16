@@ -57,7 +57,7 @@ function DownloadComponent() {
                                 paddingLeft: '20px'
                             }}>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
-                                    MatrixDB Core Interactions : <br/>
+                                    MatrixDB manually curated interaction dataset  as a MITAB 2.7 file: <br/>
                                     <FontAwesomeIcon
                                         icon={faFileDownload}
                                         style={{
@@ -68,7 +68,7 @@ function DownloadComponent() {
                                     /> <a href={"/downloads/matrixdb_CORE.tab.zip"}> matrixdb_CORE.tab.zip</a>
                                 </Typography>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
-                                    All interactions : <br/>
+                                    Interaction dataset including interactions imported from IMEX databases as MITAB 2.7 file   : <br/>
                                     <FontAwesomeIcon
                                         icon={faFileDownload}
                                         style={{

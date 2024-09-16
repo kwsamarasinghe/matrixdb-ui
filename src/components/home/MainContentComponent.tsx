@@ -21,15 +21,6 @@ function MainContentComponent() {
     const [interactionStatistics, setInteractionStatistics] = useState<any[]>([]);
     const [proteinProteinInteractionStatistics, setProteinProteinInteractionStatistics] = useState<any>(null);
 
-    const logosData = [
-        { logoName: "uniprot", text: "UniProt" },
-        { logoName: "chebi", text: "ChEBI" },
-        { logoName: "complex-portal", text: "Complex Portal" },
-        { logoName: "intact", text: "Intact" },
-        { logoName: "matrisome", text: "Matrisome Project" },
-        { logoName: "bgee", text: "Bgee" }
-    ];
-
     useEffect(() => {
         http.get("/statistics/")
             .then((statisticsResponse) => {
@@ -325,7 +316,7 @@ function MainContentComponent() {
                         }}
                         color='green'
                     />
-                    Interaction networks can be built and filtered using <a href="/networks" target="_blank">Network explorer</a>
+                    Interaction networks can be built, filtered and modified using <a href="/networks" target="_blank">Network explorer</a>
                 </Typography>
                 <Typography
                     variant={'body1'}
@@ -335,7 +326,7 @@ function MainContentComponent() {
                         width: '70%'
                     }}>
                     <img src={cytoscapeLogo} style={{width: '25px', height: 'auto'}}/>
-                    Interaction network can be exported as an image, tabular format (csv) or in cytoscape compatible format
+                    Interaction network export is available as image (svg), tabular format (csv) or Cytoscape compatible format
                 </Typography>
             </div>
             <div style={{
@@ -364,35 +355,76 @@ function MainContentComponent() {
                     }}
                 >
                     <Grid container spacing={2}>
-                        {logosData.map((item, index) => (
-                            <Grid key={index} item xs={12} sm={4} md={4} lg={4}>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
-                                    <div style={{ display: "flex" }}>
-                                        <LogoIcon logoName={item.logoName} width="60" height="auto" />
-                                    </div>
-                                    <div style={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-                                        <Typography variant="body2" style={{ fontWeight: 'bold', marginLeft: '5px' }}>
-                                            {item.text}
-                                        </Typography>
-                                    </div>
-                                </div>
-                            </Grid>
-                        ))}
+                        <Grid item xs={4}>
+                            <div style={{ textAlign: 'center' }}>
+                                <Typography variant="body2" gutterBottom style={{
+                                        fontWeight: 'bold'
+                                }}>
+                                    Biomolecule Data
+                                </Typography>
+                                <LogoIcon logoName={'uniprot'} width="60" height="auto" />
+                                <Typography variant="body1">
+                                    <a href={"https://www.uniprot.org/"} target="_blank">
+                                        UniProt</a></Typography>
+                                <LogoIcon logoName={'chebi'} width="60" height="auto" />
+                                <Typography variant="body1">
+                                    <a href={"https://www.ebi.ac.uk/chebi/"} target="_blank">
+                                        ChEBI
+                                    </a>
+                                </Typography>
+                                <LogoIcon logoName={'complex-portal'} width="40" height="auto" />
+                                <Typography variant="body1">
+                                    <a href={"https://www.ebi.ac.uk/complexportal/"} target="_blank">Complex Portal</a></Typography>
+                            </div>
+                        </Grid>
+
+                        {/* Second Row */}
+                        <Grid item xs={4}>
+                            <div style={{ textAlign: 'center' }}>
+                                <Typography variant="body2" gutterBottom style={{
+                                    fontWeight: 'bold'
+                                }}>
+                                    Interaction Data
+                                </Typography>
+                                <LogoIcon logoName={'imex'} width="60" height="auto" />
+                                <Typography variant="body1" style={{
+                                    paddingBottom: '10px'
+                                }}>
+                                    <a href={"https://www.imexconsortium.org/"} target="_blank">
+                                        IMEx</a>
+                                </Typography>
+                                <LogoIcon logoName={'intact'} width="100" height="auto" />
+                                <Typography variant="body1" style={{
+                                    paddingBottom: '10px'
+                                }}>
+                                    <a href={"https://www.ebi.ac.uk/intact/"} target="_blank">IntAct
+                                    </a>
+                                </Typography>
+                                <Typography variant="body1" style={{
+                                    paddingBottom: '10px'
+                                }}>
+                                    <a href={"http://iid.ophid.utoronto.ca/"} target="_blank">
+                                        Integrated Interactions Database (IID)</a></Typography>
+                            </div>
+                        </Grid>
+
+                        {/* Third Row */}
+                        <Grid item xs={4}>
+                            <div style={{ textAlign: 'center' }}>
+                                <Typography variant="body2" gutterBottom style={{
+                                    fontWeight: 'bold'
+                                }}>
+                                    Expression Data
+                                </Typography>
+                                <LogoIcon logoName={'bgee'} width="auto" height="40" />
+                                <Typography variant="body1">
+                                    <a href={"https://www.bgee.org/"} target="_blank">Bgee</a></Typography>
+                                <LogoIcon logoName={'matrisome'} width="100" height="auto" />
+                                <Typography variant="body1">
+                                    <a href={"https://matrisomedb.org/"} target="_blank">Matriome 2.0</a></Typography>
+                            </div>
+                        </Grid>
                     </Grid>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', width: '80%' }}>
-                    <img src={imexlogo} style={{ width: '80px', height: 'auto', paddingLeft: '20px' }} className={"App-logo"} alt="IMEx Logo" />
-                    <Typography
-                        variant={'body1'}
-                        style={{
-                            marginBottom: '5px',
-                            marginTop: '20px',
-                            marginLeft: '5px'
-                        }}>
-                                    MatrixDB is an active member of the International Molecular Exchange (IMEx) consortium. Experiments are reported according to the{' '}
-                        <a href="https://pubmed.ncbi.nlm.nih.gov/19670377/">Minimum Information required</a> for reporting a Molecular Interaction experiment or to the{' '}
-                        <a href="https://pubmed.ncbi.nlm.nih.gov/22453911/">International Molecular Exchange curation rules.</a>
-                    </Typography>
                 </div>
             </div>
         </>

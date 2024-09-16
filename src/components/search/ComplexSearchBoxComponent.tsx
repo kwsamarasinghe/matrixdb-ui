@@ -61,7 +61,7 @@ function BasicSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    ChEBI accessions: <a href="/search?query=chebi:28304">CHEBI:28304</a>
+                    ChEBI identifier: <a href="/search?query=chebi:28304">CHEBI:28304</a>
                 </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -87,7 +87,7 @@ function BasicSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Complex portal accession: <a href="/search?query=cpx-1650">cpx-1650</a>
+                    Complex portal: <a href="/search?query=cpx-1650">CPX-1650</a>
                 </Typography>
                 <Typography
                     variant="body2"

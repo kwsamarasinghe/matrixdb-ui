@@ -14,8 +14,7 @@ function Footer() {
             display: 'flex',
             justifyContent: 'center',
             background: 'rgb(136, 132, 132)',
-            color: 'white',
-            padding: '10px'
+            color: 'white'
         }}>
                 <div style={{
                     width: '70%'
@@ -37,7 +36,7 @@ function Footer() {
 
                         {/* Second Column with Links */}
                         <Grid item xs={12} sm={2} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <ul style={{ listStyleType: 'none', padding: 0, textAlign: 'right', fontSize: '16px', margin: 0 }}>
+                            <ul style={{ listStyleType: 'none', padding: 0, textAlign: 'right', fontSize: '14px', margin: 0 }}>
                                 <li style={{ margin: '5px 0' }}>
                                     <a style={{ color: 'white', textDecoration: 'none' }} href="/about">About MatrixDB</a>
                                 </li>
@@ -58,7 +57,7 @@ function Footer() {
 
                         {/* Second Row with License Info */}
                         <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', flexDirection: 'column' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2px' }}>
                                 <img src={ccbylogo} style={{
                                     width: '60px',
                                     height: 'auto',

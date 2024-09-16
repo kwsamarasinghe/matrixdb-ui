@@ -6,6 +6,7 @@ import MatrixdbIcon from '../../../assets/images/matrixdb_logo_medium.png';
 import IntactIcon from '../../../assets/images/intact_logo.png';
 import BgeeIcon from '../../../assets/images/bgee_logo.png';
 import MatrisomeIcon from '../../../assets/images/matrisome_logo.png';
+import ImexIcon from '../../../assets/images/imexlogo.png';
 
 interface LogoIconProps {
     logoName: string;
@@ -37,6 +38,9 @@ const LogoIcon: React.FC<LogoIconProps> = ({ logoName, width, height }) => {
             break;
         case 'bgee':
             iconPath = BgeeIcon;
+            break;
+        case 'imex':
+            iconPath = ImexIcon;
             break;
         default:
             iconPath = null; // Handle case where no icon matches
