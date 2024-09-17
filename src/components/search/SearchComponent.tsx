@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import { useLocation } from 'react-router-dom';
 import {
     Box,
-    CircularProgress
+    CircularProgress, Typography
 } from "@mui/material";
 import http from "../../commons/http-commons";
 import { useNavigate } from 'react-router-dom';
 import ResultComponent from "./ResultComponent";
 import ComplexSearchBoxComponent from "./ComplexSearchBoxComponent";
+import LogoIcon from "../commons/icons/LogoIcon";
 
 function SearchComponent() {
 
@@ -60,6 +61,10 @@ function SearchComponent() {
                         <div style={{textAlign: 'center'}}>
                             <h2>The extracellular matrix interaction database</h2>
                             <h4>Database focused on interactions established by extracellular matrix proteins, proteoglycans and glycosaminoglycans</h4>
+                            <Typography variant="body2" component="div" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                                <LogoIcon logoName="imex" width="60" height="auto" />
+                                <span style={{ marginLeft: '8px' }}>MatrixDB is a member of the International Molecular Exchange consortium</span>
+                            </Typography>
                         </div>
                         <div style={{width: '70%'}}>
                             <ComplexSearchBoxComponent

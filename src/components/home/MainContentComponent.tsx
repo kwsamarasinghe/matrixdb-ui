@@ -365,49 +365,62 @@ function MainContentComponent() {
                     }}
                 >
                     <Grid container spacing={2}>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <div style={{ textAlign: 'center' }}>
                                 <Typography variant="body2" gutterBottom style={{
                                         fontWeight: 'bold'
                                 }}>
                                     Biomolecule Data
                                 </Typography>
+                                <a href={"https://www.uniprot.org/"} target="_blank">
                                 <LogoIcon logoName={'uniprot'} width="40" height="auto" />
+                                </a>
                                 <Typography variant="body1">
                                     <a href={"https://www.uniprot.org/"} target="_blank">
-                                        UniProt</a></Typography>
+                                        UniProtKB
+                                    </a></Typography>
+                                <a href={"https://www.ebi.ac.uk/chebi/"} target="_blank">
                                 <LogoIcon logoName={'chebi'} width="60" height="auto" />
+                                </a>
                                 <Typography variant="body1">
                                     <a href={"https://www.ebi.ac.uk/chebi/"} target="_blank">
                                         ChEBI
                                     </a>
                                 </Typography>
+                                <a href={"https://www.ebi.ac.uk/complexportal/"} target="_blank">
                                 <LogoIcon logoName={'complex-portal'} width="30" height="auto" />
+                                </a>
                                 <Typography variant="body1">
                                     <a href={"https://www.ebi.ac.uk/complexportal/"} target="_blank">Complex Portal</a></Typography>
                             </div>
                         </Grid>
-
-                        {/* Second Row */}
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <div style={{ textAlign: 'center' }}>
                                 <Typography variant="body2" gutterBottom style={{
                                     fontWeight: 'bold'
                                 }}>
                                     Interaction Data
                                 </Typography>
-                                <LogoIcon logoName={'imex'} width="60" height="auto" />
                                 <Typography variant="body1" style={{
                                     paddingBottom: '10px'
                                 }}>
                                     <a href={"https://www.imexconsortium.org/"} target="_blank">
-                                        IMEx</a>
+                                        <LogoIcon logoName={'imex'} width="60" height="auto" /></a>
                                 </Typography>
-                                <LogoIcon logoName={'intact'} width="100" height="auto" />
+
                                 <Typography variant="body1" style={{
                                     paddingBottom: '10px'
                                 }}>
-                                    <a href={"https://www.ebi.ac.uk/intact/"} target="_blank">IntAct
+                                    <a href={"https://www.ebi.ac.uk/intact/"} target="_blank">
+                                        <LogoIcon logoName={'intact'} width="100" height="auto" />
+                                    </a>
+                                </Typography>
+
+                                <Typography variant="body1" style={{
+                                    paddingBottom: '10px'
+                                }}>
+                                    <a href={"https://matrixdb.univ-lyon1.fr/"} target="_blank">
+                                        <LogoIcon logoName={'matrixdb'} width="50" height="auto" />
                                     </a>
                                 </Typography>
                                 <Typography variant="body1" style={{
@@ -419,21 +432,34 @@ function MainContentComponent() {
                         </Grid>
 
                         {/* Third Row */}
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <div style={{ textAlign: 'center' }}>
                                 <Typography variant="body2" gutterBottom style={{
                                     fontWeight: 'bold'
                                 }}>
                                     Expression Data
                                 </Typography>
-                                <LogoIcon logoName={'bgee'} width="auto" height="30" />
                                 <Typography variant="body1" style={{
                                     paddingBottom: '10px'
                                 }}>
-                                    <a href={"https://www.bgee.org/"} target="_blank">Bgee</a></Typography>
+                                    <a href={"https://www.bgee.org/"} target="_blank">
+                                        <LogoIcon logoName={'bgee'} width="auto" height="30" />
+                                    </a>
+                                </Typography>
+                            </div>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <div style={{ textAlign: 'center' }}>
+                                <Typography variant="body2" gutterBottom style={{
+                                    fontWeight: 'bold'
+                                }}>
+                                    Proteomic Data
+                                </Typography>
+                                <a href={"https://matrisomedb.org/"} target="_blank">
                                 <LogoIcon logoName={'matrisome'} width="100" height="auto" />
+                                </a>
                                 <Typography variant="body1">
-                                    <a href={"https://matrisomedb.org/"} target="_blank">Matrisome 2.0</a></Typography>
+                                    <a href={"https://matrisomedb.org/"} target="_blank">MatrisomeDB 2.0</a></Typography>
                             </div>
                         </Grid>
                     </Grid>

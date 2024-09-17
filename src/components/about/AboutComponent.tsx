@@ -3,6 +3,8 @@ import Footer from "../home/Footer";
 import imexlogo from "../../assets/images/imexlogo.png";
 import {Typography} from "@mui/material";
 import React from "react";
+import ccbylogo from "../../assets/images/ccby.png";
+import LogoIcon from "../commons/icons/LogoIcon";
 function AboutComponent() {
     return(
         <div
@@ -27,16 +29,7 @@ function AboutComponent() {
                         background: 'rgb(237, 239, 245)',
                         paddingTop: '20px'
                     }}>
-                            <Typography
-                                variant={'body1'}
-                                style={{
-                                    fontWeight: 'bold',
-                                    marginBottom: '5px',
-                                    marginTop: '5px'
-                                }}
-                            >
-                                About MatrixDB
-                            </Typography>
+
                             <div style={{
                                 paddingRight: '20px',
                                 paddingLeft: '20px'
@@ -45,13 +38,21 @@ function AboutComponent() {
                                     MatrixDB is a curated interaction database focused on experimentally supported interactions mediated by the components of the extracellular matrix (ECM), namely proteins, proteoglycans, glycosaminoglycans, and bioactive ECM fragments collectively referred to as matrikines or matricryptins. It curate interactions with individual polypeptide chains or with native multimeric proteins (e.g. collagens, laminins, thrombospondins) when appropriate. Multimers are treated as permanent complexes.
                                 </Typography><br/>
                                 <Typography variant={"body1"}>
-                                    Experiments are reported according to the Minimum Information required for reporting a Molecular Interaction experiment (MIMIx, <a href="https://www.nature.com/articles/nbt1324">Orchard et al. 2007 Nat. Biotechnol. 25:894-8</a>) or to the International Molecular Exchange curation rules (<a href="https://www.imexconsortium.org/">IMEx</a>, <a href="https://www.nature.com/articles/nmeth.1931">Orchard et al. 2012 Nat. Methods 9:345-350</a>). MatrixDB uses the controlled vocabulary of maintained by the Molecular Interactions Working Group of HUPO-Proteomics Standards Initiative.
+                                    Experiments are reported according to the Minimum Information required for reporting a Molecular Interaction experiment (MIMIx, <a href="https://www.nature.com/articles/nbt1324">Orchard et al. 2007 Nat. Biotechnol. 25:894-8</a>) or to the International Molecular Exchange curation rules (<a href="https://www.imexconsortium.org/">IMEx</a>, <a href="https://www.nature.com/articles/nmeth.1931">Orchard et al. 2012 Nat. Methods 9:345-350</a>). MatrixDB uses the controlled vocabulary maintained by the Molecular Interactions Working Group of HUPO-Proteomics Standards Initiative.
                                 </Typography><br/>
                                 <Typography variant={"body1"}>
                                     MatrixDB is one of the services of the French node of <a href="https://www.france-bioinformatique.fr/en/elixir-fr/">ELIXIR (IFB/ELIXIR-FR)</a>, and an active member of the <a href="https://www.imexconsortium.org/">IMEx consortium</a>, which is one of the Global Core Biodata Global Resources since 2023.
                                 </Typography><br/>
                                 <Typography variant={"body1"}>
-                                    Release MatrixDB 4.0 (2024-09-01) is based on release 2024-02 of IntAct, release 2024-01 of uniprot, release 2024-01 of BGee, release 2.0 of MatrisomeDB. This release also includes for the first time predicted ECM protein-protein interactions stringently selected (high quality) and extracted from IID (2024-01)
+                                    Release MatrixDB 4.0 (2024-09-01) is based on release 2024-02 of IntAct, release 2024-01 of UniProtKB, release 2024-01 of BGee, release 2.0 of MatrisomeDB. This release also includes for the first time predicted ECM protein-protein interactions from the Integrated Interactions Database (IID) (2024-01)
+                                </Typography>
+                                <Typography variant="body1" component="div" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                                    <span>MatrixDB is distributed under the terms of the Creative Commons Attribution Licence CC BY 4.0</span>
+                                    <img src={ccbylogo} style={{
+                                        width: '60px',
+                                        height: 'auto',
+                                        paddingLeft: '10px'
+                                    }} className={"App-logo"}/>
                                 </Typography>
                             </div>
                             <br/>

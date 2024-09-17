@@ -79,23 +79,32 @@ function NamingComponent() {
                         </Typography>
 
                         <Typography variant="body2" paragraph>
-                            ECMness label is displayed in the top right banner for proteins, based on the ECMness criterion of MatrixDB ('MatrixDB ECM' blue capsule) and MatrisomeDB categories and subcategories, defined as:
-                            <div className="category">
-                                <h5 className="category-title">Core Matrisome</h5>
-                                <ul className="subcategory-list">
-                                    <li className="subcategory-item">ECM Glycoproteins</li>
-                                    <li className="subcategory-item">Proteoglycans</li>
-                                    <li className="subcategory-item">Collagens</li>
-                                </ul>
-                            </div>
+                            ECM proteins are annotated as MatrixDB ECM (based on the criteria available in the Download tab) and with matrisome division and category (defined below) when available. The labels are displayed in the top right banner.
+                            <div className="row-container" style={{ display: 'flex', gap: '20px' }}>
+                                <div className="title-column" style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <h5 className="division-title">Division</h5>
+                                    <h5 className="category-title">Categories</h5>
+                                </div>
 
-                            <div className="category">
-                                <h5 className="category-title">Matrisome-Associated</h5>
-                                <ul className="subcategory-list">
-                                    <li className="subcategory-item">ECM Regulators</li>
-                                    <li className="subcategory-item">Secreted Factors</li>
-                                    <li className="subcategory-item">ECM-Affiliated Proteins</li>
-                                </ul>
+                                <div className="categories-container" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                                    <div className="category">
+                                        <h5 className="category-title">Core Matrisome</h5>
+                                        <ul className="subcategory-list" style={{ listStyleType: 'none', paddingLeft: '0' }}>
+                                            <li className="subcategory-item">ECM Glycoproteins</li>
+                                            <li className="subcategory-item">Proteoglycans</li>
+                                            <li className="subcategory-item">Collagens</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="category">
+                                        <h5 className="category-title">Matrisome-Associated</h5>
+                                        <ul className="subcategory-list" style={{ listStyleType: 'none', paddingLeft: '0' }}>
+                                            <li className="subcategory-item">ECM Regulators</li>
+                                            <li className="subcategory-item">Secreted Factors</li>
+                                            <li className="subcategory-item">ECM-Affiliated Proteins</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </Typography>
 
