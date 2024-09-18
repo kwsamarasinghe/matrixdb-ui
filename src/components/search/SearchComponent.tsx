@@ -62,8 +62,9 @@ function SearchComponent() {
                             <h2>The extracellular matrix interaction database</h2>
                             <h4>Database focused on interactions established by extracellular matrix proteins, proteoglycans and glycosaminoglycans</h4>
                             <Typography variant="body2" component="div" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                                <LogoIcon logoName="imex" width="60" height="auto" />
                                 <span style={{ marginLeft: '8px' }}>MatrixDB is a member of the International Molecular Exchange consortium</span>
+                                <LogoIcon logoName="imex" width="60" height="auto" />
+
                             </Typography>
                         </div>
                         <div style={{width: '70%'}}>
