@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-import {Grid, Tooltip} from "@mui/material";
+import {Box, Grid, Tooltip} from "@mui/material";
 import http from "../../commons/http-commons";
 import {faCircleNodes} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -358,112 +358,102 @@ function MainContentComponent() {
                     }}>
                     Data Sources
                 </Typography>
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '60%'
-                    }}
-                >
-                    <Grid container spacing={2}>
-                        <Grid item xs={3}>
+
+                    <Grid container spacing={2} direction="column">
+                        <Grid item xs={12}>
                             <div style={{ textAlign: 'center' }}>
-                                <Typography variant="body2" gutterBottom style={{
-                                        fontWeight: 'bold'
-                                }}>
-                                    Biomolecule Data
-                                </Typography>
-                                <a href={"https://www.uniprot.org/"} target="_blank">
-                                <LogoIcon logoName={'uniprot'} width="40" height="auto" />
-                                </a>
-                                <Typography variant="body1">
-                                    <a href={"https://www.uniprot.org/"} target="_blank">
-                                        UniProtKB
-                                    </a></Typography>
-                                <a href={"https://www.ebi.ac.uk/chebi/"} target="_blank">
-                                <LogoIcon logoName={'chebi'} width="60" height="auto" />
-                                </a>
-                                <Typography variant="body1">
-                                    <a href={"https://www.ebi.ac.uk/chebi/"} target="_blank">
-                                        ChEBI
-                                    </a>
-                                </Typography>
-                                <a href={"https://www.ebi.ac.uk/complexportal/"} target="_blank">
-                                <LogoIcon logoName={'complex-portal'} width="30" height="auto" />
-                                </a>
-                                <Typography variant="body1">
-                                    <a href={"https://www.ebi.ac.uk/complexportal/"} target="_blank">Complex Portal</a></Typography>
-                            </div>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <div style={{ textAlign: 'center' }}>
-                                <Typography variant="body2" gutterBottom style={{
-                                    fontWeight: 'bold'
-                                }}>
+                                <Typography variant="body2" gutterBottom style={{ fontWeight: 'bold' }}>
                                     Interaction Data
                                 </Typography>
-                                <Typography variant="body1" style={{
-                                    paddingBottom: '10px'
-                                }}>
-                                    <a href={"https://www.imexconsortium.org/"} target="_blank">
-                                        <LogoIcon logoName={'imex'} width="60" height="auto" /></a>
-                                </Typography>
-
-                                <Typography variant="body1" style={{
-                                    paddingBottom: '10px'
-                                }}>
-                                    <a href={"https://www.ebi.ac.uk/intact/"} target="_blank">
-                                        <LogoIcon logoName={'intact'} width="100" height="auto" />
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                                    <a href="https://www.imexconsortium.org/" target="_blank">
+                                        <LogoIcon logoName="imex" width="60" height="auto" />
                                     </a>
-                                </Typography>
-
-                                <Typography variant="body1" style={{
-                                    paddingBottom: '10px'
-                                }}>
-                                    <a href={"https://matrixdb.univ-lyon1.fr/"} target="_blank">
-                                        <LogoIcon logoName={'matrixdb'} width="50" height="auto" />
+                                    <a href="https://www.ebi.ac.uk/intact/" target="_blank">
+                                        <LogoIcon logoName="intact" width="100" height="auto" />
                                     </a>
+                                    <a href="https://matrixdb.univ-lyon1.fr/" target="_blank">
+                                        <LogoIcon logoName="matrixdb" width="50" height="auto" />
+                                    </a>
+                                    <Typography variant="body1">
+                                        <a href="http://iid.ophid.utoronto.ca/" target="_blank">Integrated Interactions Database (IID)</a>
+                                    </Typography>
+                                </div>
+                            </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <div style={{ textAlign: 'center' }}>
+                                <Typography variant="body2" gutterBottom style={{ fontWeight: 'bold' }}>
+                                    Biomolecule Data
                                 </Typography>
-                                <Typography variant="body1" style={{
-                                    paddingBottom: '10px'
-                                }}>
-                                    <a href={"http://iid.ophid.utoronto.ca/"} target="_blank">
-                                        Integrated Interactions Database (IID)</a></Typography>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                                    <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+                                        <a href="https://www.uniprot.org/" target="_blank" rel="noopener noreferrer">
+                                            <LogoIcon logoName="uniprot" width="30" height="auto" />
+                                        </a>
+                                        <Typography variant="body1" ml={1} style={{ paddingTop: '10px'}}>
+                                            <a href="https://www.uniprot.org/" target="_blank" rel="noopener noreferrer">
+                                                UniProtKB
+                                            </a>
+                                        </Typography>
+                                    </Box>
+
+                                    <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+                                        <a href="https://www.ebi.ac.uk/chebi/" target="_blank" rel="noopener noreferrer">
+                                            <LogoIcon logoName="chebi" width="40" height="auto" />
+                                        </a>
+                                        <Typography variant="body1" ml={1}>
+                                            <a href="https://www.ebi.ac.uk/chebi/" target="_blank" rel="noopener noreferrer">
+                                                ChEBI
+                                            </a>
+                                        </Typography>
+                                    </Box>
+
+                                    <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+                                        <a href="https://www.ebi.ac.uk/complexportal/" target="_blank" rel="noopener noreferrer">
+                                            <LogoIcon logoName="complex-portal" width="20" height="auto" />
+                                        </a>
+                                        <Typography variant="body1" ml={1} style={{ paddingTop: '10px'}}>
+                                            <a href="https://www.ebi.ac.uk/complexportal/" target="_blank" rel="noopener noreferrer">
+                                                Complex Portal
+                                            </a>
+                                        </Typography>
+                                    </Box>
+                                </div>
                             </div>
                         </Grid>
 
-                        {/* Third Row */}
-                        <Grid item xs={3}>
+                        {/* Third Line */}
+                        <Grid item xs={12}>
                             <div style={{ textAlign: 'center' }}>
-                                <Typography variant="body2" gutterBottom style={{
-                                    fontWeight: 'bold'
-                                }}>
+                                <Typography variant="body2" gutterBottom style={{ fontWeight: 'bold' }}>
                                     Expression Data
                                 </Typography>
-                                <Typography variant="body1" style={{
-                                    paddingBottom: '10px'
-                                }}>
-                                    <a href={"https://www.bgee.org/"} target="_blank">
-                                        <LogoIcon logoName={'bgee'} width="auto" height="30" />
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                                    <a href="https://www.bgee.org/" target="_blank">
+                                        <LogoIcon logoName="bgee" width="auto" height="30" />
                                     </a>
-                                </Typography>
+                                </div>
                             </div>
                         </Grid>
-                        <Grid item xs={3}>
+
+                        {/* Fourth Line */}
+                        <Grid item xs={12}>
                             <div style={{ textAlign: 'center' }}>
-                                <Typography variant="body2" gutterBottom style={{
-                                    fontWeight: 'bold'
-                                }}>
+                                <Typography variant="body2" gutterBottom style={{ fontWeight: 'bold' }}>
                                     Proteomic Data
                                 </Typography>
-                                <a href={"https://matrisomedb.org/"} target="_blank">
-                                <LogoIcon logoName={'matrisome'} width="100" height="auto" />
-                                </a>
-                                <Typography variant="body1">
-                                    <a href={"https://matrisomedb.org/"} target="_blank">MatrisomeDB 2.0</a></Typography>
+                                <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+                                    <a href="https://matrisomedb.org/" target="_blank">
+                                        <LogoIcon logoName="matrisome" width="100" height="auto" />
+                                    </a>
+                                    <Typography variant="body1">
+                                        <a href="https://matrisomedb.org/" target="_blank">MatrisomeDB 2.0</a>
+                                    </Typography>
+                                </Box>
                             </div>
                         </Grid>
                     </Grid>
-                </div>
             </div>
         </>
     );
