@@ -17,7 +17,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/d3": "^7.4.2",
+    "@types/d3": "^7.4.3",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.14",
     "@types/react": "^18.0.28",
@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@types/cytoscape": "^3.19.10",
-    "@types/d3": "^7.4.1",
+    "@types/d3": "^7.4.3",
     "@types/react-csv": "^1.1.10",
     "@types/react-virtualized": "^9.21.30",
     "webpack": "^5.88.2"
