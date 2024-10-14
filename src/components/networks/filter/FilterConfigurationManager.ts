@@ -105,7 +105,7 @@ export class FilterConfigurationManager {
                         },
                     },
                     {   id: 'score',
-                        label: 'Expression Score',
+                        label: 'Normalized Spectral Abundance Factor (NSAF)',
                         options: {
                             type: FilterOptionType.numeric,
                             range: []

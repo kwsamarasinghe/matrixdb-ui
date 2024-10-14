@@ -12,6 +12,7 @@ import ProteinProteinInteractionComponent from "../statistics/ProteinProteinInte
 import LogoIcon from "../commons/icons/LogoIcon";
 import CirclePacking from "../statistics/BiomoleculeBySpeciesCirclePacking";
 import imexlogo from "../../assets/images/imexlogo.png";
+import ExperimentPieChartComponent from "../statistics/ExperimentPieChartComponent";
 
 
 
@@ -204,9 +205,11 @@ function MainContentComponent() {
                                     Protein-Protein Interactions ({proteinProteinInteractionStatistics.all})
                                 </Typography>
                                 <div style={{
-                                    paddingTop: '30px'
+                                    paddingTop: '30px',
+                                    display: 'flex',
+                                    justifyContent: 'center'
                                 }}>
-                                    <ProteinProteinInteractionComponent
+                                    {/*<ProteinProteinInteractionComponent
                                         data={[
                                             {   name: "Experimental",
                                                 value: proteinProteinInteractionStatistics.experimental,
@@ -217,7 +220,16 @@ function MainContentComponent() {
                                                 value: proteinProteinInteractionStatistics.predicted,
                                                 color: '#b32828'
                                             }]
-                                        }/>
+                                        }/>*/}
+                                    <ExperimentPieChartComponent data={[
+                                        {   title: "Experimental",
+                                            value: proteinProteinInteractionStatistics.experimental,
+                                        },
+                                        {
+                                            title: "Predicted",
+                                            value: proteinProteinInteractionStatistics.predicted,
+                                        }]
+                                    } width={200} height={200} />
                                 </div>
                             </Card>}
                         </Grid>

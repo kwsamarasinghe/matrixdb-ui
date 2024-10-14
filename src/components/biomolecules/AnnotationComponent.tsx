@@ -52,7 +52,7 @@ function AnnotationComponent(props: any) {
         },
         {
             field: 'category',
-            headerName: 'Onotology',
+            headerName: 'Ontology',
             width: 250,
         },
         {

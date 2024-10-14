@@ -16,6 +16,7 @@ import ExpressionComponent from "./ExpressionComponent";
 import StructureComponent from "./StructureComponent";
 import Header from "../home/HeaderComponent";
 import Footer from "../home/Footer";
+import {useNavigate} from "react-router-dom";
 
 function BiomoleculeComponent() {
     const { biomoleculeId } = useParams();
@@ -25,12 +26,20 @@ function BiomoleculeComponent() {
     const [showKeywords, setShowKeywords] = useState(false);
     const [biomolecule, setBiomolecule] = useState<any>(null);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         if(!biomolecule) {
             http.get("/biomolecules/" + biomoleculeId)
                 .then((biomoleculeResponse) => {
                     let biomoleculeData = biomoleculeResponse.data;
                     if(biomoleculeData) {
+
+                        if(biomoleculeData?.obsolete) {
+                            navigate(`/biomolecule/${biomoleculeData.refer_to}`);
+                            return;
+                        }
+
                         setBiomolecule(biomoleculeData);
 
                         if(

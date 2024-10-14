@@ -2,9 +2,13 @@ import Header from "../home/HeaderComponent";
 import Footer from "../home/Footer";
 import imexlogo from "../../assets/images/imexlogo.png";
 import {Box, TableContainer, Typography} from "@mui/material";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {faFileDownload} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ProteinProteinInteractionComponent from "../statistics/ProteinProteinInteractionComponent";
+import http from "../../commons/http-commons";
+import ExperimentPieChartComponent from "../statistics/ExperimentPieChartComponent";
+import BiomoleculeCircularDisplayComponent from "../statistics/BiomoleculeCircularDisplayCompotnent";
 
 const uniProtKBData = [
     { term: 'Basement membrane', code: 'KW-0084' },
@@ -19,6 +23,95 @@ const goTermsData = [
     { term: 'Extracellular region', code: 'GO:0005576' },
 ];
 function DownloadComponent() {
+
+    const [statistics, setStatistics] = useState<any>({});
+    const [biomoleculeStatistics, setBiomoleculeStatistics] = useState<any>([]);
+    const [interactionStatistics, setInteractionStatistics] = useState<any[]>([]);
+    const [proteinProteinInteractionStatistics, setProteinProteinInteractionStatistics] = useState<any>(null);
+
+    useEffect(() => {
+        http.get("/statistics/")
+            .then((statisticsResponse) => {
+                setStatistics(statisticsResponse.data);
+                let biomoleculeData = statisticsResponse.data.biomolecules;
+                let biomoleculeStatistics = [
+                    {
+                        type: 'Protein',
+                        value: biomoleculeData.protein.all,
+                        bySpecies: biomoleculeData.protein.by_species
+                    },
+                    {
+                        type: 'GAG',
+                        value: biomoleculeData.gag
+                    },
+                    {
+                        type: 'Multimer',
+                        value: biomoleculeData.multimer.all,
+                        bySpecies: biomoleculeData.multimer.by_species
+
+                    },
+                    {
+                        type: 'PFRAG',
+                        value: biomoleculeData.pfrag.all,
+                        bySpecies: biomoleculeData.pfrag.by_species
+                    },
+                    {
+                        type: 'SmallMolecules',
+                        value: biomoleculeData.smallmol
+                    },
+                    {
+                        type: 'CAT',
+                        value: biomoleculeData.cat
+                    },
+                    {
+                        type: 'LIPID',
+                        value: biomoleculeData.lipid
+                    },
+                    {
+                        type: 'SPEP',
+                        value: biomoleculeData.spep
+                    }
+                ];
+                setBiomoleculeStatistics(biomoleculeStatistics);
+
+                let interactionData = statisticsResponse.data.interactions;
+                let interactionStatistics = [
+                    { row: 'Protein', column: 'Protein', value: interactionData.protein_protein.directly_supported},
+                    { row: 'Protein', column: 'GAG', value: interactionData.protein_gag || 0},
+                    { row: 'Protein', column: 'PFRAG', value: interactionData.protein_pfrag || 0},
+                    { row: 'Protein', column: 'Multimer', value: interactionData?.protein_multimer || 0},
+                    { row: 'GAG', column: 'Protein', value: interactionData.protein_gag || 0},
+                    { row: 'GAG', column: 'GAG', value: interactionData?.gag_gag || 0},
+                    { row: 'GAG', column: 'PFRAG', value: interactionData.gag_pfrag || 0 },
+                    { row: 'GAG', column: 'Multimer', value: interactionData.gag_multimer || 0},
+                    { row: 'PFRAG', column: 'Protein', value: interactionData.protein_pfrag || 0 },
+                    { row: 'PFRAG', column: 'GAG', value: interactionData.gag_pfrag || 0 },
+                    { row: 'PFRAG', column: 'PFRAG', value: interactionData.pfrag_pfrag || 0},
+                    { row: 'PFRAG', column: 'Multimer', value: interactionData.multimer_pfrag || 0 },
+                    { row: 'Multimer', column: 'Protein', value: interactionData.protein_multimer ||  0},
+                    { row: 'Multimer', column: 'GAG', value: interactionData.gag_multimer || 0},
+                    { row: 'Multimer', column: 'PFRAG', value: interactionData.multimer_pfrag || 0 },
+                    { row: 'Multimer', column: 'Multimer', value: interactionData.multimer_multimer || 0 },
+                    { row: 'Other', column: 'Protein', value: interactionData.protein_other || 0 },
+                    { row: 'Other', column: 'PFRAG', value: interactionData.pfrag_other ||  0},
+                    { row: 'Other', column: 'GAG', value: interactionData.gag_other || 0},
+                    { row: 'Other', column: 'Multimer', value: interactionData.multimer_other || 0 },
+                    { row: 'Protein', column: 'Other', value: interactionData.protein_other || 0 },
+                    { row: 'PFRAG', column: 'Other', value: interactionData.pfrag_other ||  0},
+                    { row: 'GAG', column: 'Other', value: interactionData.gag_other || 0},
+                    { row: 'Multimer', column: 'Other', value: interactionData.multimer_other || 0 },
+                    { row: 'Other', column: 'Other', value: interactionData.other_other || 0 },
+                ];
+                setInteractionStatistics(interactionStatistics);
+                setProteinProteinInteractionStatistics({
+                    all: interactionData.protein_protein.all,
+                    experimental: interactionData.protein_protein.directly_supported,
+                    predicted: interactionData.protein_protein.predicted
+                })
+            });
+    }, []);
+
+
     return(
         <div
             className="App"
@@ -67,6 +160,7 @@ function DownloadComponent() {
                                         color={'darkgreen'}
                                     /> <a href={"/downloads/matrixdb_CORE.tab.zip"}> matrixdb_CORE.tab.zip</a>
                                 </Typography>
+                                <br/>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
                                     Interaction dataset including interactions imported from IMEX databases as MITAB 2.7 file   : <br/>
                                     <FontAwesomeIcon
@@ -77,6 +171,19 @@ function DownloadComponent() {
                                         }}
                                         color={'darkgreen'}
                                     /><a href={"/downloads/matrixdb_all.tab.zip"}> matrixdb_all.tab.zip</a>
+
+                                    <br/>
+                                    <br/>
+                                    Protein-Protein interactions (experimental vs predicted)
+                                    {proteinProteinInteractionStatistics && <ExperimentPieChartComponent data={[
+                                        {   title: "Experimental",
+                                            value: proteinProteinInteractionStatistics.experimental,
+                                        },
+                                        {
+                                            title: "Predicted",
+                                            value: proteinProteinInteractionStatistics.predicted,
+                                        }]
+                                    } width={200} height={200} />}
                                 </Typography>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
                                     Biomolecules : <br/>
@@ -100,6 +207,25 @@ function DownloadComponent() {
                                         color={'darkgreen'}
                                     /><a href={"/downloads/ecm_proteins.csv"}> ecm_proteins.csv</a>
                                 </Typography>
+
+                                <br/>
+                                <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
+                                    Biomolecule counts by types
+                                </Typography>
+                                {
+                                    biomoleculeStatistics &&
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'left'
+                                    }}>
+                                        <BiomoleculeCircularDisplayComponent
+                                            biomoleculeStatistics={biomoleculeStatistics}
+                                            width={400}
+                                            height={240}
+                                        />
+                                    </div>
+                                }
+
                                 <Box sx={{ padding: 3 }}>
                                     <Typography variant="body2" gutterBottom>
                                         MatrixDB selects extra cellular matrix (ECM) proteins according to the following criteria and according to the classification from matrisome project.
