@@ -72,7 +72,7 @@ function AssociationOverview(props: any) {
                 <CardContent style={{ flex: 0.35, backgroundColor: 'white', padding: '20px' }}>
                     <Typography variant="body2" gutterBottom>
                         <a href={"/association/" + association.id} style={{ wordBreak: 'break-all' }}>
-                            {association.id && association.id}
+                            {association.id}
                         </a>
                     </Typography>
                     {
@@ -124,6 +124,10 @@ function Legend(){
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: '#d3b486', marginRight: '10px' }}></div>
                     <span>SPEP</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%',backgroundColor: 'lightgray', marginRight: '10px' }}></div>
+                    <span>Other</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                     <hr style={{ width: '20px', border: '2px solid black', marginRight: '10px' }} />
@@ -339,10 +343,12 @@ function CytoscapeComponent(props: any) {
             let participantsToDraw: any[] = [];
             participants.forEach((participant: any) => {
                 if (filteredParticipants.has(participant.id)) {
+                    let participantId = context.interactors.interactor_mapping[participant.id];
                     participantsToDraw.push({
                         data: {
                             id: participant.id,
-                            label: participant.id,
+                            mdbId: participantId,
+                            label: participant.name,
                             type: participant.type
                         }
                     });
@@ -481,7 +487,7 @@ function CytoscapeComponent(props: any) {
                         },
                     },
                 ],
-                userZoomingEnabled: false,
+                userZoomingEnabled: true,
             });
             console.log("cytoscape done")
             // Calculate node size based on degree
@@ -504,19 +510,8 @@ function CytoscapeComponent(props: any) {
                 node.style('width', nodeSize).style('height', nodeSize);
             });
             console.log("Calculated the node size")
-            cy.current.zoom(1.5);
 
-            cy.current.on('click', 'node', function (event: any) {
-                const node = event.target;
-                let nodeId = parseInt(node.id());
-                let selectedPartner = participants.filter((p: any) => p.id === nodeId)[0];
-                let sortedIds = [props.biomoleculeId, context.interactors.interactor_mapping[selectedPartner.id]].sort();
-                let selectedInteraction = associations.find((association: any) => association.id === sortedIds[0] + '__' + sortedIds[1]);
-                if (selectedInteraction) {
-                    setSelectedInteraction(selectedInteraction);
-                    setSelectedPartner(null);
-                }
-            });
+            //cy.current.zoom(1);
 
             cy.current.on('mouseover', 'node', function (event: any) {
                 const node = event.target;
@@ -530,10 +525,53 @@ function CytoscapeComponent(props: any) {
                 }
             });
 
-            cy.current.on('mouseout', 'node', function (event: any) {
-                const node = event.target;
+            cy.current.on('mouseover', 'edge', function (event: any) {
+                let edge = event.target;
+                let associationId = edge.data().label;
+                let selectedInteraction = associations.find((association: any) => association.id === associationId);
+                setSelectedInteraction(selectedInteraction);
+                setSelectedPartner(null);
             });
 
+            cy.current.on('zoom', function() {
+                var currentZoom = cy.current.zoom();
+
+                // Set the zoom level threshold for showing labels
+                var zoomThreshold = 3;
+
+                if (currentZoom >= zoomThreshold) {
+                    // Show node labels when zoom level is above the threshold
+                    cy.current.nodes().forEach(function(node: any) {
+                        node.style('label', node.data('label'))
+                        node.style('text-valign', 'center')
+                        node.style('text-halign', 'center')
+                        node.style('font-size', '4')
+                    });
+                } else {
+                    if(Object.keys(context.interactors.interactor_mapping).length <= 30) {
+                        cy.current.nodes().forEach(function(node: any) {
+                            node.style('label', node.data('label'))
+                            node.style('text-valign', 'center')
+                            node.style('text-halign', 'center')
+                            node.style('font-size', '4')
+                        });
+                    } else {
+                        cy.current.nodes().forEach(function(node: any) {
+                            node.style('label', '');
+                        });
+                    }
+                }
+            });
+
+            // Show labels for small networks
+            if(Object.keys(context.interactors.interactor_mapping).length <= 30) {
+                cy.current.nodes().forEach(function(node: any) {
+                    node.style('label', node.data('label'))
+                    node.style('text-valign', 'center')
+                    node.style('text-halign', 'center')
+                    node.style('font-size', '4')
+                });
+            }
         }
     }
 

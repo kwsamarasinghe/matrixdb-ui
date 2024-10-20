@@ -212,12 +212,29 @@ function NamingComponent() {
                         </div>
                         <Typography variant="body2">
                             A synthetic or engineered peptide is identified by a MatrixDB-specific identifier "SPEP_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) or an EBI identifier is provided when available (e.g., EBI-6894609 for the triple-helical FRET peptide substrate THP-15).</Typography>
-                        <Typography variant="body2" style={{
-                            fontWeight: 'bold'
-                        }}>Others</Typography>
-                        <Typography variant="body2">
-                            Remaining molecules are identified by a MatrixDB-specific identifier "SMALLMOL_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available (e.g., CHEBI:76023 for thioflavin T).
-                        </Typography><br/><br/>
+
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'row'
+                        }}>
+                            <div style={{
+                                width: '20px',
+                                height: '20px',
+                                borderRadius: '50%',
+                                backgroundColor: 'lightgray',
+                                marginRight: '10px'
+                            }}></div>
+                            <Typography variant="body2" style={{
+                                fontWeight: 'bold'
+                            }}>Others</Typography>
+                        </div>
+
+                                <Typography variant="body2">
+                                    Remaining molecules are identified by a MatrixDB-specific identifier "SMALLMOL_x" where x is a number. A cross-reference to ChEBI (Chemical Entities of Biological Interest) is provided when available (e.g., CHEBI:76023 for thioflavin T).
+                                </Typography>
+
+
+                            <br/><br/>
 
                         <Divider/><br/>
                         <Typography

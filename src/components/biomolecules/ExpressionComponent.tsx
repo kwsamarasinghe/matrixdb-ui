@@ -403,9 +403,9 @@ function ExpressionComponent(props: any) {
                     <Typography>
                         Protein: {expressionData.protein}
                     </Typography>
-                    <Typography>
+                    {expressionData.gene && <Typography>
                         Gene: {expressionData.gene}
-                    </Typography>
+                    </Typography>}
                     <Typography>
                         Tissue: {expressionData.tissue}
                     </Typography>
@@ -540,7 +540,7 @@ function ExpressionComponent(props: any) {
                                             key={innerIndex}
                                             tissue={tissue}
                                             protein={protein}
-                                            gene={'gene'}
+                                            gene={gene}
                                             score={expressionSamples[sample][tissue] ? expressionSamples[sample][tissue] : 0 }
                                             maxScore={maxScore}
                                         />

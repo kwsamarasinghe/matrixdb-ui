@@ -170,13 +170,15 @@ const CirclePacking: React.FC<any> = (props: any) => {
             .selectAll("foreignObject")
             .data(root.descendants().filter(d => d.depth === 2))
             .join("foreignObject")
-            .attr("width", 40)
-            .attr("height", 60)
-            .attr("x", d => d.x - 50)
-            .attr("y", d => d.y - 80)
+            .attr("width", d => d.r < 100 ? 70 : d.r)
+            .attr("height", d => d.r < 150 ? 160 : d.r)
+            .attr("x", d => d.r / 2 )
+            .attr("y", d => d.r / 2 - 30)
             .html(d => {
+                let size = d.r;
+                if(size < 30) size = 30;
                 return `<div xmlns="http://www.w3.org/1999/xhtml">
-                            <img src=${d.data.icon} />
+                            <img src=${d.data.icon} width="${size}" height="${size}" />
                         </div>`;
             });
 

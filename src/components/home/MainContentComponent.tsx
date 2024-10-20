@@ -185,13 +185,13 @@ function MainContentComponent() {
                             }
                         </Grid>
                         <Grid item xs={12} sm={12} md={6}>
-                            {proteinProteinInteractionStatistics && <Card
-                                style={{
+                            {
+                                proteinProteinInteractionStatistics &&
+                                <Card style={{
                                     flex: '1',
                                     margin: '10px',
                                     ...cardStyle
-                                }}
-                            >
+                                }}>
                                 <Typography
                                     component="div"
                                     style={{
@@ -231,7 +231,8 @@ function MainContentComponent() {
                                         }]
                                     } width={200} height={200} />
                                 </div>
-                            </Card>}
+                            </Card>
+                            }
                         </Grid>
                     </Grid>
                 {/*</div>*/}

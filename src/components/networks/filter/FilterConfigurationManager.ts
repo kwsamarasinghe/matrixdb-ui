@@ -86,7 +86,7 @@ export class FilterConfigurationManager {
             },
             {
                 id: 'proteomicsExpression',
-                label: 'Proteomics Data',
+                label: 'Proteomic Data',
                 subCriteria: [
                     {
                         id: 'tissue',

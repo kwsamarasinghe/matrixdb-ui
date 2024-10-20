@@ -62,7 +62,7 @@ const   BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
         let biomolecules = getFromLocalStorage("selectedBiomolecules");
         if(!biomolecules) biomolecules = [];
 
-        http.get(`/search?query=id:${biomolecules.join(',')}&mode=1`)
+        http.get(`/search?query=id:${biomolecules.join(',')}`)
             .then((searchResponse) => {
                 setBiomolecules(searchResponse.data.biomolecules);
             });

@@ -158,11 +158,11 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /> <a href={"/downloads/matrixdb_CORE.tab.zip"}> matrixdb_CORE.tab.zip</a>
+                                    /> <a href={"/downloads/matrixdb_CORE_4_0.tab.zip"}> matrixdb_CORE.tab.zip</a>
                                 </Typography>
                                 <br/>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
-                                    Interaction dataset including interactions imported from IMEX databases as MITAB 2.7 file   : <br/>
+                                    MatrixDB curated interaction dataset (release 4.0) including interactions imported from IMEx databases as a MITAB 2.7 file   : <br/>
                                     <FontAwesomeIcon
                                         icon={faFileDownload}
                                         style={{
@@ -170,7 +170,7 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /><a href={"/downloads/matrixdb_all.tab.zip"}> matrixdb_all.tab.zip</a>
+                                    /><a href={"/downloads/matrixdb_all_4_0.tab.zip"}> matrixdb_all.tab.zip</a>
 
                                     <br/>
                                     <br/>
@@ -207,7 +207,12 @@ function DownloadComponent() {
                                         color={'darkgreen'}
                                     /><a href={"/downloads/ecm_proteins.csv"}> ecm_proteins.csv</a>
                                 </Typography>
-
+                                <br/>
+                                <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
+                                    The previous release of MatrixDB (release 3.4) is available at
+                                    <a href={'http://v1.matrixdb.univ-lyon1.fr/'} target="_blank"> http://v1.matrixdb.univ-lyon1.fr/
+                                    </a>
+                                </Typography>
                                 <br/>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
                                     Biomolecule counts by types
@@ -228,7 +233,7 @@ function DownloadComponent() {
 
                                 <Box sx={{ padding: 3 }}>
                                     <Typography variant="body2" gutterBottom>
-                                        MatrixDB selects extra cellular matrix (ECM) proteins according to the following criteria and according to the classification from matrisome project.
+                                        MatrixDB selects extracellular matrix (ECM) and secreted proteins according to the following criteria, and according to the  matrisome divisions and categories.
                                     </Typography>
                                     <Typography variant="body2" gutterBottom>
                                         UniProtKB Keywords
