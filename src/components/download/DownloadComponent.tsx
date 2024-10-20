@@ -158,7 +158,7 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /> <a href={"/downloads/matrixdb_CORE_4_0.tab.zip"}> matrixdb_CORE.tab.zip</a>
+                                    /> <a href={"/downloads/matrixdb_CORE_4_0.tab.zip"}> matrixdb_CORE_4_0.tab.zip</a>
                                 </Typography>
                                 <br/>
                                 <Typography variant={"body2"} style={{fontWeight: 'bold'}}>
@@ -170,7 +170,7 @@ function DownloadComponent() {
                                             fontSize: '1.5em'
                                         }}
                                         color={'darkgreen'}
-                                    /><a href={"/downloads/matrixdb_all_4_0.tab.zip"}> matrixdb_all.tab.zip</a>
+                                    /><a href={"/downloads/matrixdb_all_4_0.tab.zip"}> matrixdb_all_4_0.tab.zip</a>
 
                                     <br/>
                                     <br/>
