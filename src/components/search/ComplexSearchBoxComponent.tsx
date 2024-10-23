@@ -213,7 +213,7 @@ function AdvancedSearchInstructions() {
                         fontSize: "0.6em",
                         paddingRight: "4px"
                     }}/>
-                    Matrisome subcategory AND Species: <a href="/search?query=matrisome_subcategory:ecm regulators and species:homo sapiens&mode=1">matrisome_subcategory:ecm regulators and species:homo sapiens</a>
+                    Matrisome category AND Species: <a href="/search?query=matrisome_category:ecm regulators and species:homo sapiens&mode=1">matrisome_category:ecm regulators and species:homo sapiens</a>
                 </Typography>
             </Grid>
         </Grid>
