@@ -58,13 +58,20 @@ const NetworkExplorer: React.FC<any> = ({
 
     useEffect(() => {
         let biomolecules = getFromLocalStorage("selectedBiomolecules");
-        if(!biomolecules) biomolecules = [];
+        if(!biomolecules) {
+            biomolecules = [];
+            return;
+        }
 
-        http.get(`/search?query=id:${biomolecules.join(',')}`)
+        http.get(`/search?query=id:${biomolecules.join(',')}&mode=1`)
             .then((searchResponse) => {
                 setBiomolecules(searchResponse.data.biomolecules);
             });
     }, []);
+
+    const onAllParticipantsRemove = () => {
+        setBiomolecules([]);
+    }
 
     const onParticipantAdd = (biomolecule: any[]) => {
         let newSelectedBiomolecules = [...selectedParticipants, ...biomolecule];
@@ -366,6 +373,7 @@ const NetworkExplorer: React.FC<any> = ({
                                                                         searchQuery={searchQuery}
                                                                         onParticipantAdd={onParticipantAdd}
                                                                         onParticipantRemove={onParticipantRemove}
+                                                                        onAllParticipantsRemove={onAllParticipantsRemove}
                                                                         onSelectionChange={onSelectionChange}
                                                                         onGenerateNetwork={generateNetwork}
                                                                     />

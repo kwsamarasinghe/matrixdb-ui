@@ -60,9 +60,12 @@ const   BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
 
     const updateBiomolcules = () => {
         let biomolecules = getFromLocalStorage("selectedBiomolecules");
-        if(!biomolecules) biomolecules = [];
+        if(!biomolecules) {
+            biomolecules = [];
+            return
+        }
 
-        http.get(`/search?query=id:${biomolecules.join(',')}`)
+        http.get(`/search?query=id:${biomolecules.join(',')}&mode=1`)
             .then((searchResponse) => {
                 setBiomolecules(searchResponse.data.biomolecules);
             });
@@ -79,6 +82,7 @@ const   BiomoleculeSelectionComponent: React.FC<any> = (props: any)  => {
             biomolecules.map((biomolecule: any) => biomolecule.biomolecule_id));
         updateBiomolcules();
         setSelectedTab(1);
+        props.onAllParticipantsRemove();
     }
 
     const onSaveToBiomolcules = (biomolecules: any[])  => {
