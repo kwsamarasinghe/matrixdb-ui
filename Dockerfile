@@ -1,13 +1,8 @@
-FROM node:20-alpine AS builder
+FROM node:12.22-alpine AS builder
 
-
-ENV NODE_ENV production
 WORKDIR /app
-
 COPY ./package.json ./
-RUN npm i --save-dev @types/d3
-RUN npm i --save-dev @types/react-csv
-RUN npm install
+RUN npm install --loglevel verbose
 COPY . .
 RUN npm run build
 
