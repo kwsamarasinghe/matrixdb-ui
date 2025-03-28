@@ -49,6 +49,9 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
 
     const [interactors, setInteractors] = useState<any | null>();
     const [interactorStats, setInteractorStats] = useState<any | null>();
+    const [psciquicInteractions, setPsciquicInteractions] = useState<number>();
+    const [psciquicSources, setPsciquicSources] = useState<number>();
+    const [psciquicDone, setPsciquicDone] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState(true);
     const [tabValue, setTabValue] = useState(0);
     const [openHelp, setOpenHelp] = useState(false);
@@ -102,6 +105,19 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                     onInteractionLoad();
                 }
                 setInteractorStats(interactorStats);
+            })
+            .catch((reason: any) => {
+                console.log("Error in response, " + reason);
+            })
+    }, [biomoleculeId]);
+
+    useEffect(() => {
+        // Get network for biomoleculeId
+        http.get(`/statistics/psicquic/${biomoleculeId}`)
+            .then((networkResponse) => {
+                setPsciquicInteractions(networkResponse.data.interactions);
+                setPsciquicSources(networkResponse.data.successful_services);
+                setPsciquicDone(true);
             })
             .catch((reason: any) => {
                 console.log("Error in response, " + reason);
@@ -242,8 +258,35 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                             biomoleculeIds={[biomoleculeId]}
                                        />
                                    </TabPanel>
+                                   {!psciquicDone ? (
+                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                                            <div className="spinner"></div> {/* Replace with an actual spinner component */}
+                                        </div>
+                                        ) : (
+                                        <div
+                                            style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            textAlign: 'center',
+                                            }}
+                                        >
+                                            <div
+                                            style={{
+                                                color: 'white',
+                                                background: '#277070',
+                                                width: '50%',
+                                                padding: '10px'
+                                            }}
+                                            >
+                                            <h3>PSCIQUIC View</h3>
+                                            <p>{psciquicInteractions} Binary interactions from {psciquicSources} Sources</p>
+                                            </div>
+                                        </div>
+                                    )}
                                </>
                             }
+
                         </>
                     </Paper>
                 </div>
