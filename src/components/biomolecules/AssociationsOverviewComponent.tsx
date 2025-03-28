@@ -51,6 +51,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
     const [interactorStats, setInteractorStats] = useState<any | null>();
     const [psciquicInteractions, setPsciquicInteractions] = useState<number>();
     const [psciquicSources, setPsciquicSources] = useState<number>();
+    const [psciquicXref, setPsciquicXref] = useState<string>('');
     const [psciquicDone, setPsciquicDone] = useState<boolean>(false);
     const [isExpanded, setIsExpanded] = useState(true);
     const [tabValue, setTabValue] = useState(0);
@@ -117,6 +118,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
             .then((networkResponse) => {
                 setPsciquicInteractions(networkResponse.data.interactions);
                 setPsciquicSources(networkResponse.data.successful_services);
+                setPsciquicXref(networkResponse.data.xref);
                 setPsciquicDone(true);
             })
             .catch((reason: any) => {
@@ -280,7 +282,7 @@ const AssociationsOverviewComponent: React.FC<AssociationOverviewComponentProps>
                                             }}
                                             >
                                             <h3>PSCIQUIC View</h3>
-                                            <p>{psciquicInteractions} Binary interactions from {psciquicSources} Sources</p>
+                                            <p>{psciquicInteractions} <a href={psciquicXref} target='_blank'>Binary interactions</a> </p>
                                             </div>
                                         </div>
                                     )}
