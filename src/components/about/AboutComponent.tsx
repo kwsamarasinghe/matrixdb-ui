@@ -96,6 +96,12 @@ function AboutComponent() {
                                 <li>
                                     <a href="https://pubmed.ncbi.nlm.nih.gov/30371822/" target="_blank">MatrixDB: integration of new data with a focus on glycosaminoglycan interactions.</a> Clerc O, Deniaud M, Vallet SD, Naba A, Rivet A, Perez S, Thierry-Mieg N, Ricard-Blum S. Nucleic Acids Res. <b>(2019)</b> 47(D1):D376-D381.
                                 </li>
+                                <li>
+                                    <a href="https://pubmed.ncbi.nlm.nih.gov/39558161/" target="_target">
+                                        MatrixDB 2024: an increased coverage of extracellular matrix interactions, a new Network Explorer and a new web interface.
+                                    </a> Samarasinghe KW, Kotlyar M, Vallet SD, Hayes C, Naba A, Jurisica I, Lisacek F, Ricard-Blum S. Nucleic Acids Res. <b>(2025)</b> 53(D1):D1677-D1682.
+                                    
+                                </li>
                             </Typography>
                     </div>
                 </div>
