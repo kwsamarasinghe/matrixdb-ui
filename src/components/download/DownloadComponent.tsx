@@ -264,6 +264,13 @@ function DownloadComponent() {
                                         </Box>
                                     ))}
                                 </Box>
+                                <Typography variant={"body2"} style={{ fontWeight: 'bold', marginTop: '20px' }}>
+                                    All data provided on this page is licensed under the 
+                                    <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '5px' }}>
+                                        Creative Commons Attribution License (CC BY 4.0)
+                                    </a>
+                                    and should be appropriately credited when used.
+                                </Typography>
                             </div>
                     </div>
                 </div>

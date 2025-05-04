@@ -74,7 +74,7 @@ function AboutComponent() {
                                     marginBottom: '5px',
                                     marginTop: '5px'
                             }}>
-                                Publications describing MatrixDB and its updates
+                                Publications describing MatrixDB and its updates. Please cite the most recent publication.
                             </Typography>
 
                             <Typography
