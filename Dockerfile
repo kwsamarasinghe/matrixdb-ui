@@ -1,6 +1,5 @@
 FROM node:24.22.1 AS builder
 
-
 ENV NODE_ENV=production
 WORKDIR /app
 
