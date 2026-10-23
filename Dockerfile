@@ -1,8 +1,10 @@
-FROM node:12.22-alpine AS builder
+FROM node:24.22.1 AS builder
 
+ENV NODE_ENV=production
 WORKDIR /app
-COPY ./package.json ./
-RUN npm install --loglevel verbose
+
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev
 COPY . .
 RUN npm run build
 
